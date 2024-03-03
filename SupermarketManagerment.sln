@@ -5,13 +5,13 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{653A9BF1-D474-4061-970E-F935B15FB90A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Domain", "Supermarket.Domain\Supermarket.Domain.csproj", "{E4215E50-89A2-47BF-94F1-509264F716FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Supermarket.Domain", "Supermarket.Domain\Supermarket.Domain.csproj", "{E4215E50-89A2-47BF-94F1-509264F716FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Application", "Supermarket.Application\Supermarket.Application.csproj", "{125852CF-1E89-45A7-8CB6-F295DD6F7336}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Supermarket.Application", "Supermarket.Application\Supermarket.Application.csproj", "{125852CF-1E89-45A7-8CB6-F295DD6F7336}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Infrastructure", "Supermarket.Infrastructure\Supermarket.Infrastructure.csproj", "{EB844F5E-E575-4A21-BFFF-75C361CF0E0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Supermarket.Infrastructure", "Supermarket.Infrastructure\Supermarket.Infrastructure.csproj", "{EB844F5E-E575-4A21-BFFF-75C361CF0E0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Api", "Supermarket.Api\Supermarket.Api.csproj", "{7AA2364C-9FB0-4F60-A9B3-EB8EFA930D4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Supermarket.Api", "Supermarket.Api\Supermarket.Api.csproj", "{7AA2364C-9FB0-4F60-A9B3-EB8EFA930D4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
