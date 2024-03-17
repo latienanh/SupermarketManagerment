@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Supermarket.Application.DTOs.Auth;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
+using Supermarket.Application.ModelRequests;
+using Supermarket.Application.ModelResponses;
 
 namespace Supermarket.Application.Services
 {
@@ -18,7 +20,7 @@ namespace Supermarket.Application.Services
         {
             _authRepository = authRepository;
         }
-        public async Task<string> LoginDtos(LoginDtos loginDtos)
+        public async Task<LoginResponses> LoginDtos(LoginDtos loginDtos)
         {
             return await _authRepository.Login(loginDtos);
         }
@@ -26,6 +28,10 @@ namespace Supermarket.Application.Services
         public async Task<IdentityResult>SignUp(SignUpDtos signUpDtos)
         {
             return await _authRepository.SignUp(signUpDtos);
+        }
+        public async Task<LoginResponses> RenewTokenAsync(LoginTokenRequest loginTokenRequest)
+        {
+            return await _authRepository.RenewTokenAsync(loginTokenRequest);
         }
     }
 }

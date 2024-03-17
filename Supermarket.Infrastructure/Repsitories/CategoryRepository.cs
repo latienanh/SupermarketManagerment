@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Supermarket.Application.DTOs;
+using Supermarket.Application.DTOs.SupermarketDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Domain.Entities.SupermarketEntities;
 using Supermarket.Infastructure;

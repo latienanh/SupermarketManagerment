@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs.Auth;
 using Supermarket.Application.IServices;
+using Supermarket.Application.ModelRequests;
 
 namespace Supermarket.Api.Controllers
 {
@@ -15,7 +16,7 @@ namespace Supermarket.Api.Controllers
         {
             _authServices = authServices;
         }
-
+    
         [HttpPost("SignUp")]
         public async Task<ActionResult> Signup(SignUpDtos signUpDtos)
         {
@@ -32,12 +33,26 @@ namespace Supermarket.Api.Controllers
         public async Task<ActionResult> Login(LoginDtos loginDtos)
         {
             var result = await _authServices.LoginDtos(loginDtos);
-            if (string.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result.AccessToken))
             {
                 return Unauthorized();
             };
             return Ok(result);
         }
+
+        [HttpPost("Refresh")]
+        public async Task<IActionResult> Refresh(LoginTokenRequest loginTokenRequest)
+        {
+            var result = await _authServices.RenewTokenAsync(loginTokenRequest);
+            if (result!=null)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest();
+
+        }
+
 
     }
 }

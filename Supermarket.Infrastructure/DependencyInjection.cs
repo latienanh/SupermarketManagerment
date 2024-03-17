@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Supermarket.Application.IRepositories;
 using Supermarket.Infrastructure.Settings;
-using Microsoft.Extensions.Configuration;
 using Supermarket.Infastructure;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
+using Supermarket.Application.IServices;
+using Supermarket.Application.Services;
+using Supermarket.Infrastructure.Repsitories;
 
 namespace Supermarket.Infrastructure
 {
@@ -28,6 +31,11 @@ namespace Supermarket.Infrastructure
                     b => b.MigrationsAssembly("Supermarket.Infrastructure"));
             });
             return services;
+        }
+        public static IServiceCollection AddRepository(this IServiceCollection service)
+        {
+            service.AddScoped<IAttributeRepository, AttributeRepository>();
+            return service;
         }
     }
 }

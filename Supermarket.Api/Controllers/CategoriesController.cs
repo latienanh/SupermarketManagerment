@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs;
+using Supermarket.Application.DTOs.SupermarketDtos;
 using Supermarket.Application.IServices;
 using Supermarket.Domain.Entities.SupermarketEntities;
 
@@ -20,6 +21,7 @@ namespace Supermarket.Api.Controllers
         }
         // GET: api/<CategoriesController>
         [HttpGet]
+        //[Authorize(Roles = "Salesperson")]
         public  ActionResult<IList<CategoryDto>> Get()
         {
             List<CategoryDto> allCategories = _categoryServices.GetAllCategories();
@@ -34,7 +36,7 @@ namespace Supermarket.Api.Controllers
         //}
 
         [HttpPost]
-        //[Authorize]
+        //[Authorize(Roles = "Administrator")]
         public ActionResult<Category> Create(CategoryDto categoryDto)
         {
             _categoryServices.createCategory(categoryDto);

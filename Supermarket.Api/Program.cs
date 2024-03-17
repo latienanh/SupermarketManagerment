@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Supermarket.Application;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.Profiles;
@@ -22,6 +24,7 @@ namespace Supermarket.Api
             // Add services to the container.
             
             ConfigurationManager Configuration = builder.Configuration;
+            builder.Services.AddAplication(Configuration);
             builder.Services.AddJWTRepository(Configuration);
             builder.Services.AddSqlRepository(Configuration);
             builder.Services.AddControllers();
@@ -59,10 +62,36 @@ namespace Supermarket.Api
                 build => build.WithOrigins("*").AllowAnyMethod().WithHeaders()));
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(option =>
+            {
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Book API", Version = "v1" });
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+            });
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
-
+            builder.Services.AddAuthorization();
             builder.Services
                 .AddAuthentication(option =>
                 {
@@ -80,7 +109,8 @@ namespace Supermarket.Api
                         ValidateAudience = true,
                         ValidIssuer = Configuration["JsonWebToken:ValidIssuer"],
                         ValidAudience = Configuration["JsonWebToken:ValidAudience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JsonWebToken:SecretKey"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JsonWebToken:SecretKey"])),
+                        ClockSkew = new TimeSpan(0,0,5)
                     };
                 });
 
@@ -88,6 +118,10 @@ namespace Supermarket.Api
             builder.Services.AddScoped<ICategoryServices, CategoryServices>();
             builder.Services.AddScoped<IAuthServices,AuthServices>();
             builder.Services.AddScoped<IAuthRepository,AuthRepository>();
+            builder.Services.AddScoped<ITokenServices, TokenServices>();
+            builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            builder.Services.AddServices();
+            builder.Services.AddRepository();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

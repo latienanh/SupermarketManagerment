@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Supermarket.Infastructure;
 
@@ -11,9 +12,10 @@ using Supermarket.Infastructure;
 namespace Supermarket.Infrastructure.Migrations
 {
     [DbContext(typeof(SuperMarketDbContext))]
-    partial class SuperMarketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240304183042_addrefreshToken")]
+    partial class addrefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1232,7 +1234,7 @@ namespace Supermarket.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Expriaton")
-                        .HasColumnType("datetime")
+                        .HasColumnType("date")
                         .HasColumnName("expriaton");
 
                     b.Property<string>("Token")

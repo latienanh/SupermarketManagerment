@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Supermarket.Domain.Entities.SupermarketEntities;
+using Supermarket.Domain.Entities.Token;
 using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 
 namespace Supermarket.Domain.Entities.Identity
@@ -27,6 +28,7 @@ namespace Supermarket.Domain.Entities.Identity
             Coupons = new HashSet<Coupon>();
         }
         public Employee Employee { get; set; } = null!;
+        public RefreshToken RefreshToken { get; set; }
         public ICollection<Attribute> Attributes { get; }
         public ICollection<AttributeValue> AttributeValues { get; }
         public ICollection<StockIn> StockIns { get; }

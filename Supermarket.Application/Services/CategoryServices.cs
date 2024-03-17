@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Supermarket.Application.DTOs;
+using Supermarket.Application.DTOs.SupermarketDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Domain.Entities.SupermarketEntities;

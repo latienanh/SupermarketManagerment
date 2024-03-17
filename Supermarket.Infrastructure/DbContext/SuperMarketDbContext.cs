@@ -7,11 +7,12 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Supermarket.Domain.Entities.Identity;
 using Supermarket.Domain.Entities.SupermarketEntities;
+using Supermarket.Domain.Entities.Token;
 using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 
 namespace Supermarket.Infastructure
 {
-    public class SuperMarketDbContext : IdentityDbContext<AppUser,IdentityRole<int>,int>
+    public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
     {
         public SuperMarketDbContext(DbContextOptions<SuperMarketDbContext> options)
             : base(options)
@@ -34,6 +35,7 @@ namespace Supermarket.Infastructure
         public virtual DbSet<UnitConversion> UnitConversions { get; set; } = null!;
         public virtual DbSet<Variant> Variants { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
 
 //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //        {
@@ -48,6 +50,19 @@ namespace Supermarket.Infastructure
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Expriaton)
+                    .HasColumnType("datetime")
+                    .HasColumnName("expriaton");
+                entity.Property(e => e.UserId).HasColumnName("userId");
+                 entity.Property(e => e.Token).HasColumnName("token");
+
+                 entity.HasOne(d => d.AppUser)
+                     .WithOne(d => d.RefreshToken)
+                     .HasForeignKey<RefreshToken>(d => d.UserId);
+            });
             modelBuilder.Entity<Domain.Entities.SupermarketEntities.Attribute>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
