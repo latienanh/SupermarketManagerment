@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Supermarket.Infrastructure.Migrations
 {
-    public partial class FirstDb : Migration
+    public partial class firstDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -94,8 +94,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -121,8 +119,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -146,8 +142,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -180,8 +174,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -210,8 +202,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -245,8 +235,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -258,6 +246,28 @@ namespace Supermarket.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Modifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EntityType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EntityId = table.Column<int>(type: "int", nullable: false),
+                    EntityName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Modifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Modifications_Users_ModifiedBy",
+                        column: x => x.ModifiedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -275,8 +285,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -287,6 +295,27 @@ namespace Supermarket.Infrastructure.Migrations
                         column: x => x.createBy,
                         principalTable: "Users",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    expriaton = table.Column<DateTime>(type: "datetime", nullable: false),
+                    userId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -302,8 +331,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -412,8 +439,6 @@ namespace Supermarket.Infrastructure.Migrations
                     IsDelete = table.Column<bool>(type: "bit", nullable: true),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -445,8 +470,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -543,8 +566,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -579,8 +600,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -682,8 +701,6 @@ namespace Supermarket.Infrastructure.Migrations
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     createBy = table.Column<int>(type: "int", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    modifiedBy = table.Column<int>(type: "int", nullable: true),
-                    modifiedTime = table.Column<DateTime>(type: "date", nullable: false),
                     deleteBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -805,6 +822,11 @@ namespace Supermarket.Infrastructure.Migrations
                 column: "customerID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Modifications_ModifiedBy",
+                table: "Modifications",
+                column: "ModifiedBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductBatches_batchId",
                 table: "ProductBatches",
                 column: "batchId");
@@ -823,6 +845,12 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "IX_Products_createBy",
                 table: "Products",
                 column: "createBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_userId",
+                table: "RefreshTokens",
+                column: "userId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -938,6 +966,9 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "InvoiceDetails");
 
             migrationBuilder.DropTable(
+                name: "Modifications");
+
+            migrationBuilder.DropTable(
                 name: "ProductBatches");
 
             migrationBuilder.DropTable(
@@ -945,6 +976,9 @@ namespace Supermarket.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductCoupons");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");

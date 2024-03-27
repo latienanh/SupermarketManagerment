@@ -1,10 +1,6 @@
-﻿
-using Supermarket.Application.DTOs.Common;
+﻿namespace Supermarket.Application.DTOs.SupermarketDtos;
 
-namespace Supermarket.Application.DTOs.SupermarketDtos
+public class AttributeDto
 {
-    public class AttributeDto:BaseDTO
-    {
-        public string? AttributeName { get; set; }
-    }
+    public string? AttributeName { get; set; }
 }

@@ -1,12 +1,9 @@
-﻿
-using Supermarket.Application.DTOs.Common;
-using Supermarket.Domain.Entities;
+﻿using Supermarket.Application.DTOs.Common;
 
-namespace Supermarket.Application.DTOs.SupermarketDtos
+namespace Supermarket.Application.DTOs.SupermarketDtos;
+
+public class CategoryDto : BaseDTO
 {
-    public class CategoryDto : BaseDTO
-    {
-        public int? ParentId { get; set; }
-        public string? CategoryName { get; set; }
-    }
+    public int? ParentId { get; set; }
+    public string? CategoryName { get; set; }
 }

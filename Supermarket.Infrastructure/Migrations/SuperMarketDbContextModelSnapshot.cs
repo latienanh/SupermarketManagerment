@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Supermarket.Infastructure;
 
 #nullable disable
 
@@ -206,6 +205,34 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("ProductCoupons", (string)null);
                 });
 
+            modelBuilder.Entity("Supermarket.Domain.Entities.Common.Modification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModifiedBy");
+
+                    b.ToTable("Modifications");
+                });
+
             modelBuilder.Entity("Supermarket.Domain.Entities.Identity.AppUser", b =>
                 {
                     b.Property<int>("Id")
@@ -306,14 +333,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
@@ -353,14 +372,6 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
 
                     b.HasKey("Id");
 
@@ -412,14 +423,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("date")
                         .HasColumnName("manufacturingDate");
 
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
-
                     b.Property<int?>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
@@ -462,14 +465,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
 
                     b.Property<int?>("ParentId")
                         .HasColumnType("int")
@@ -537,14 +532,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
@@ -609,14 +596,6 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<int?>("MembershipTypeId")
                         .HasColumnType("int")
                         .HasColumnName("membershipTypeId");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(10)
@@ -687,14 +666,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("lastName");
 
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -743,14 +714,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
 
                     b.Property<string>("PaymentMethod")
                         .HasMaxLength(50)
@@ -874,14 +837,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
-
                     b.Property<string>("ProductImage")
                         .HasMaxLength(150)
                         .IsUnicode(false)
@@ -939,14 +894,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)")
@@ -1050,14 +997,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
-
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
@@ -1102,14 +1041,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int")
@@ -1179,14 +1110,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modifiedBy");
-
-                    b.Property<DateTime>("ModifiedTime")
-                        .HasColumnType("date")
-                        .HasColumnName("modifiedTime");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int")
@@ -1364,6 +1287,15 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasForeignKey("ProductId")
                         .IsRequired()
                         .HasConstraintName("FK_ProductCoupons_Products");
+                });
+
+            modelBuilder.Entity("Supermarket.Domain.Entities.Common.Modification", b =>
+                {
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
+                        .WithMany("Modifications")
+                        .HasForeignKey("ModifiedBy");
+
+                    b.Navigation("AppUsers");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Attribute", b =>
@@ -1655,6 +1587,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Invoices");
+
+                    b.Navigation("Modifications");
 
                     b.Navigation("Products");
 
