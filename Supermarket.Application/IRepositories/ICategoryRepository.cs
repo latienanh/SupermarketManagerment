@@ -3,8 +3,7 @@ using Supermarket.Domain.Entities.SupermarketEntities;
 
 namespace Supermarket.Application.IRepositories;
 
-public interface ICategoryRepository
+public interface ICategoryRepository:IEntityRepository<Category>
 {
-    List<CategoryDto> getAllCategories();
-    Category createCategory(CategoryDto categorydto);
+
 }

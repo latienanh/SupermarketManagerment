@@ -2,44 +2,53 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Supermarket.Application.DTOs.SupermarketDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Domain.Entities.Common;
 using Supermarket.Infrastructure.DbFactories;
 
 namespace Supermarket.Infrastructure.Repositories;
 
-public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
+public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDomain
 {
+    #region Properties
     private readonly IMapper _mapper;
+    private SuperMarketDbContext _dataContext;
+    private readonly DbSet<T> _dbSet;
+    protected IDbFactory DbFactory { get; }
+    protected SuperMarketDbContext DbContext => _dataContext ?? (_dataContext = DbFactory.Init());
 
-    protected RepositoryBase(IDbFactory dbFactory,IMapper mapper)
+    #endregion
+    protected RepositoryBase(IDbFactory dbFactory, IMapper mapper)
     {
         _mapper = mapper;
         DbFactory = dbFactory;
-        dbSet = DbContext.Set<T>();
+        _dbSet = DbContext.Set<T>();
     }
 
     public async Task<T> AddAsync(T entity)
     {
         if (entity == null) return null;
-        entity.CreateTime= DateTime.UtcNow;
+        entity.CreateTime = DateTime.UtcNow;
         entity.IsDelete = false;
-        await dbSet.AddAsync(entity);
+        await _dbSet.AddAsync(entity);
         return entity;
     }
 
-    public async Task<T> UpdateAsync(T entity,int id,string entityType)
+    public async Task<T> UpdateAsync(T entity, int id, string entityType)
     {
-        var entitySet = await DbContext.Set<T>().FirstOrDefaultAsync(x=>x.Id==id);
+        var entitySet = await DbContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id&&x.IsDelete==false);
+        if (entitySet == null)
+            return null;
         var entityToUpdate = entitySet;
-        
-        var properties = typeof(T).GetProperties().Where(x => x.Name != "IsDelete"&& x.Name != "CreateBy" && x.Name != "CreateTime" && x.Name != "DeleteBy");
-            
+
+        var properties = typeof(T).GetProperties().Where(x => x.Name != "IsDelete" && x.Name != "CreateBy" && x.Name != "CreateTime" && x.Name != "DeleteBy");
+
         foreach (var property in properties)
         {
             property.SetValue(entityToUpdate, property.GetValue(entity));
         }
-        entityToUpdate.Id=id;
+        entityToUpdate.Id = id;
         var updateModifed = new ModificationDto
         {
             ModifiedBy = null,
@@ -49,23 +58,19 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
         };
         var mapperUpdateM = _mapper.Map<Modification>(updateModifed);
         DbContext.Modifications.Add(mapperUpdateM);
-        dbSet.Update(entityToUpdate);
+        _dbSet.Update(entityToUpdate);
 
         return entityToUpdate;
-        //dbSet.Attach(entity);
-        //DbContext.Entry(entity).State = EntityState.Modified;
-        //return entity;
     }
 
     public Task<T> DeleteAsync(T entity)
     {
-        //return dbSet.Remove(entity);
         throw new NotImplementedException();
     }
 
     public async Task<T> DeleteAsync(int id)
     {
-        var entity = await dbSet.FirstOrDefaultAsync(x => x.Id == id);
+        var entity = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
         if (entity == null)
             return null;
         entity.IsDelete = true;
@@ -74,7 +79,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
 
     public async Task<bool> DeleteMultiAsync(Expression<Func<T, bool>> where)
     {
-        var objects = dbSet.Where(where).AsEnumerable();
+        var objects = _dbSet.Where(where).AsEnumerable();
         foreach (var obj in objects)
             obj.IsDelete = true;
         return true;
@@ -82,20 +87,20 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
 
     public async Task<T> GetSingleByIdAsync(int id)
     {
-        return await dbSet.FirstOrDefaultAsync(x => x.Id == id&&x.IsDelete==true);
+        return await _dbSet.FirstOrDefaultAsync(x => x.Id == id && x.IsDelete == false);
     }
 
     public async Task<T> GetSingleByConditionAsync(Expression<Func<T, bool>> expression, string[] includes = null)
     {
         if (includes != null && includes.Count() > 0)
         {
-            var query = dataContext.Set<T>().Include(includes.First());
+            var query = _dataContext.Set<T>().Include(includes.First());
             foreach (var include in includes.Skip(1))
                 query = query.Include(include);
-            return await query.FirstOrDefaultAsync(expression);
+            return await query.FirstOrDefaultAsync(expression=>expression.IsDelete==false);
         }
 
-        return await dataContext.Set<T>().FirstOrDefaultAsync(expression);
+        return await _dataContext.Set<T>().FirstOrDefaultAsync(expression=>expression.IsDelete==false);
     }
 
 
@@ -103,13 +108,13 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
     {
         if (includes != null && includes.Count() > 0)
         {
-            var query = dataContext.Set<T>().Include(includes.First());
+            var query = _dataContext.Set<T>().Include(includes.First());
             foreach (var include in includes.Skip(1))
                 query = query.Include(include);
             return query.AsQueryable();
         }
 
-        return dataContext.Set<T>().Where(x=>x.IsDelete==false).AsQueryable();
+        return _dataContext.Set<T>().Where(x => x.IsDelete == false).AsQueryable();
     }
 
     public async Task<IEnumerable<T>> GetMultiAsync(Expression<Func<T, bool>> predicate, string[] includes = null)
@@ -117,13 +122,13 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
         //HANDLE INCLUDES FOR ASSOCIATED OBJECTS IF APPLICABLE
         if (includes != null && includes.Count() > 0)
         {
-            var query = dataContext.Set<T>().Include(includes.First());
+            var query = _dataContext.Set<T>().Include(includes.First());
             foreach (var include in includes.Skip(1))
                 query = query.Include(include);
-            return query.Where(predicate).AsQueryable();
+            return query.Where(predicate=>predicate.IsDelete==false).AsQueryable();
         }
 
-        return dataContext.Set<T>().Where(predicate).AsQueryable();
+        return _dataContext.Set<T>().Where(predicate=>predicate.IsDelete==false).AsQueryable();
     }
 
     public async Task<IEnumerable<T>> GetMultiPagingAsync(Expression<Func<T, bool>> predicate, int total, int index = 0,
@@ -135,7 +140,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
         //HANDLE INCLUDES FOR ASSOCIATED OBJECTS IF APPLICABLE
         if (includes != null && includes.Count() > 0)
         {
-            var query = dataContext.Set<T>().Include(includes.First());
+            var query = _dataContext.Set<T>().Include(includes.First());
             foreach (var include in includes.Skip(1))
                 query = query.Include(include);
             _resetSet = predicate != null ? query.Where(predicate).AsQueryable() : query.AsQueryable();
@@ -143,8 +148,8 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
         else
         {
             _resetSet = predicate != null
-                ? dataContext.Set<T>().Where(predicate).AsQueryable()
-                : dataContext.Set<T>().AsQueryable();
+                ? _dataContext.Set<T>().Where(predicate).AsQueryable()
+                : _dataContext.Set<T>().AsQueryable();
         }
 
         _resetSet = skipCount == 0 ? _resetSet.Take(size) : _resetSet.Skip(skipCount).Take(size);
@@ -154,22 +159,11 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : BaseDomain
 
     public async Task<int> CountAsync(Expression<Func<T, bool>> where)
     {
-        return dbSet.Count(where);
+        return _dbSet.Count(where);
     }
 
     public async Task<bool> CheckContainsAsync(Expression<Func<T, bool>> predicate)
     {
-        return dataContext.Set<T>().Count(predicate) > 0;
+        return _dataContext.Set<T>().Count(predicate) > 0;
     }
-
-    #region Properties
-
-    private SuperMarketDbContext dataContext;
-    private readonly DbSet<T> dbSet;
-
-    protected IDbFactory DbFactory { get; }
-
-    protected SuperMarketDbContext DbContext => dataContext ?? (dataContext = DbFactory.Init());
-
-    #endregion
 }

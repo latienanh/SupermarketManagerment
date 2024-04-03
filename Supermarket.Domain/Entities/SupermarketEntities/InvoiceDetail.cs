@@ -4,7 +4,6 @@ namespace Supermarket.Domain.Entities.SupermarketEntities;
 
 public class InvoiceDetail : BaseDomain
 {
-    public int Id { get; set; }
     public int ProductId { get; set; }
     public int? VariantId { get; set; }
     public int InvoiceId { get; set; }

@@ -1,8 +1,11 @@
-﻿namespace Supermarket.Domain.Entities.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Supermarket.Domain.Entities.Common;
 
-public static class AppRole
+namespace Supermarket.Domain.Entities.Identity;
+
+public class AppRole : IdentityRole<int>
 {
-    public const string Admin = "Administrator";
-    public const string Manager = "Manager";
-    public const string Salesperson = "Salesperson";
+    public AppRole(string name):base(name)
+    {
+    }
 }

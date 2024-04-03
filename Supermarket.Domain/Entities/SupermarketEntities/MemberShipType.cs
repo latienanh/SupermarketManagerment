@@ -1,13 +1,14 @@
-﻿namespace Supermarket.Domain.Entities.SupermarketEntities;
+﻿using Supermarket.Domain.Entities.Common;
 
-public class MemberShipType
+namespace Supermarket.Domain.Entities.SupermarketEntities;
+
+public class MemberShipType : BaseDomain
 {
     public MemberShipType()
     {
         Customers = new HashSet<Customer>();
     }
 
-    public int Id { get; set; }
     public string? Name { get; set; }
 
     public virtual ICollection<Customer> Customers { get; set; }

@@ -1,40 +1,68 @@
-﻿using Supermarket.Application.DTOs.SupermarketDtos;
+﻿using AutoMapper;
+using Supermarket.Application.DTOs.SupermarketDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
+using Supermarket.Application.UnitOfWork;
+using Supermarket.Domain.Entities.SupermarketEntities;
+using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 
 namespace Supermarket.Application.Services;
 
 public class AttributeServices : IAttributeServices
 {
-    private readonly IAttributeRepository _atributeRepository;
+    private readonly IAttributeRepository _attributeRepository;
+    private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AttributeServices(IAttributeRepository atributeRepository)
+    public AttributeServices(IAttributeRepository attributeRepository, IUnitOfWork unitOfWork,
+        IMapper mapper)
     {
-        _atributeRepository = atributeRepository;
+        _attributeRepository = attributeRepository;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
-    public async Task<ICollection<AttributeDto>> GetAllAsync()
+    public async Task<IEnumerable<AttributeResponseDto>> GetAllAsync()
     {
-        return await _atributeRepository.GetAllAsync();
+        var result = await _attributeRepository.GetAllAsync();
+        var listAttribute = _mapper.Map<ICollection<AttributeResponseDto>>(result);
+        return listAttribute;
     }
 
-    public async Task<AttributeDto> GetByIdAsync(int id)
+    public async Task<AttributeResponseDto> GetByIdAsync(int id)
     {
-        return await _atributeRepository.GetByIdAsync(id);
+        var result = await _attributeRepository.GetSingleByIdAsync(id);
+        var attribute = _mapper.Map<AttributeResponseDto>(result);
+        return attribute;
     }
 
-    public async Task<bool> CreateAsync(AttributeDto entity)
+    public async Task<bool> CreateAsync(AttributeRequestDto entity)
     {
-        return await _atributeRepository.CreateAsync(entity);
+        if (entity == null)
+            return false;
+        var attrbute = _mapper.Map<Attribute>(entity);
+        await _attributeRepository.AddAsync(attrbute);
+        await _unitOfWork.CommitAsync();
+        return true;
     }
 
-    public async Task<bool> UpdateAsync(AttributeDto entity, int Id)
+    public async Task<bool> UpdateAsync(AttributeRequestDto entity, int id)
     {
-        return await _atributeRepository.UpdateAsync(entity, Id);
+        if (entity == null)
+            return false;
+        var attributeValue = _mapper.Map<Attribute>(entity);
+        var entityType = "Attribute";
+        await _attributeRepository.UpdateAsync(attributeValue, id, entityType);
+        await _unitOfWork.CommitAsync();
+        return true;
     }
 
-    public async Task<bool> DeleteAsync(int Id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return await _atributeRepository.DeleteAsync(Id);
+        await _attributeRepository.DeleteAsync(id);
+        await _unitOfWork.CommitAsync();
+        return true;
     }
 }

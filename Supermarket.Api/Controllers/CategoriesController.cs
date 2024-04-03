@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Supermarket.Application.DTOs.SupermarketDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IServices;
+using Supermarket.Application.ModelResponses;
 using Supermarket.Domain.Entities.SupermarketEntities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,47 +22,73 @@ public class CategoriesController : ControllerBase
         _categoryServices = categoryServices;
     }
 
-    // GET: api/<CategoriesController>
     [HttpGet]
-    //[Authorize(Roles = "Salesperson")]
-    public ActionResult<IList<CategoryDto>> Get()
+    public async Task<IActionResult> GetAll()
     {
-        var allCategories = _categoryServices.GetAllCategories();
-        return Ok(allCategories);
+        var result = await _categoryServices.GetAllAsync();
+        if (result.IsNullOrEmpty())
+            return BadRequest(new ResponseWithList<CategoryResponseDto>
+                {
+                    Message = "Không có thông tin gì",
+                    ListData = result
+                }
+            );
+        return Ok(new ResponseWithList<CategoryResponseDto>
+        {
+            Message = "Lấy thông tin thành công",
+            ListData = result
+        });
     }
-
-
-    // GET api/<CategoriesController>/5
-    //[HttpGet("{id}")]
-    //public string Get(int id)
-    //{
-    //    return "value";
-    //}
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var result = await _categoryServices.GetByIdAsync(id);
+        if (result == null)
+            return BadRequest(new ResponseWithData<CategoryResponseDto>
+                {
+                    Message = "Không có thông tin gì",
+                    Data = result
+                }
+            );
+        return Ok(new ResponseWithData<CategoryResponseDto>
+        {
+            Message = "Lấy thông tin thành công",
+            Data = result
+        });
+    }
 
     [HttpPost]
-    //[Authorize(Roles = "Administrator")]
-    public ActionResult<Category> Create(CategoryDto categoryDto)
+    public async Task<IActionResult> Create([FromBody] CategoryRequestDto model)
     {
-        _categoryServices.createCategory(categoryDto);
-        if (categoryDto != null)
-            return Ok(new
-            {
-                Success = true,
-                Data = categoryDto
-            });
-
-        return BadRequest();
+        var result = await _categoryServices.CreateAsync(model);
+        if (result)
+            return Ok(new ResponseBase());
+        return BadRequest(new ResponseBase
+        {
+            Message = "Tạo không thành công"
+        });
     }
 
-    // PUT api/<CategoriesController>/5
-    //[HttpPut("{id}")]
-    //public void Put(int id, [FromBody] string value)
-    //{
-    //}
-
-    //// DELETE api/<CategoriesController>/5
-    //[HttpDelete("{id}")]
-    //public void Delete(int id)
-    //{
-    //}
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _categoryServices.DeleteAsync(id);
+        if (result)
+            return Ok(new ResponseBase());
+        return BadRequest(new ResponseBase
+        {
+            Message = "Xoá không thành công"
+        });
+    }
+    [HttpPut]
+    public async Task<IActionResult> Update(int id, CategoryRequestDto model)
+    {
+        var result = await _categoryServices.UpdateAsync(model, id);
+        if (result)
+            return Ok(new ResponseBase());
+        return BadRequest(new ResponseBase
+        {
+            Message = "Sửa không thành công"
+        });
+    }
 }

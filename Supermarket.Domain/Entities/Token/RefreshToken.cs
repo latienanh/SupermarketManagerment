@@ -1,10 +1,10 @@
-﻿using Supermarket.Domain.Entities.Identity;
+﻿using Supermarket.Domain.Entities.Common;
+using Supermarket.Domain.Entities.Identity;
 
 namespace Supermarket.Domain.Entities.Token;
 
-public class RefreshToken
+public class RefreshToken: BaseDomainBasic
 {
-    public int Id { get; set; }
     public string Token { get; set; }
     public DateTime Expriaton { get; set; }
     public int UserId { get; set; }

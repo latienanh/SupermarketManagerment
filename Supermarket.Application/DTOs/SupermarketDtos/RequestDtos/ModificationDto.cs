@@ -1,4 +1,4 @@
-﻿namespace Supermarket.Application.DTOs.SupermarketDtos;
+﻿namespace Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 
 public class ModificationDto
 {

@@ -2,6 +2,6 @@
 
 namespace Supermarket.Application.IRepositories;
 
-public interface IAttributeValueRepository : IRepository<AttributeValue>
+public interface IAttributeValueRepository : IEntityRepository<AttributeValue>
 {
 }

@@ -1,8 +1,9 @@
-﻿namespace Supermarket.Domain.Entities.SupermarketEntities;
+﻿using Supermarket.Domain.Entities.Common;
 
-public class StockInDetail
+namespace Supermarket.Domain.Entities.SupermarketEntities;
+
+public class StockInDetail: BaseDomain
 {
-    public int Id { get; set; }
     public int? ProductId { get; set; }
     public int? VariantId { get; set; }
     public int? StockInId { get; set; }

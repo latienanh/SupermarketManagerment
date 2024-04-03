@@ -3,7 +3,7 @@ using Supermarket.Domain.Entities.Common;
 
 namespace Supermarket.Application.IRepositories;
 
-public interface IRepository<T> where T : BaseDomain
+public interface IEntityRepository<T> where T : BaseDomain
 {
     // Marks an entity as new
     Task<T> AddAsync(T entity);

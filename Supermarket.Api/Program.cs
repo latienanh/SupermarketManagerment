@@ -28,7 +28,7 @@ public class Program
         builder.Services.AddJWTRepository(configuration);
         builder.Services.AddSqlRepository(configuration);
         builder.Services.AddControllers();
-
+        builder.Services.AddScoped<Custom401ReponseMiddleware>();
 
         builder.Services.AddIdentity<AppUser, IdentityRole<int>>()
             .AddEntityFrameworkStores<SuperMarketDbContext>()
@@ -115,15 +115,8 @@ public class Program
                     ClockSkew = new TimeSpan(0, 0, 5)
                 };
             });
-        builder.Services.AddScoped<Custom401ReponseMiddleware>();
-        //services.AddScoped<Custom403ResponseMiddleware>();
-        //services.AddScoped<HandleExceptionMiddleware>();
-        builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-        builder.Services.AddScoped<ICategoryServices, CategoryServices>();
-        builder.Services.AddScoped<IAuthServices, AuthServices>();
-        builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-        builder.Services.AddScoped<ITokenServices, TokenServices>();
-        builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        //builder.Services.ConfigureCustomMiddleware();
+
         builder.Services.AddServices();
         builder.Services.AddRepository();
         builder.Services.AddDbFactory();
@@ -147,4 +140,12 @@ public class Program
 
         app.Run();
     }
+
+    //public static IServiceCollection ConfigureCustomMiddleware(this IServiceCollection services)
+    //{
+    //    services.AddScoped<Custom401ReponseMiddleware>();
+    //    services.AddScoped<Custom403ResponseMiddleware>();
+    //    services.AddScoped<HandleExceptionMiddleware>();
+    //    return services;
+    //}
 }

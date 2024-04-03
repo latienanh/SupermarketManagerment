@@ -7,5 +7,5 @@ public class ResponseWithList<T> : ResponseBase
         ListData = new List<T>();
     }
 
-    public ICollection<T> ListData { get; set; }
+    public IEnumerable<T> ListData { get; set; }
 }

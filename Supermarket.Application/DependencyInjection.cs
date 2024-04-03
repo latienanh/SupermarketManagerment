@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.Services;
 using Supermarket.Application.Settings;
@@ -20,6 +21,12 @@ public static class DependencyInjection
     {
         service.AddScoped<IAttributeServices, AttributeServices>();
         service.AddScoped<IAttributeValueServices, AttributeValueServices>();
+        service.AddScoped<ICategoryServices, CategoryServices>();
+       service.AddScoped<IAuthServices, AuthServices>();
+        service.AddScoped<ITokenServices, TokenServices>();
+        service.AddScoped<IRoleServices, RoleServices>();
+        service.AddScoped<IUserServices, UserServices>();
+        service.AddScoped<IProductServices, ProductServices>();
         return service;
     }
 }

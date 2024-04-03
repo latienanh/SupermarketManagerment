@@ -1,12 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Supermarket.Application.DTOs.Auth.RequestDtos;
+using Supermarket.Application.DTOs.Auth.ResponseDtos;
 using Supermarket.Application.IRepositories;
+using Supermarket.Application.IServices;
+using Supermarket.Application.Services;
 using Supermarket.Application.UnitOfWork;
+using Supermarket.Domain.Entities.Identity;
 using Supermarket.Infrastructure.DbFactories;
 using Supermarket.Infrastructure.Repositories;
 using Supermarket.Infrastructure.Settings;
 using Supermarket.Infrastructure.UnitOfWorks;
+using System.Reflection;
 
 namespace Supermarket.Infrastructure;
 
@@ -37,6 +44,12 @@ public static class DependencyInjection
     {
         service.AddScoped<IAttributeRepository, AttributeRepository>();
         service.AddScoped<IAttributeValueRepository, AttributeValueRepository>();
+        service.AddScoped<ICategoryRepository, CategoryRepository>();
+        service.AddScoped<IAuthRepository, AuthRepository>();
+        service.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        service.AddScoped<IRoleRepository, RoleRepository>();
+        service.AddScoped<IUserRepository<UserRequestDto,UserResponseDto>, UserRepository>();
+        service.AddScoped<IProductRepository, ProductRepository>();
         return service;
     }
     public static IServiceCollection AddDbFactory(this IServiceCollection service)

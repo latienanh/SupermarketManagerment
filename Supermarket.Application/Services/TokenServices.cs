@@ -36,12 +36,12 @@ public class TokenServices : ITokenServices
 
     public async Task<RefreshToken> CreateRefreshTokenAsync(RefreshToken refreshToken)
     {
-        return await _refreshTokenRepository.CreateRefreshTokenAsync(refreshToken);
+        return await _refreshTokenRepository.AddAsync(refreshToken);
     }
 
-    public async Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken)
+    public async Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken,int id)
     {
-        return await _refreshTokenRepository.UpdateRefreshTokenAsync(refreshToken);
+        return await _refreshTokenRepository.UpdateAsync(refreshToken,id);
     }
 
     public async Task<string> GenerateRefreshTokenAsync()
@@ -66,7 +66,7 @@ public class TokenServices : ITokenServices
         var token = new JwtSecurityToken(
             _jsonWebTokenSettings.ValidIssuer,
             _jsonWebTokenSettings.ValidAudience,
-            expires: DateTime.UtcNow.AddSeconds(30),
+            expires: DateTime.UtcNow.AddMinutes(30),//30p
             claims: authClaim,
             signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
         );

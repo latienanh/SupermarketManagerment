@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Supermarket.Application.DTOs.SupermarketDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
+using Supermarket.Domain.Entities.SupermarketEntities;
 
 namespace Supermarket.Api.Controllers;
 
@@ -22,13 +25,13 @@ public class AttributeValueController : ControllerBase
     {
         var result = await _attributeValueServices.GetAllAsync();
         if (result.IsNullOrEmpty())
-            return BadRequest(new ResponseWithList<AttributeValueDto>
+            return BadRequest(new ResponseWithList<AttributeValueResponseDto>
                 {
                     Message = "Không có thông tin gì",
                     ListData = result
                 }
             );
-        return Ok(new ResponseWithList<AttributeValueDto>
+        return Ok(new ResponseWithList<AttributeValueResponseDto>
         {
             Message = "Lấy thông tin thành công",
             ListData = result
@@ -39,13 +42,13 @@ public class AttributeValueController : ControllerBase
     {
         var result = await _attributeValueServices.GetByIdAsync(id);
         if (result == null)
-            return BadRequest(new ResponseWithData<AttributeValueDto>
+            return BadRequest(new ResponseWithData<AttributeValueResponseDto>
                 {
                     Message = "Không có thông tin gì",
                     Data = result
                 }
             );
-        return Ok(new ResponseWithData<AttributeValueDto>
+        return Ok(new ResponseWithData<AttributeValueResponseDto>
         {
             Message = "Lấy thông tin thành công",
             Data = result
@@ -53,7 +56,7 @@ public class AttributeValueController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] AttributeValueDto model)
+    public async Task<IActionResult> Create([FromBody] AttributeValueRequestDto model)
     {
         var result = await _attributeValueServices.CreateAsync(model);
         if (result)
@@ -65,7 +68,7 @@ public class AttributeValueController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    public async Task<IActionResult> Delete(int id)
     {
         var result = await _attributeValueServices.DeleteAsync(id);
         if (result)
@@ -76,7 +79,7 @@ public class AttributeValueController : ControllerBase
         });
     }
     [HttpPut]
-    public async Task<IActionResult> Update(int id ,AttributeValueDto model)
+    public async Task<IActionResult> Update(int id ,AttributeValueRequestDto model)
     {
         var result = await _attributeValueServices.UpdateAsync(model,id);
         if (result)

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Supermarket.Infrastructure;
 
 #nullable disable
 
@@ -746,9 +747,21 @@ namespace Supermarket.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeleteBy")
+                        .HasColumnType("int");
+
                     b.Property<int>("InvoiceId")
                         .HasColumnType("int")
                         .HasColumnName("invoiceId");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int")
@@ -772,6 +785,8 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreateBy");
+
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("ProductId");
@@ -790,12 +805,26 @@ namespace Supermarket.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeleteBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreateBy");
 
                     b.ToTable("MemberShipTypes");
                 });
@@ -814,10 +843,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("nchar(10)")
                         .HasColumnName("barCode")
                         .IsFixedLength();
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int")
-                        .HasColumnName("categoryId");
 
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int")
@@ -922,6 +947,18 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeleteBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.Property<double?>("Price")
                         .HasColumnType("float")
                         .HasColumnName("price");
@@ -951,6 +988,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("variantId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreateBy");
 
                     b.HasIndex("ProductId");
 
@@ -1410,6 +1449,11 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.InvoiceDetail", b =>
                 {
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
+                        .WithMany("InvoicesDetails")
+                        .HasForeignKey("CreateBy")
+                        .HasConstraintName("FK_InvoicesDetails_AppUsers_Create");
+
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Invoice", "Invoice")
                         .WithMany("InvoiceDetails")
                         .HasForeignKey("InvoiceId")
@@ -1427,11 +1471,23 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasForeignKey("VariantId")
                         .HasConstraintName("FK_InvoiceDetails_Variants");
 
+                    b.Navigation("AppUsers");
+
                     b.Navigation("Invoice");
 
                     b.Navigation("Product");
 
                     b.Navigation("Variant");
+                });
+
+            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.MemberShipType", b =>
+                {
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
+                        .WithMany("MemberShipTypes")
+                        .HasForeignKey("CreateBy")
+                        .HasConstraintName("FK_MemberShipTypes_AppUsers_Create");
+
+                    b.Navigation("AppUsers");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Product", b =>
@@ -1463,6 +1519,11 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.StockInDetail", b =>
                 {
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
+                        .WithMany("StockInsDetails")
+                        .HasForeignKey("CreateBy")
+                        .HasConstraintName("FK_StockInsDetails_AppUsers_Create");
+
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Product", "Product")
                         .WithMany("StockInDetails")
                         .HasForeignKey("ProductId")
@@ -1477,6 +1538,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .WithMany("StockInDetails")
                         .HasForeignKey("VariantId")
                         .HasConstraintName("FK_StockInDetails_Variants");
+
+                    b.Navigation("AppUsers");
 
                     b.Navigation("Product");
 
@@ -1588,6 +1651,10 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.Navigation("Invoices");
 
+                    b.Navigation("InvoicesDetails");
+
+                    b.Navigation("MemberShipTypes");
+
                     b.Navigation("Modifications");
 
                     b.Navigation("Products");
@@ -1596,6 +1663,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("StockIns");
+
+                    b.Navigation("StockInsDetails");
 
                     b.Navigation("Suppliers");
 

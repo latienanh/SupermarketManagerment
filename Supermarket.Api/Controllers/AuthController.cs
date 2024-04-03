@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs.Auth;
+using Supermarket.Application.DTOs.Auth.RequestDtos;
 using Supermarket.Application.IServices;
-using Supermarket.Application.ModelRequests;
+
 
 namespace Supermarket.Api.Controllers;
 
@@ -17,27 +18,28 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("SignUp")]
-    public async Task<ActionResult> Signup(SignUpDtos signUpDtos)
+    public async Task<ActionResult> Signup(UserRequestDto userRequestDtos)
     {
-        var result = await _authServices.SignUp(signUpDtos);
-        if (result.Succeeded) return Ok(result.Succeeded);
+        var result = await _authServices.SignUp(userRequestDtos);
+        if (result.Succeeded) 
+            return Ok(result);
 
-        return Unauthorized();
+        return Unauthorized(result);
     }
 
     [HttpPost("Login")]
-    public async Task<ActionResult> Login(LoginDtos loginDtos)
+    public async Task<ActionResult> Login(LoginBasicRequestDtos loginBasicRequestDtos)
     {
-        var result = await _authServices.LoginDtos(loginDtos);
+        var result = await _authServices.LoginAsync(loginBasicRequestDtos);
         if (string.IsNullOrEmpty(result.AccessToken)) return Unauthorized();
         ;
         return Ok(result);
     }
 
     [HttpPost("Refresh")]
-    public async Task<IActionResult> Refresh(LoginTokenRequest loginTokenRequest)
+    public async Task<IActionResult> Refresh(LoginTokenRequestDtos loginTokenRequestDtos)
     {
-        var result = await _authServices.RenewTokenAsync(loginTokenRequest);
+        var result = await _authServices.RenewTokenAsync(loginTokenRequestDtos);
         if (result != null) return Ok(result);
 
         return BadRequest();

@@ -1,7 +1,9 @@
 ﻿using Supermarket.Application.DTOs.SupermarketDtos;
+using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 
 namespace Supermarket.Application.IRepositories;
 
-public interface IAttributeRepository : IRepositoryBase<AttributeDto>
+public interface IAttributeRepository : IEntityRepository<Attribute>
 {
+
 }

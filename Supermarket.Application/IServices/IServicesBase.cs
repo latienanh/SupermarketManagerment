@@ -1,10 +1,10 @@
 ﻿namespace Supermarket.Application.IServices;
 
-public interface IServicesBase<T>
+public interface IServicesBase<TRequestDto,TReponseDto>
 {
-    Task<ICollection<T>> GetAllAsync();
-    Task<T> GetByIdAsync(int id);
-    Task<bool> CreateAsync(T entity);
-    Task<bool> UpdateAsync(T entity, int id);
+    Task<IEnumerable<TReponseDto>> GetAllAsync();
+    Task<TReponseDto> GetByIdAsync(int id);
+    Task<bool> CreateAsync(TRequestDto entity);
+    Task<bool> UpdateAsync(TRequestDto entity, int id);
     Task<bool> DeleteAsync(int id);
 }

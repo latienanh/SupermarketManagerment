@@ -316,9 +316,6 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
                 .HasMaxLength(10)
                 .HasColumnName("barCode")
                 .IsFixedLength();
-
-            entity.Property(e => e.CategoryId).HasColumnName("categoryId");
-
             entity.Property(e => e.CreateBy).HasColumnName("createBy");
             entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
             entity.Property(e => e.CreateTime)
@@ -694,6 +691,18 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
                 .WithOne(e => e.AppUsers)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Coupons_AppUsers_Create");
+            entity.HasMany(d => d.InvoicesDetails)
+                .WithOne(e => e.AppUsers)
+                .HasForeignKey(e => e.CreateBy)
+                .HasConstraintName("FK_InvoicesDetails_AppUsers_Create");
+            entity.HasMany(d => d.MemberShipTypes)
+                .WithOne(e => e.AppUsers)
+                .HasForeignKey(e => e.CreateBy)
+                .HasConstraintName("FK_MemberShipTypes_AppUsers_Create");
+            entity.HasMany(d => d.StockInsDetails)
+                .WithOne(e => e.AppUsers)
+                .HasForeignKey(e => e.CreateBy)
+                .HasConstraintName("FK_StockInsDetails_AppUsers_Create");
         });
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

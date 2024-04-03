@@ -2,9 +2,9 @@
 
 namespace Supermarket.Application.IRepositories;
 
-public interface IRefreshTokenRepository
+public interface IRefreshTokenRepository: IBasicRepository<RefreshToken>
 {
     Task<bool> ValidateRefreshTokenAsync(string token);
-    Task<RefreshToken> CreateRefreshTokenAsync(RefreshToken refreshToken);
-    Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken);
+    //Task<RefreshToken> CreateRefreshTokenAsync(RefreshToken refreshToken);
+    //Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken);
 }

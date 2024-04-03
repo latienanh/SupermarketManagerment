@@ -40,4 +40,7 @@ public class AppUser : IdentityUser<int>
     public ICollection<Product> Products { get; }
     public ICollection<Category> Categories { get; }
     public ICollection<Coupon> Coupons { get; }
+    public ICollection<InvoiceDetail> InvoicesDetails { get; }
+    public ICollection<MemberShipType> MemberShipTypes { get; }
+    public ICollection<StockInDetail> StockInsDetails { get; }
 }

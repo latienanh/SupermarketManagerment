@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Supermarket.Application.DTOs.SupermarketDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.UnitOfWork;
@@ -21,22 +23,22 @@ public class AttributeValueServices : IAttributeValueServices
         _mapper = mapper;
     }
 
-    public async Task<ICollection<AttributeValueDto>> GetAllAsync()
+    public async Task<IEnumerable<AttributeValueResponseDto>> GetAllAsync()
     {
         var result = await _attributeValueRepository.GetAllAsync();
-        var listAttributeValue = _mapper.Map<ICollection<AttributeValueDto>>(result);
+        var listAttributeValue = _mapper.Map<ICollection<AttributeValueResponseDto>>(result);
       
         return listAttributeValue;
     }
 
-    public async Task<AttributeValueDto> GetByIdAsync(int id)
+    public async Task<AttributeValueResponseDto> GetByIdAsync(int id)
     {
         var result = await _attributeValueRepository.GetSingleByIdAsync(id);
-        var attributeValue = _mapper.Map<AttributeValueDto>(result);
+        var attributeValue = _mapper.Map<AttributeValueResponseDto>(result);
         return attributeValue;
     }
 
-    public async Task<bool> CreateAsync(AttributeValueDto entity)
+    public async Task<bool> CreateAsync(AttributeValueRequestDto entity)
     {
         if (entity == null)
             return false;
@@ -46,7 +48,7 @@ public class AttributeValueServices : IAttributeValueServices
         return true;
     }
 
-    public async Task<bool> UpdateAsync(AttributeValueDto entity, int id)
+    public async Task<bool> UpdateAsync(AttributeValueRequestDto entity, int id)
     {
         if (entity == null)
             return false;
@@ -60,7 +62,7 @@ public class AttributeValueServices : IAttributeValueServices
     public async Task<bool> DeleteAsync(int id)
     {
         await _attributeValueRepository.DeleteAsync(id);
-        _unitOfWork.CommitAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 }

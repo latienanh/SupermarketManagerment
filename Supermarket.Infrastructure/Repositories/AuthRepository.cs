@@ -4,11 +4,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Supermarket.Application.DTOs.Auth;
+using Supermarket.Application.DTOs.Auth.RequestDtos;
+using Supermarket.Application.DTOs.Auth.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
-using Supermarket.Application.ModelRequests;
-using Supermarket.Application.ModelResponses;
 using Supermarket.Domain.Entities.Identity;
 using Supermarket.Domain.Entities.Token;
 using Supermarket.Infrastructure.Settings;
@@ -22,7 +21,7 @@ public class AuthRepository : IAuthRepository
     private readonly RoleManager<IdentityRole<int>> _roleManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly SuperMarketDbContext _supermarketDbContext;
-    private readonly ITokenServices _TokenServices;
+    private readonly ITokenServices _tokenServices;
     private readonly UserManager<AppUser> _userManager;
 
     public AuthRepository(
@@ -31,7 +30,7 @@ public class AuthRepository : IAuthRepository
         JsonWebTokenSettings jsonWebTokenSettings,
         RoleManager<IdentityRole<int>> roleManager,
         SuperMarketDbContext supermarketDbContext,
-        ITokenServices TokenServices,
+        ITokenServices tokenServices,
         IMapper mapper)
     {
         _userManager = userManager;
@@ -39,67 +38,71 @@ public class AuthRepository : IAuthRepository
         _jsonWebTokenSettings = jsonWebTokenSettings;
         _roleManager = roleManager;
         _supermarketDbContext = supermarketDbContext;
-        _TokenServices = TokenServices;
+        _tokenServices = tokenServices;
         _mapper = mapper;
     }
 
-    public async Task<LoginResponses> Login(LoginDtos loginDtos)
+    public async Task<LoginResponseDtos> LoginAsync(LoginBasicRequestDtos loginBasicRequestDtos)
     {
-        var user = await _userManager.FindByNameAsync(loginDtos.UserName);
-        var passwordValid = await _userManager.CheckPasswordAsync(user, loginDtos.Password);
+        var user = await _userManager.FindByNameAsync(loginBasicRequestDtos.UserName);
+        var passwordValid = await _userManager.CheckPasswordAsync(user,loginBasicRequestDtos.Password);
         if (user == null || !passwordValid)
-            return new LoginResponses
+            return new LoginResponseDtos()
             {
                 AccessToken = string.Empty
             };
-        var token = await _TokenServices.GenerateAccessTokenAsync(user);
+        var token = await _tokenServices.GenerateAccessTokenAsync(user);
 
-        var RefreshToken = new RefreshToken
+        var refreshTokenNew = new RefreshToken
         {
-            Token = await _TokenServices.GenerateRefreshTokenAsync(),
-            Expriaton = DateTime.UtcNow.AddMinutes(2),
+            Token = await _tokenServices.GenerateRefreshTokenAsync(),
+            Expriaton = DateTime.UtcNow.AddDays(30),//30 ngay
             UserId = user.Id
         };
-        var refeshToken = await _supermarketDbContext.RefreshTokens.FirstOrDefaultAsync(u => u.UserId == user.Id);
-        if (refeshToken == null)
+        var refeshTokenDatabase = await _supermarketDbContext.RefreshTokens.FirstOrDefaultAsync(u => u.UserId == user.Id);
+        if (refeshTokenDatabase == null)
         {
-            await _TokenServices.CreateRefreshTokenAsync(RefreshToken);
-            return new LoginResponses
+            await _tokenServices.CreateRefreshTokenAsync(refreshTokenNew);
+            return new LoginResponseDtos()
             {
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                 ExpirationAT = token.ValidTo,
-                RefreshToken = RefreshToken.Token,
-                ExpirationRT = RefreshToken.Expriaton
+                RefreshToken = refreshTokenNew.Token,
+                ExpirationRT = refreshTokenNew.Expriaton
             };
         }
 
-        if (refeshToken.Expriaton < DateTime.UtcNow)
-            await _TokenServices.UpdateRefreshTokenAsync(RefreshToken);
-        return new LoginResponses
+        if (refeshTokenDatabase.Expriaton < DateTime.UtcNow)
+            await _tokenServices.UpdateRefreshTokenAsync(refeshTokenDatabase,refeshTokenDatabase.Id);
+        return new LoginResponseDtos()
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
             ExpirationAT = token.ValidTo,
-            RefreshToken = refeshToken.Token,
-            ExpirationRT = refeshToken.Expriaton
+            RefreshToken = refeshTokenDatabase.Token,
+            ExpirationRT = refeshTokenDatabase.Expriaton
         };
     }
 
-    public async Task<IdentityResult> SignUp(SignUpDtos signUpDtos)
+    public async Task<IdentityResult> SignUpAsync(UserRequestDto userRequestDtos)
     {
-        var user = _mapper.Map<AppUser>(signUpDtos);
-        var result = await _userManager.CreateAsync(user, signUpDtos.Password);
+        if (userRequestDtos.Password != userRequestDtos.ConfirmPassword)
+        {
+            return IdentityResult.Failed(new IdentityError { Code = "PasswordConfirmation", Description = "Passwords không giống." });
+        }
+        var user = _mapper.Map<AppUser>(userRequestDtos);
+        user.PasswordHash = userRequestDtos.Password;
+        var result = await _userManager.CreateAsync(user, user.PasswordHash);
         if (result.Succeeded)
         {
-            if (!await _roleManager.RoleExistsAsync(AppRole.Salesperson))
-                await _roleManager.CreateAsync(new IdentityRole<int>(AppRole.Salesperson));
+            if (!await _roleManager.RoleExistsAsync("Salesperson"))
+                await _roleManager.CreateAsync(new IdentityRole<int>("Salesperson"));
 
-            await _userManager.AddToRoleAsync(user, AppRole.Salesperson);
+            await _userManager.AddToRoleAsync(user, "Salesperson");
+            return IdentityResult.Success;
         }
-
         return result;
     }
-
-    public async Task<LoginResponses> RenewTokenAsync(LoginTokenRequest loginTokenRequest)
+    public async Task<LoginResponseDtos> RenewTokenAsync(LoginTokenRequestDtos loginTokenRequest)
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
         var secretKeyBytes = Encoding.UTF8.GetBytes(_jsonWebTokenSettings.SecretKey);
@@ -143,9 +146,9 @@ public class AuthRepository : IAuthRepository
             if (storeRefeshToken.Expriaton < DateTime.UtcNow)
                 return null;
             var user = await _supermarketDbContext.Users.FirstOrDefaultAsync(x => x.Id == storeRefeshToken.UserId);
-            var token = await _TokenServices.GenerateAccessTokenAsync(user);
+            var token = await _tokenServices.GenerateAccessTokenAsync(user);
             var AccessToken = new JwtSecurityTokenHandler().WriteToken(token);
-            return new LoginResponses
+            return new LoginResponseDtos()
             {
                 AccessToken = AccessToken,
                 ExpirationAT = token.ValidTo,

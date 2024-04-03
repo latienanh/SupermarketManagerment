@@ -1,15 +1,18 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs.SupermarketDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
-
+using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 namespace Supermarket.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 
-//[Authorize]
+[Authorize(Roles = "Admin,Manager")]
 public class AttributeController : ControllerBase
 {
     private readonly IAttributeServices _attributeServices;
@@ -24,14 +27,13 @@ public class AttributeController : ControllerBase
     {
         var result = await _attributeServices.GetAllAsync();
         if (result.Any())
-            return Ok(new ResponseWithList<AttributeDto>
+            return Ok(new ResponseWithList<AttributeResponseDto>
             {
                 Message = "Tìm thấy thành công",
                 ListData = result
             });
-        return BadRequest(new ResponseWithList<AttributeDto>
+        return BadRequest(new ResponseWithList<AttributeResponseDto>
         {
-            Status = HttpStatusCode.BadRequest,
             Message = "Không tìm thấy thông tin",
             ListData = result
         });
@@ -42,46 +44,50 @@ public class AttributeController : ControllerBase
     {
         var result = await _attributeServices.GetByIdAsync(id);
         if (result != null)
-            return Ok(new ResponseWithData<AttributeDto>
+            return Ok(new ResponseWithData<AttributeResponseDto>
             {
                 Data = result
             });
-        return BadRequest(new ResponseWithData<AttributeDto>
+        return BadRequest(new ResponseWithData<AttributeResponseDto>
         {
-            Status = HttpStatusCode.BadRequest,
             Message = "Không tìm thấy thông tin",
             Data = result
         });
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(AttributeDto attributeDto)
+    public async Task<IActionResult> Create(AttributeRequestDto attributeDto)
     {
         var result = await _attributeServices.CreateAsync(attributeDto);
-        //if (result)
-        return Created("", result);
-        //return BadRequest(new ResponseWithData<AttributeDto>()
-        //{
-        //    Data = result
-        //});
+        if (result)
+            return Ok(new ResponseBase());
+        return BadRequest(new ResponseBase()
+        {
+            Message = "Tạo không thành công!!!"
+        });
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(AttributeDto attributeDto, int Id)
+    public async Task<IActionResult> Update(AttributeRequestDto attributeDto, int id)
     {
-        var result = await _attributeServices.UpdateAsync(attributeDto, Id);
-        //if (result)
-        return Ok(
-            result
-        );
+        var result = await _attributeServices.UpdateAsync(attributeDto, id);
+        if (result)
+        return Ok(new ResponseBase());
+        return BadRequest(new ResponseBase()
+        {
+            Message = "Sửa không thành công"
+        });
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete(int Id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var result = await _attributeServices.DeleteAsync(Id);
-        return Ok(
-            result
-        );
+        var result = await _attributeServices.DeleteAsync(id);
+        if(result)
+        return Ok(new ResponseBase());
+        return BadRequest(new ResponseBase()
+        {
+            Message = "Xoá không thành công"
+        });
     }
 }

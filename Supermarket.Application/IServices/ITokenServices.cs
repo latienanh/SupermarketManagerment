@@ -8,7 +8,7 @@ public interface ITokenServices
 {
     Task<bool> ValidateRefreshTokenAsync(string token);
     Task<RefreshToken> CreateRefreshTokenAsync(RefreshToken refreshToken);
-    Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken);
+    Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken,int id);
     Task<string> GenerateRefreshTokenAsync();
     Task<JwtSecurityToken> GenerateAccessTokenAsync(AppUser user);
 }
