@@ -58,8 +58,19 @@ public class Program
             options.SignIn.RequireConfirmedPhoneNumber = false; // Xác thực số điện thoại
         });
 
-        builder.Services.AddCors(p => p.AddPolicy("MyCrossOriginResourceSharing",
-            build => build.WithOrigins("*").AllowAnyMethod().WithHeaders()));
+        //builder.Services.AddCors(p => p.AddPolicy("MyCrossOriginResourceSharing",
+        //    build => build.WithOrigins("*").AllowAnyMethod().WithHeaders()));
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("MyCrossOriginResourceSharing",
+                builder =>
+                {
+                    builder.WithOrigins(configuration["Client_URL"])
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .WithHeaders("Content-Type"); // Thêm tiêu đề Content-Type vào danh sách các tiêu đề cho phép
+                });
+        });
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(option =>

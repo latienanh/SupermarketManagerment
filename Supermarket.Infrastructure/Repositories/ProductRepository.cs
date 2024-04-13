@@ -15,7 +15,7 @@ namespace Supermarket.Infrastructure.Repositories
     public class ProductRepository : RepositoryBase<Product>,IProductRepository
     {
         private readonly ICategoryRepository _categoryRepository;
-        public ProductRepository(ICategoryRepository categoryRepository,IDbFactory dbFactory, IMapper mapper) : base(dbFactory, mapper)
+        public ProductRepository(ICategoryRepository categoryRepository,IDbFactory dbFactory, IMapper mapper,int userId) : base(dbFactory, mapper, userId)
         {
             _categoryRepository = categoryRepository;
         }

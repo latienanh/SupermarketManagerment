@@ -9,7 +9,7 @@ public interface IEntityRepository<T> where T : BaseDomain
     Task<T> AddAsync(T entity);
 
     // Marks an entity as modified
-    Task<T> UpdateAsync(T entity,int id,string entityType);
+    Task<T> UpdateAsync(T entity,int id,string entityType );
 
     // Marks an entity to be removed
     Task<T> DeleteAsync(T entity);

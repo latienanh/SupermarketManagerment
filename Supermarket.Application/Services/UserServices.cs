@@ -61,5 +61,10 @@ namespace Supermarket.Application.Services
             await _unitOfWork.CommitAsync();
             return true;
         }
+
+        public Task<bool> GetLoggedInUserId()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

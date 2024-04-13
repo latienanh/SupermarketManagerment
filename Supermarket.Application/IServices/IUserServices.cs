@@ -10,5 +10,6 @@ namespace Supermarket.Application.IServices
 {
     public interface IUserServices: IServicesBase<UserRequestDto,UserResponseDto>
     {
+        Task<bool> GetLoggedInUserId ();
     }
 }

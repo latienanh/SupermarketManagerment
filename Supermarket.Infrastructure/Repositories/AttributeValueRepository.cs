@@ -5,9 +5,9 @@ using Supermarket.Infrastructure.DbFactories;
 
 namespace Supermarket.Infrastructure.Repositories;
 
-public class AttributeValueRepository : RepositoryBase<AttributeValue>, IAttributeValueRepository
+public class AttributeValueRepository : RepositoryBase<VariantValue>, IAttributeValueRepository
 {
-    public AttributeValueRepository(IDbFactory dbFactory,IMapper mapper) : base(dbFactory,mapper)
+    public AttributeValueRepository(IDbFactory dbFactory,IMapper mapper,int userId) : base(dbFactory,mapper, userId)
     {
     }
 }

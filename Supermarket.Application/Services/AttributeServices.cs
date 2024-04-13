@@ -14,14 +14,16 @@ public class AttributeServices : IAttributeServices
 {
     private readonly IAttributeRepository _attributeRepository;
     private readonly IMapper _mapper;
+    private readonly int _userId;
     private readonly IUnitOfWork _unitOfWork;
 
     public AttributeServices(IAttributeRepository attributeRepository, IUnitOfWork unitOfWork,
-        IMapper mapper)
+        IMapper mapper,int userId)
     {
         _attributeRepository = attributeRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _userId = userId;
     }
 
     public async Task<IEnumerable<AttributeResponseDto>> GetAllAsync()

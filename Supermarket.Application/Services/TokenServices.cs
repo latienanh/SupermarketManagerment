@@ -56,7 +56,9 @@ public class TokenServices : ITokenServices
     {
         var authClaim = new List<Claim>
         {
+            new("UserId", user.Id.ToString()),
             new(ClaimTypes.Email, user.UserName),
+
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         var userRoles = await _userManager.GetRolesAsync(user);

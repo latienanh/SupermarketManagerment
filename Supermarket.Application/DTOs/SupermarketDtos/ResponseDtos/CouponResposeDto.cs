@@ -4,16 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Supermarket.Application.DTOs.Common;
 
 namespace Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos
 {
-    public class CouponResposeDto
+    public class CouponResposeDto :  BaseDTO
     {
-        public Coupon()
-        {
-            Products = new HashSet<Product>();
-        }
-
         public string? Code { get; set; }
         public string? CouponDescripiton { get; set; }
         public double? DiscountValue { get; set; }
@@ -21,6 +17,5 @@ namespace Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos
         public DateTime? CouponStartDate { get; set; }
         public DateTime? CouponEndDate { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; }
     }
 }

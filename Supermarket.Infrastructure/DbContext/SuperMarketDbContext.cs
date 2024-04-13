@@ -17,7 +17,7 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
     }
 
     public virtual DbSet<Attribute> Attributes { get; set; } = null!;
-    public virtual DbSet<AttributeValue> AttributeValues { get; set; } = null!;
+    public virtual DbSet<VariantValue> VariantValues { get; set; } = null!;
     public virtual DbSet<Batch> Batches { get; set; } = null!;
     public virtual DbSet<Category> Categories { get; set; } = null!;
     public virtual DbSet<Coupon> Coupons { get; set; } = null!;
@@ -30,7 +30,6 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
     public virtual DbSet<StockInDetail> StockInDetails { get; set; } = null!;
     public virtual DbSet<Supplier> Suppliers { get; set; } = null!;
     public virtual DbSet<UnitConversion> UnitConversions { get; set; } = null!;
-    public virtual DbSet<Variant> Variants { get; set; } = null!;
     public virtual DbSet<Employee> Employees { get; set; } = null!;
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
     public virtual DbSet<Modification> Modifications { get; set; } = null!;
@@ -70,7 +69,7 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
                 .HasDefaultValueSql("((0))");
         });
 
-        modelBuilder.Entity<AttributeValue>(entity =>
+        modelBuilder.Entity<VariantValue>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
 
@@ -82,14 +81,15 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
                 .HasColumnType("date")
                 .HasColumnName("createTime");
 
-            entity.Property(e => e.AttributeValue1)
-                .HasMaxLength(50)
-                .HasColumnName("attributeValue");
+            entity.HasOne(x=>x.Product)
+                .WithMany(p=>p.VariantValues)
+                .HasForeignKey(d=>d.ProductId)
+                .HasConstraintName("FK_VariantValue_Product");
 
             entity.HasOne(d => d.Attribute)
                 .WithMany(p => p.AttributeValues)
                 .HasForeignKey(d => d.AttributeId)
-                .HasConstraintName("FK_AttributeValues_Attributes2");
+                .HasConstraintName("FK_VariantValue_Attributes");
         });
 
         modelBuilder.Entity<Batch>(entity =>
@@ -292,11 +292,6 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_InvoiceDetails_Products");
-
-            entity.HasOne(d => d.Variant)
-                .WithMany(p => p.InvoiceDetails)
-                .HasForeignKey(d => d.VariantId)
-                .HasConstraintName("FK_InvoiceDetails_Variants");
         });
 
         modelBuilder.Entity<MemberShipType>(entity =>
@@ -324,7 +319,10 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
             entity.Property(e => e.IsDelete)
                 .HasColumnName("isDelete")
                 .HasDefaultValueSql("((0))");
-
+            entity.HasOne(d => d.Parent)
+                .WithMany(p => p.InverseParent)
+                .HasForeignKey(d => d.ParentId)
+                .HasConstraintName("FK_Product_Product");
 
             entity.Property(e => e.ProductImage)
                 .HasMaxLength(150)
@@ -461,10 +459,7 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
                 .HasForeignKey(d => d.StockInId)
                 .HasConstraintName("FK_StockInDetails_StockIns");
 
-            entity.HasOne(d => d.Variant)
-                .WithMany(p => p.StockInDetails)
-                .HasForeignKey(d => d.VariantId)
-                .HasConstraintName("FK_StockInDetails_Variants");
+           
         });
 
 
@@ -523,96 +518,23 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
                 .IsUnicode(false)
                 .HasColumnName("unitName");
 
-            entity.Property(e => e.VariantId).HasColumnName("variantId");
-
             entity.HasOne(d => d.Product)
                 .WithMany(p => p.UnitConversions)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_UnitConversions_Products");
-
-            entity.HasOne(d => d.Variant)
-                .WithMany(p => p.UnitConversions)
-                .HasForeignKey(d => d.VariantId)
-                .HasConstraintName("FK_UnitConversions_Variants");
         });
 
-        modelBuilder.Entity<Variant>(entity =>
-        {
-            entity.Property(e => e.Id).HasColumnName("id");
-
-            entity.Property(e => e.AttributeValueId).HasColumnName("attributeValueId");
-
-            entity.Property(e => e.BuyingPrice).HasColumnName("buyingPrice");
-
-            entity.Property(e => e.CreateBy).HasColumnName("createBy");
-            entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
-            entity.Property(e => e.CreateTime)
-                .HasColumnType("date")
-                .HasColumnName("createTime");
-            entity.Property(e => e.ImageProductVariant)
-                .IsUnicode(false)
-                .HasColumnName("imageProductVariant");
-
-            entity.Property(e => e.IsDelete)
-                .HasColumnName("isDelete")
-                .HasDefaultValueSql("((0))");
-
-
-            entity.Property(e => e.ProductId).HasColumnName("productId");
-
-            entity.Property(e => e.Quantity).HasColumnName("quantity");
-
-            entity.Property(e => e.SalePrice).HasColumnName("salePrice");
-
-            entity.Property(e => e.Sku)
-                .HasMaxLength(10)
-                .HasColumnName("sku")
-                .IsFixedLength();
-
-            entity.Property(e => e.Title)
-                .HasMaxLength(50)
-                .HasColumnName("title");
-
-            entity.HasOne(d => d.AttributeValue)
-                .WithMany(p => p.Variants)
-                .HasForeignKey(d => d.AttributeValueId)
-                .HasConstraintName("FK_Variants_AttributeValues");
-
-            entity.HasOne(d => d.Product)
-                .WithMany(p => p.Variants)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_VaritionOptions_Products");
-
-            entity.HasMany(d => d.Batches)
-                .WithMany(p => p.Variants)
-                .UsingEntity<Dictionary<string, object>>(
-                    "VariantBatch",
-                    l => l.HasOne<Batch>().WithMany().HasForeignKey("BatchId")
-                        .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_VaritionBatches_Batches"),
-                    r => r.HasOne<Variant>().WithMany().HasForeignKey("VariantId")
-                        .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_VariantBatches_Variants"),
-                    j =>
-                    {
-                        j.HasKey("VariantId", "BatchId").HasName("PK_VaritionBatches");
-
-                        j.ToTable("VariantBatches");
-
-                        j.IndexerProperty<int>("VariantId").HasColumnName("variantId");
-
-                        j.IndexerProperty<int>("BatchId").HasColumnName("batchId");
-                    });
-        });
         modelBuilder.Entity<Employee>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
 
             entity.Property(e => e.Address).HasColumnName("address");
 
-            entity.Property(e => e.CreateBy).HasColumnName("createBy");
-            entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
-            entity.Property(e => e.CreateTime)
-                .HasColumnType("date")
-                .HasColumnName("createTime");
+            //entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            //entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
+            //entity.Property(e => e.CreateTime)
+            //    .HasColumnType("date")
+            //    .HasColumnName("createTime");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -627,9 +549,9 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
                 .HasColumnName("fullName")
                 .HasComputedColumnSql("(([firstName]+' ')+[lastName])", false);
 
-            entity.Property(e => e.IsDelete)
-                .HasColumnName("isDelete")
-                .HasDefaultValueSql("((0))");
+            //entity.Property(e => e.IsDelete)
+            //    .HasColumnName("isDelete")
+            //    .HasDefaultValueSql("((0))");
 
             entity.Property(e => e.LastName)
                 .HasMaxLength(50)
@@ -638,71 +560,122 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
         modelBuilder.Entity<AppUser>(entity =>
         {
             entity.HasOne(e => e.Employee)
-                .WithOne(x => x.AppUsers)
+                .WithOne(x => x.AppUser)
                 .HasForeignKey<Employee>(x => x.UserId)
                 .HasConstraintName("FK_Employees_AppUsers");
 
-            entity.HasMany(d => d.Attributes)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.CreateAttributes)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Attributes_AppUsers_Create");
-            entity.HasMany(d => d.AttributeValues)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteAttributes)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Attributes_AppUsers_Delete");
+            entity.HasMany(d => d.CreateVariantValues)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
-                .HasConstraintName("FK_AttributeValues_AppUsers_Create");
-            entity.HasMany(d => d.StockIns)
-                .WithOne(e => e.AppUsers)
+                .HasConstraintName("FK_VariantValues_AppUsers_Create");
+            entity.HasMany(d => d.DeleteVariantValues)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_VariantValues_AppUsers_Delete");
+            entity.HasMany(d => d.CreateStockIns)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_StockIns_AppUsers_Create");
-            entity.HasMany(d => d.Suppliers)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteStockIns)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_StockIns_AppUsers_Delete");
+            entity.HasMany(d => d.CreateSuppliers)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Suppliers_AppUsers_Create");
-            entity.HasMany(d => d.Variants)
-                .WithOne(e => e.AppUsers)
-                .HasForeignKey(e => e.CreateBy)
-                .HasConstraintName("FK_Variants_AppUsers_Create");
-            entity.HasMany(d => d.Batches)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteSuppliers)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Suppliers_AppUsers_Delete");
+            entity.HasMany(d => d.CreateBatches)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Batches_AppUsers_Create");
-            entity.HasMany(d => d.UnitConversions)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteBatches)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Batches_AppUsers_Delete");
+            entity.HasMany(d => d.CreateUnitConversions)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_UnitConversions_AppUsers_Create");
-            entity.HasMany(d => d.Invoices)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteUnitConversions)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_UnitConversions_AppUsers_Delete");
+            entity.HasMany(d => d.CreateInvoices)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Invoices_AppUsers_Create");
-            entity.HasMany(d => d.Customers)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteInvoices)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Invoices_AppUsers_Delete");
+            entity.HasMany(d => d.CreateCustomers)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Customers_AppUsers_Create");
-            entity.HasMany(d => d.Products)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteCustomers)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Customers_AppUsers_Delete");
+            entity.HasMany(d => d.CreateProducts)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Products_AppUsers_Create");
-
-            entity.HasMany(d => d.Categories)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteProducts)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Products_AppUsers_Delete");
+            entity.HasMany(d => d.CreateCategories)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Categories_AppUsers_Create");
-            entity.HasMany(d => d.Coupons)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteCategories)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Categories_AppUsers_Delete");
+            entity.HasMany(d => d.CreateCoupons)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_Coupons_AppUsers_Create");
-            entity.HasMany(d => d.InvoicesDetails)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteCoupons)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Coupons_AppUsers_Delete");
+            entity.HasMany(d => d.CreateInvoicesDetails)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_InvoicesDetails_AppUsers_Create");
-            entity.HasMany(d => d.MemberShipTypes)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteInvoicesDetails)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_InvoicesDetails_AppUsers_Delete");
+            entity.HasMany(d => d.CreateMemberShipTypes)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_MemberShipTypes_AppUsers_Create");
-            entity.HasMany(d => d.StockInsDetails)
-                .WithOne(e => e.AppUsers)
+            entity.HasMany(d => d.DeleteMemberShipTypes)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_MemberShipTypes_AppUsers_Delete");
+            entity.HasMany(d => d.CreateStockInsDetails)
+                .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
                 .HasConstraintName("FK_StockInsDetails_AppUsers_Create");
+            entity.HasMany(d => d.DeleteStockInsDetails)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_StockInsDetails_AppUsers_Delete");
         });
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

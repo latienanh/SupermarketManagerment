@@ -15,21 +15,24 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
     private readonly IMapper _mapper;
     private SuperMarketDbContext _dataContext;
     private readonly DbSet<T> _dbSet;
+    private int _userId;
     protected IDbFactory DbFactory { get; }
     protected SuperMarketDbContext DbContext => _dataContext ?? (_dataContext = DbFactory.Init());
 
     #endregion
-    protected RepositoryBase(IDbFactory dbFactory, IMapper mapper)
+    protected RepositoryBase(IDbFactory dbFactory, IMapper mapper, int userId)
     {
         _mapper = mapper;
         DbFactory = dbFactory;
         _dbSet = DbContext.Set<T>();
+        _userId = userId;
     }
 
     public async Task<T> AddAsync(T entity)
     {
         if (entity == null) return null;
         entity.CreateTime = DateTime.UtcNow;
+        entity.CreateBy = _userId;
         entity.IsDelete = false;
         await _dbSet.AddAsync(entity);
         return entity;
@@ -51,7 +54,7 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
         entityToUpdate.Id = id;
         var updateModifed = new ModificationDto
         {
-            ModifiedBy = null,
+            ModifiedBy = _userId,
             ModifiedTime = DateTime.UtcNow,
             EntityId = entityToUpdate.Id,
             EntityType = entityType
@@ -74,6 +77,7 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
         if (entity == null)
             return null;
         entity.IsDelete = true;
+        entity.DeleteBy=_userId;
         return entity;
     }
 

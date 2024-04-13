@@ -12,6 +12,6 @@ namespace Supermarket.Infrastructure.Repositories
 {
     public class InvoiceDetailRepository: RepositoryBase<InvoiceDetail>,IInvoiceDetailRepository
     {
-        public InvoiceDetailRepository(IDbFactory dbFactory, IMapper mapper) : base(dbFactory, mapper) { }
+        public InvoiceDetailRepository(IDbFactory dbFactory, IMapper mapper,int userId) : base(dbFactory, mapper, userId) { }
     }
 }

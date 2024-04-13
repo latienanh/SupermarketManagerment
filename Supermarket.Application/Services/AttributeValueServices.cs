@@ -42,7 +42,7 @@ public class AttributeValueServices : IAttributeValueServices
     {
         if (entity == null)
             return false;
-        var attrbutevalue = _mapper.Map<AttributeValue>(entity);
+        var attrbutevalue = _mapper.Map<VariantValue>(entity);
         await _attributeValueRepository.AddAsync(attrbutevalue);
         await _unitOfWork.CommitAsync();
         return true;
@@ -52,7 +52,7 @@ public class AttributeValueServices : IAttributeValueServices
     {
         if (entity == null)
             return false;
-        var attributeValue = _mapper.Map<AttributeValue>(entity);
+        var attributeValue = _mapper.Map<VariantValue>(entity);
         var entityType = "AttributeValue";
         await _attributeValueRepository.UpdateAsync(attributeValue,id,entityType);
         await _unitOfWork.CommitAsync();

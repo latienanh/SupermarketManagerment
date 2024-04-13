@@ -12,6 +12,6 @@ namespace Supermarket.Infrastructure.Repositories
 {
     public class UnitConversionRepository: RepositoryBase<UnitConversion>,IUnitConversionRepository
     {
-        public UnitConversionRepository(IDbFactory dbFactory, IMapper mapper) : base(dbFactory, mapper) { }
+        public UnitConversionRepository(IDbFactory dbFactory, IMapper mapper,int userId) : base(dbFactory, mapper,userId) { }
     }
 }

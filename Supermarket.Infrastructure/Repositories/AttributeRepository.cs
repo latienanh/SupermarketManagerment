@@ -10,12 +10,8 @@ namespace Supermarket.Infrastructure.Repositories;
 
 public class AttributeRepository : RepositoryBase<Attribute>,IAttributeRepository
 {
-    private readonly IMapper _mapper;
-    private readonly SuperMarketDbContext _superMarketDbContext;
-
-    public AttributeRepository(IDbFactory dbFactory,IMapper mapper) : base(dbFactory,mapper)
+    public AttributeRepository(IDbFactory dbFactory,IMapper mapper,int userId) : base(dbFactory,mapper,userId)
     {
-
     }
        
 }

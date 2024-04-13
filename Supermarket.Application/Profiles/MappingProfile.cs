@@ -23,12 +23,14 @@ public class MappingProfile : Profile
         CreateMap<Attribute, AttributeResponseDto>().ReverseMap();
         CreateMap<Attribute, AttributeRequestDto>().ReverseMap();
         CreateMap<Modification, ModificationDto>().ReverseMap();
-        CreateMap<AttributeValue, AttributeValueResponseDto>().ReverseMap();
-        CreateMap<AttributeValue, AttributeValueRequestDto>().ReverseMap();
+        CreateMap<VariantValue, AttributeValueResponseDto>().ReverseMap();
+        CreateMap<VariantValue, AttributeValueRequestDto>().ReverseMap();
         CreateMap<IdentityRole<int>, RoleRequestDto>().ReverseMap();
         CreateMap<IdentityRole<int>, RoleResponseDto>().ReverseMap();
         CreateMap<AppUser, UserResponseDto>().ReverseMap();
         CreateMap<Product, ProductRequestDto>().ReverseMap();
         CreateMap<Product, ProductResponseDto>().ReverseMap();
+        CreateMap<Coupon,CouponRequestDto>().ReverseMap();
+        CreateMap<Coupon,CouponResposeDto>().ReverseMap();
     }
 }

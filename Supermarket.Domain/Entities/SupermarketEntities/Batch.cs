@@ -7,7 +7,6 @@ public class Batch : BaseDomain
     public Batch()
     {
         Products = new HashSet<Product>();
-        Variants = new HashSet<Variant>();
     }
 
     public string? BatchNumber { get; set; }
@@ -16,5 +15,4 @@ public class Batch : BaseDomain
     public int? Quantity { get; set; }
 
     public virtual ICollection<Product> Products { get; set; }
-    public virtual ICollection<Variant> Variants { get; set; }
 }

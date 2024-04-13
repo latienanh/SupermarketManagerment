@@ -14,5 +14,4 @@ public class StockInDetail: BaseDomain
 
     public virtual Product? Product { get; set; }
     public virtual StockIn? StockIn { get; set; }
-    public virtual Variant? Variant { get; set; }
 }

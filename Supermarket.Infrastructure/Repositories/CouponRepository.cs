@@ -12,6 +12,6 @@ namespace Supermarket.Infrastructure.Repositories
 {
     public class CouponRepository : RepositoryBase<Coupon>,ICouponRepository
     {
-        public CouponRepository(IDbFactory dbFactory, IMapper mapper) : base(dbFactory, mapper) { }
+        public CouponRepository(IDbFactory dbFactory, IMapper mapper, int userId) : base(dbFactory, mapper, userId) { }
     }
 }

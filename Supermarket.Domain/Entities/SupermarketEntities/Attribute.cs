@@ -6,9 +6,9 @@ public class Attribute : BaseDomain
 {
     public Attribute()
     {
-        AttributeValues = new HashSet<AttributeValue>();
+        AttributeValues = new HashSet<VariantValue>();
     }
 
     public string? AttributeName { get; set; }
-    public virtual ICollection<AttributeValue> AttributeValues { get; set; }
+    public virtual ICollection<VariantValue> AttributeValues { get; set; }
 }

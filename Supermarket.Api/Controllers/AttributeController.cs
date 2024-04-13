@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs.SupermarketDtos;
@@ -12,10 +13,11 @@ namespace Supermarket.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 
-[Authorize(Roles = "Admin,Manager")]
+[Authorize]
 public class AttributeController : ControllerBase
 {
     private readonly IAttributeServices _attributeServices;
+    private int userId = 1;
 
     public AttributeController(IAttributeServices attributeServices)
     {
@@ -58,6 +60,8 @@ public class AttributeController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(AttributeRequestDto attributeDto)
     {
+        int userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
+        
         var result = await _attributeServices.CreateAsync(attributeDto);
         if (result)
             return Ok(new ResponseBase());

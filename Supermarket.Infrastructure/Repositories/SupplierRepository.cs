@@ -12,6 +12,6 @@ namespace Supermarket.Infrastructure.Repositories
 {
     public class SupplierRepository: RepositoryBase<Supplier>,ISupplierRepository
     {
-        public SupplierRepository(IDbFactory dbFactory, IMapper mapper) : base(dbFactory, mapper) { }
+        public SupplierRepository(IDbFactory dbFactory, IMapper mapper, int userId) : base(dbFactory, mapper, userId) { }
     }
 }

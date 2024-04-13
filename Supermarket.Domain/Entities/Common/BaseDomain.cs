@@ -9,5 +9,6 @@ public class BaseDomain
     public int? CreateBy { get; set; }
     public DateTime CreateTime { get; set; }
     public int? DeleteBy { get; set; }
-    public AppUser AppUsers { get; set; }
+    public AppUser UserCreate { get; set; }
+    public AppUser UserDelete { get; set; }
 }

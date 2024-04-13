@@ -12,6 +12,6 @@ namespace Supermarket.Infrastructure.Repositories
 {
     public class StockInRepository: RepositoryBase<StockIn>,IStockInRepository
     {
-        public StockInRepository(IDbFactory dbFactory, IMapper mapper) : base(dbFactory, mapper) { }
+        public StockInRepository(IDbFactory dbFactory, IMapper mapper,int userId) : base(dbFactory, mapper, userId) { }
     }
 }

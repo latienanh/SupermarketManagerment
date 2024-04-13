@@ -50,6 +50,7 @@ public static class DependencyInjection
         service.AddScoped<IRoleRepository, RoleRepository>();
         service.AddScoped<IUserRepository<UserRequestDto,UserResponseDto>, UserRepository>();
         service.AddScoped<IProductRepository, ProductRepository>();
+        service.AddScoped<ICouponRepository, CouponRepository>();
         return service;
     }
     public static IServiceCollection AddDbFactory(this IServiceCollection service)

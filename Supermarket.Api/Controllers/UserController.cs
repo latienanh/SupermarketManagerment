@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Supermarket.Application.DTOs.Auth.RequestDtos;
@@ -55,7 +57,17 @@ namespace Supermarket.Api.Controllers
                 Data = result
             });
         }
-
+        [Authorize]
+        [HttpGet]
+        [Route("/current")]
+        public async Task<IActionResult> GetLoggedInUserId()
+        {
+            int id = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
+            return Ok(new
+            {
+                userId = id
+            });
+        }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserRequestDto model)
         {
