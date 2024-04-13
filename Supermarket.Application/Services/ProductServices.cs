@@ -40,26 +40,26 @@ namespace Supermarket.Application.Services
             return resultMap;
         }
 
-        public async Task<bool> CreateAsync(ProductRequestDto entity)
+        public async Task<bool> CreateAsync(ProductRequestDto entity, int userID)
         {
             var entityMap = _mapper.Map<Product>(entity);
             var resultAddCategory = await _productRepository.AddToCategoryAsync(entityMap, entity.CategoriesId);
-            var result = await _productRepository.AddAsync(entityMap);
+            var result = await _productRepository.AddAsync(entityMap, userID);
             await _unitOfWork.CommitAsync();
             return result!=null?true:false;
         }
 
-        public async Task<bool> UpdateAsync(ProductRequestDto entity, int id)
+        public async Task<bool> UpdateAsync(ProductRequestDto entity, int id, int userID)
         {
             var entityMap = _mapper.Map<Product>(entity);
-            var result = await _productRepository.UpdateAsync(entityMap,id,"Product");
+            var result = await _productRepository.UpdateAsync(entityMap,id,"Product", userID);
             await _unitOfWork.CommitAsync();
             return result != null ? true : false;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int userID)
         {
-            var result = await _productRepository.DeleteAsync(id);
+            var result = await _productRepository.DeleteAsync(id, userID);
             await _unitOfWork.CommitAsync();
             return result!=null?true:false;
         }

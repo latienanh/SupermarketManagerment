@@ -10,7 +10,7 @@ namespace Supermarket.Infrastructure.Repositories;
 
 public class AttributeRepository : RepositoryBase<Attribute>,IAttributeRepository
 {
-    public AttributeRepository(IDbFactory dbFactory,IMapper mapper,int userId) : base(dbFactory,mapper,userId)
+    public AttributeRepository(IDbFactory dbFactory,IMapper mapper) : base(dbFactory,mapper)
     {
     }
        

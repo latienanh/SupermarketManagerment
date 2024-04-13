@@ -6,6 +6,7 @@ using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
+using System.Security.Claims;
 
 namespace Supermarket.Api.Controllers
 {
@@ -14,10 +15,12 @@ namespace Supermarket.Api.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductServices _productServices;
+        private readonly int _userId;
 
         public ProductController(IProductServices productServices)
         {
             _productServices = productServices;
+            _userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
         }
 
         [HttpGet]
@@ -56,9 +59,9 @@ namespace Supermarket.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ProductRequestDto model)
+        public async Task<IActionResult> Create([FromForm] ProductRequestDto model)
         {
-            var result = await _productServices.CreateAsync(model);
+            var result = await _productServices.CreateAsync(model, _userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase
@@ -70,7 +73,7 @@ namespace Supermarket.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _productServices.DeleteAsync(id);
+            var result = await _productServices.DeleteAsync(id, _userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase
@@ -81,7 +84,7 @@ namespace Supermarket.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(int id, ProductRequestDto model)
         {
-            var result = await _productServices.UpdateAsync(model, id);
+            var result = await _productServices.UpdateAsync(model, id, _userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase

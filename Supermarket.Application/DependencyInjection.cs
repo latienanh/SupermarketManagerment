@@ -20,7 +20,6 @@ public static class DependencyInjection
     public static IServiceCollection AddServices(this IServiceCollection service)
     {
         service.AddScoped<IAttributeServices, AttributeServices>();
-        service.AddScoped<IAttributeValueServices, AttributeValueServices>();
         service.AddScoped<ICategoryServices, CategoryServices>();
        service.AddScoped<IAuthServices, AuthServices>();
         service.AddScoped<ITokenServices, TokenServices>();

@@ -6,15 +6,15 @@ namespace Supermarket.Application.IRepositories;
 public interface IEntityRepository<T> where T : BaseDomain
 {
     // Marks an entity as new
-    Task<T> AddAsync(T entity);
+    Task<T> AddAsync(T entity,int userId);
 
     // Marks an entity as modified
-    Task<T> UpdateAsync(T entity,int id,string entityType );
+    Task<T> UpdateAsync(T entity,int id,string entityType, int userId);
 
     // Marks an entity to be removed
     Task<T> DeleteAsync(T entity);
 
-    Task<T> DeleteAsync(int id);
+    Task<T> DeleteAsync(int id, int userId);
 
     //Delete multi records
     Task<bool> DeleteMultiAsync(Expression<Func<T, bool>> where);

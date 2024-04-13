@@ -37,30 +37,30 @@ public class CategoryServices : ICategoryServices
         return resultMap;
     }
 
-    public async Task<bool> CreateAsync(CategoryRequestDto entity)
+    public async Task<bool> CreateAsync(CategoryRequestDto entity, int userID)
     {
         if (entity == null)
             return false;
         var attrbute = _mapper.Map<Category>(entity);
-        await _categoryRepository.AddAsync(attrbute);
+        await _categoryRepository.AddAsync(attrbute, userID);
         await _unitOfWork.CommitAsync();
         return true;
     }
 
-    public async Task<bool> UpdateAsync(CategoryRequestDto entity, int id)
+    public async Task<bool> UpdateAsync(CategoryRequestDto entity, int id, int userID)
     {
         if (entity == null)
             return false;
         var attributeValue = _mapper.Map<Category>(entity);
         var entityType = "Attribute";
-        await _categoryRepository.UpdateAsync(attributeValue, id, entityType);
+        await _categoryRepository.UpdateAsync(attributeValue, id, entityType, userID);
         await _unitOfWork.CommitAsync();
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id, int userID)
     {
-        await _categoryRepository.DeleteAsync(id);
+        await _categoryRepository.DeleteAsync(id, userID);
         await _unitOfWork.CommitAsync();
         return true;
     }

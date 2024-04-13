@@ -40,25 +40,25 @@ namespace Supermarket.Application.Services
             return resultMap;
         }
 
-        public async Task<bool> CreateAsync(CouponRequestDto entity)
+        public async Task<bool> CreateAsync(CouponRequestDto entity, int userID)
         {
             var entityMap = _mapper.Map<Coupon>(entity);
-            var result = await _couponRepository.AddAsync(entityMap);
+            var result = await _couponRepository.AddAsync(entityMap, userID);
             await _unitOfWork.CommitAsync();
             return result!=null?true:false;
         }
 
-        public async Task<bool> UpdateAsync(CouponRequestDto entity, int id)
+        public async Task<bool> UpdateAsync(CouponRequestDto entity, int id, int userID)
         {
             var entityMap = _mapper.Map<Coupon>(entity);
-            var result = await _couponRepository.UpdateAsync(entityMap,id,"Coupon");
+            var result = await _couponRepository.UpdateAsync(entityMap,id,"Coupon", userID);
             await _unitOfWork.CommitAsync();
             return result != null ? true : false;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int userID)
         {
-            var result = await _couponRepository.DeleteAsync(id);
+            var result = await _couponRepository.DeleteAsync(id, userID);
             await _unitOfWork.CommitAsync();
             return result != null ? true : false;
         }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Supermarket.Application.DTOs.SupermarketDtos.RequestDtos
 {
@@ -14,7 +15,8 @@ namespace Supermarket.Application.DTOs.SupermarketDtos.RequestDtos
         public string? ProductSlug { get; set; }
         public int? CategoryId { get; set; }
         public int? ParentId { get; set; }
-        public string? ProductImage { get; set; }
+        public IFormFile image { get; set; }
+
         public IEnumerable<int> CategoriesId { get; set; }
 
     }

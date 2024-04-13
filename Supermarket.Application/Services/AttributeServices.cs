@@ -14,16 +14,14 @@ public class AttributeServices : IAttributeServices
 {
     private readonly IAttributeRepository _attributeRepository;
     private readonly IMapper _mapper;
-    private readonly int _userId;
     private readonly IUnitOfWork _unitOfWork;
 
     public AttributeServices(IAttributeRepository attributeRepository, IUnitOfWork unitOfWork,
-        IMapper mapper,int userId)
+        IMapper mapper)
     {
         _attributeRepository = attributeRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-        _userId = userId;
     }
 
     public async Task<IEnumerable<AttributeResponseDto>> GetAllAsync()
@@ -40,30 +38,30 @@ public class AttributeServices : IAttributeServices
         return attribute;
     }
 
-    public async Task<bool> CreateAsync(AttributeRequestDto entity)
+    public async Task<bool> CreateAsync(AttributeRequestDto entity,int userID)
     {
         if (entity == null)
             return false;
         var attrbute = _mapper.Map<Attribute>(entity);
-        await _attributeRepository.AddAsync(attrbute);
+        await _attributeRepository.AddAsync(attrbute,userID);
         await _unitOfWork.CommitAsync();
         return true;
     }
 
-    public async Task<bool> UpdateAsync(AttributeRequestDto entity, int id)
+    public async Task<bool> UpdateAsync(AttributeRequestDto entity, int id, int userID)
     {
         if (entity == null)
             return false;
         var attributeValue = _mapper.Map<Attribute>(entity);
         var entityType = "Attribute";
-        await _attributeRepository.UpdateAsync(attributeValue, id, entityType);
+        await _attributeRepository.UpdateAsync(attributeValue, id, entityType,  userID);
         await _unitOfWork.CommitAsync();
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id, int userID)
     {
-        await _attributeRepository.DeleteAsync(id);
+        await _attributeRepository.DeleteAsync(id, userID);
         await _unitOfWork.CommitAsync();
         return true;
     }

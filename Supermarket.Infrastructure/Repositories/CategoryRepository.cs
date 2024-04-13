@@ -8,7 +8,7 @@ namespace Supermarket.Infrastructure.Repositories;
 
 public class CategoryRepository : RepositoryBase<Category>,ICategoryRepository
 {
-    public CategoryRepository(IDbFactory dbFactory, IMapper mapper,int userId):base(dbFactory,mapper,userId)
+    public CategoryRepository(IDbFactory dbFactory, IMapper mapper):base(dbFactory,mapper)
     {
         
     }

@@ -13,7 +13,7 @@ namespace Supermarket.Infrastructure.Repositories
     public class MemberShipTypeRepository : RepositoryBase<MemberShipType>,IMemberShipTypeRepository
 
     {
-    public MemberShipTypeRepository(IDbFactory dbFactory, IMapper mapper, int userId) : base(dbFactory, mapper, userId)
+    public MemberShipTypeRepository(IDbFactory dbFactory, IMapper mapper) : base(dbFactory, mapper)
     {
     }
     }

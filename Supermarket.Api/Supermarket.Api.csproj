@@ -27,4 +27,8 @@
     <ProjectReference Include="..\Supermarket.Infrastructure\Supermarket.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\image\" />
+  </ItemGroup>
+
 </Project>

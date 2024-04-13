@@ -12,6 +12,6 @@ namespace Supermarket.Infrastructure.Repositories
 {
     public class BatchRepository: RepositoryBase<Batch>,IBatchRepository
     {
-        public BatchRepository(IDbFactory dbFactory,IMapper mapper,int userId): base(dbFactory,mapper,userId) { }
+        public BatchRepository(IDbFactory dbFactory,IMapper mapper): base(dbFactory,mapper) { }
     }
 }

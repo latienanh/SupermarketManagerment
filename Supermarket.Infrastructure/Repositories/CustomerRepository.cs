@@ -7,6 +7,6 @@ namespace Supermarket.Infrastructure.Repositories
 {
     public class CustomerRepository : RepositoryBase<Customer>, ICustomerRepository
     {
-        public CustomerRepository(IDbFactory dbFactory, IMapper mapper, int userId) : base(dbFactory, mapper, userId) { }
+        public CustomerRepository(IDbFactory dbFactory, IMapper mapper) : base(dbFactory, mapper) { }
     }
 }

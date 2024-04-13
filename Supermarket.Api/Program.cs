@@ -28,7 +28,10 @@ public class Program
         builder.Services.AddJWTRepository(configuration);
         builder.Services.AddSqlRepository(configuration);
         builder.Services.AddControllers();
+
         builder.Services.AddScoped<Custom401ReponseMiddleware>();
+        builder.Services.AddScoped<Custom403ResponseMiddleware>();
+        builder.Services.AddScoped<HandleExceptionMiddleware>();
 
         builder.Services.AddIdentity<AppUser, IdentityRole<int>>()
             .AddEntityFrameworkStores<SuperMarketDbContext>()
@@ -142,13 +145,17 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        
         app.UseCors("MyCrossOriginResourceSharing");
-        app.UseAuthentication();
+        app.UseAuthentication(); 
+        app.UseMiddleware<Custom401ReponseMiddleware>();
+        app.UseMiddleware<Custom403ResponseMiddleware>();
         app.UseAuthorization();
+       
 
 
         app.MapControllers();
-
+        app.UseMiddleware<HandleExceptionMiddleware>();
         app.Run();
     }
 

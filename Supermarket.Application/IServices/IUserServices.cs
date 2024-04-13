@@ -8,7 +8,7 @@ using Supermarket.Application.DTOs.Auth.ResponseDtos;
 
 namespace Supermarket.Application.IServices
 {
-    public interface IUserServices: IServicesBase<UserRequestDto,UserResponseDto>
+    public interface IUserServices: IServicesBasic<UserRequestDto,UserResponseDto>
     {
         Task<bool> GetLoggedInUserId ();
     }

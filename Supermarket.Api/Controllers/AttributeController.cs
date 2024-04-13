@@ -17,7 +17,6 @@ namespace Supermarket.Api.Controllers;
 public class AttributeController : ControllerBase
 {
     private readonly IAttributeServices _attributeServices;
-    private int userId = 1;
 
     public AttributeController(IAttributeServices attributeServices)
     {
@@ -61,8 +60,7 @@ public class AttributeController : ControllerBase
     public async Task<IActionResult> Create(AttributeRequestDto attributeDto)
     {
         int userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
-        
-        var result = await _attributeServices.CreateAsync(attributeDto);
+        var result = await _attributeServices.CreateAsync(attributeDto,userId);
         if (result)
             return Ok(new ResponseBase());
         return BadRequest(new ResponseBase()
@@ -74,7 +72,8 @@ public class AttributeController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(AttributeRequestDto attributeDto, int id)
     {
-        var result = await _attributeServices.UpdateAsync(attributeDto, id);
+        int userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
+        var result = await _attributeServices.UpdateAsync(attributeDto, id, userId);
         if (result)
         return Ok(new ResponseBase());
         return BadRequest(new ResponseBase()
@@ -86,7 +85,8 @@ public class AttributeController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _attributeServices.DeleteAsync(id);
+        int userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
+        var result = await _attributeServices.DeleteAsync(id,userId);
         if(result)
         return Ok(new ResponseBase());
         return BadRequest(new ResponseBase()

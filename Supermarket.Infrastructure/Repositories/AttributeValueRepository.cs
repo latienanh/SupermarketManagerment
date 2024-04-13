@@ -7,7 +7,7 @@ namespace Supermarket.Infrastructure.Repositories;
 
 public class AttributeValueRepository : RepositoryBase<VariantValue>, IAttributeValueRepository
 {
-    public AttributeValueRepository(IDbFactory dbFactory,IMapper mapper,int userId) : base(dbFactory,mapper, userId)
+    public AttributeValueRepository(IDbFactory dbFactory,IMapper mapper) : base(dbFactory,mapper)
     {
     }
 }

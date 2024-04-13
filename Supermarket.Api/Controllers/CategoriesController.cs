@@ -6,6 +6,7 @@ using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
 using Supermarket.Domain.Entities.SupermarketEntities;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,10 +17,12 @@ namespace Supermarket.Api.Controllers;
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoryServices _categoryServices;
+    private readonly int _userId;
 
     public CategoriesController(ICategoryServices categoryServices)
     {
         _categoryServices = categoryServices;
+        _userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
     }
 
     [HttpGet]
@@ -60,7 +63,7 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CategoryRequestDto model)
     {
-        var result = await _categoryServices.CreateAsync(model);
+        var result = await _categoryServices.CreateAsync(model, _userId);
         if (result)
             return Ok(new ResponseBase());
         return BadRequest(new ResponseBase
@@ -72,7 +75,7 @@ public class CategoriesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _categoryServices.DeleteAsync(id);
+        var result = await _categoryServices.DeleteAsync(id, _userId);
         if (result)
             return Ok(new ResponseBase());
         return BadRequest(new ResponseBase
@@ -83,7 +86,7 @@ public class CategoriesController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(int id, CategoryRequestDto model)
     {
-        var result = await _categoryServices.UpdateAsync(model, id);
+        var result = await _categoryServices.UpdateAsync(model, id, _userId);
         if (result)
             return Ok(new ResponseBase());
         return BadRequest(new ResponseBase

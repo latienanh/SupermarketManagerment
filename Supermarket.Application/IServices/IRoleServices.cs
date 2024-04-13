@@ -10,7 +10,7 @@ using Supermarket.Domain.Entities.Identity;
 
 namespace Supermarket.Application.IServices
 {
-    public interface IRoleServices : IServicesBase<RoleRequestDto,RoleResponseDto>
+    public interface IRoleServices : IServicesBasic<RoleRequestDto,RoleResponseDto>
     {
     }
 }
