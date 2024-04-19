@@ -9,7 +9,7 @@ public class StockIn : BaseDomain
         StockInDetails = new HashSet<StockInDetail>();
     }
 
-    public int? SupplierId { get; set; }
+    public Guid? SupplierId { get; set; }
     public DateTime? EntryDate { get; set; }
     public double? TotalOrderValue { get; set; }
     public string? Note { get; set; }

@@ -21,12 +21,13 @@ public static class DependencyInjection
     {
         service.AddScoped<IAttributeServices, AttributeServices>();
         service.AddScoped<ICategoryServices, CategoryServices>();
-       service.AddScoped<IAuthServices, AuthServices>();
+        service.AddScoped<IAuthServices, AuthServices>();
         service.AddScoped<ITokenServices, TokenServices>();
         service.AddScoped<IRoleServices, RoleServices>();
         service.AddScoped<IUserServices, UserServices>();
         service.AddScoped<IProductServices, ProductServices>();
         service.AddScoped<ICouponServices, CouponServices>();
+        service.AddScoped<IImageServices, ImageServices>();
         return service;
     }
 }

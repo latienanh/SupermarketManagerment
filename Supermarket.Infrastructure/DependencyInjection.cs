@@ -43,7 +43,7 @@ public static class DependencyInjection
     public static IServiceCollection AddRepository(this IServiceCollection service)
     {
         service.AddScoped<IAttributeRepository, AttributeRepository>();
-        service.AddScoped<IAttributeValueRepository, AttributeValueRepository>();
+        service.AddScoped<IVariantValueRepository, VariantValueRepository>();
         service.AddScoped<ICategoryRepository, CategoryRepository>();
         service.AddScoped<IAuthRepository, AuthRepository>();
         service.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();

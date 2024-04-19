@@ -9,6 +9,6 @@ namespace Supermarket.Application.IRepositories
 {
     public interface IProductRepository : IEntityRepository<Product>
     {
-        Task<bool> AddToCategoryAsync(Product product,IEnumerable<int> categoryIds);
+        Task<bool> AddToCategoryAsync(Product product,IEnumerable<Guid> categoryIds);
     }
 }

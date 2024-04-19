@@ -13,6 +13,5 @@ public class Batch : BaseDomain
     public DateTime? ManufacturingDate { get; set; }
     public DateTime? ExpiryDate { get; set; }
     public int? Quantity { get; set; }
-
     public virtual ICollection<Product> Products { get; set; }
 }

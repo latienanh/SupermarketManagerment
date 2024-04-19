@@ -6,7 +6,7 @@ using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 
 namespace Supermarket.Domain.Entities.Identity;
 
-public class AppUser : IdentityUser<int>
+public class AppUser : IdentityUser<Guid>
 {
     public AppUser()
     {

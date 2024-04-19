@@ -41,7 +41,7 @@ public class AttributeController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _attributeServices.GetByIdAsync(id);
         if (result != null)
@@ -59,7 +59,7 @@ public class AttributeController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(AttributeRequestDto attributeDto)
     {
-        int userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
+        var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
         var result = await _attributeServices.CreateAsync(attributeDto,userId);
         if (result)
             return Ok(new ResponseBase());
@@ -70,9 +70,9 @@ public class AttributeController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(AttributeRequestDto attributeDto, int id)
+    public async Task<IActionResult> Update(AttributeRequestDto attributeDto, Guid id)
     {
-        int userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
+        var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
         var result = await _attributeServices.UpdateAsync(attributeDto, id, userId);
         if (result)
         return Ok(new ResponseBase());
@@ -83,9 +83,9 @@ public class AttributeController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        int userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
+        var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
         var result = await _attributeServices.DeleteAsync(id,userId);
         if(result)
         return Ok(new ResponseBase());

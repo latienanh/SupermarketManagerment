@@ -5,29 +5,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Supermarket.Infrastructure.Migrations
 {
-    public partial class firstDB : Migration
+    public partial class Db : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "MemberShipTypes",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MemberShipTypes", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -41,8 +27,7 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -69,7 +54,7 @@ namespace Supermarket.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -88,13 +73,12 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "Attributes",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     attributeName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -104,22 +88,26 @@ namespace Supermarket.Infrastructure.Migrations
                         column: x => x.createBy,
                         principalTable: "Users",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Attributes_AppUsers_Delete",
+                        column: x => x.deleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Batches",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     batchNumber = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     manufacturingDate = table.Column<DateTime>(type: "date", nullable: true),
                     expiryDate = table.Column<DateTime>(type: "date", nullable: true),
                     quantity = table.Column<int>(type: "int", nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -129,20 +117,24 @@ namespace Supermarket.Infrastructure.Migrations
                         column: x => x.createBy,
                         principalTable: "Users",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Batches_AppUsers_Delete",
+                        column: x => x.deleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    parentId = table.Column<int>(type: "int", nullable: true),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    parentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     categoryName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -150,6 +142,11 @@ namespace Supermarket.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Categories_AppUsers_Create",
                         column: x => x.createBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Categories_AppUsers_Delete",
+                        column: x => x.deleteBy,
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -163,8 +160,7 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "Coupons",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     code = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     couponDescripiton = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     discountValue = table.Column<double>(type: "float", nullable: true),
@@ -172,9 +168,9 @@ namespace Supermarket.Infrastructure.Migrations
                     couponStartDate = table.Column<DateTime>(type: "date", nullable: true),
                     couponEndDate = table.Column<DateTime>(type: "date", nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -184,58 +180,25 @@ namespace Supermarket.Infrastructure.Migrations
                         column: x => x.createBy,
                         principalTable: "Users",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Customers",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    firstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    lastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    fullName = table.Column<string>(type: "nvarchar(101)", maxLength: 101, nullable: true, computedColumnSql: "(([firstName]+' ')+[lastName])", stored: false),
-                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    phoneNumber = table.Column<string>(type: "nchar(10)", fixedLength: true, maxLength: 10, nullable: true),
-                    email = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    membershipTypeId = table.Column<int>(type: "int", nullable: true),
-                    isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
-                    createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customers", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Customers_AppUsers_Create",
-                        column: x => x.createBy,
+                        name: "FK_Coupons_AppUsers_Delete",
+                        column: x => x.deleteBy,
                         principalTable: "Users",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Customers_membershipType",
-                        column: x => x.membershipTypeId,
-                        principalTable: "MemberShipTypes",
-                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     firstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     lastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     fullName = table.Column<string>(type: "nvarchar(101)", maxLength: 101, nullable: true, computedColumnSql: "(([firstName]+' ')+[lastName])", stored: false),
                     address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     email = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
-                    createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -244,21 +207,44 @@ namespace Supermarket.Infrastructure.Migrations
                         name: "FK_Employees_AppUsers",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MemberShipTypes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberShipTypes", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_MemberShipTypes_AppUsers_Create",
+                        column: x => x.CreateBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MemberShipTypes_AppUsers_Delete",
+                        column: x => x.DeleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Modifications",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EntityType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EntityId = table.Column<int>(type: "int", nullable: false),
-                    EntityName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -274,25 +260,35 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     barCode = table.Column<string>(type: "nchar(10)", fixedLength: true, maxLength: 10, nullable: true),
                     productName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     productSlug = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
-                    categoryId = table.Column<int>(type: "int", nullable: true),
                     productImage = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: true),
+                    Describe = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     quantity = table.Column<int>(type: "int", nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.id);
                     table.ForeignKey(
+                        name: "FK_Product_Product",
+                        column: x => x.ParentId,
+                        principalTable: "Products",
+                        principalColumn: "id");
+                    table.ForeignKey(
                         name: "FK_Products_AppUsers_Create",
                         column: x => x.createBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppUsers_Delete",
+                        column: x => x.deleteBy,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -301,11 +297,10 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "RefreshTokens",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     token = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     expriaton = table.Column<DateTime>(type: "datetime", nullable: false),
-                    userId = table.Column<int>(type: "int", nullable: false)
+                    userId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -322,16 +317,15 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "Suppliers",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     phoneNumber = table.Column<string>(type: "nchar(10)", fixedLength: true, maxLength: 10, nullable: true),
                     email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -339,6 +333,11 @@ namespace Supermarket.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Suppliers_AppUsers_Create",
                         column: x => x.createBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Suppliers_AppUsers_Delete",
+                        column: x => x.deleteBy,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -349,7 +348,7 @@ namespace Supermarket.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -371,7 +370,7 @@ namespace Supermarket.Infrastructure.Migrations
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -388,8 +387,8 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "UserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -412,7 +411,7 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "UserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -429,61 +428,39 @@ namespace Supermarket.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AttributeValues",
+                name: "Customers",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    attributeId = table.Column<int>(type: "int", nullable: true),
-                    attributeValue = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
-                    createBy = table.Column<int>(type: "int", nullable: true),
-                    createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AttributeValues", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_AttributeValues_AppUsers_Create",
-                        column: x => x.createBy,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_AttributeValues_Attributes2",
-                        column: x => x.attributeId,
-                        principalTable: "Attributes",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Invoices",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    customerID = table.Column<int>(type: "int", nullable: true),
-                    invoiceDate = table.Column<DateTime>(type: "date", nullable: true),
-                    totalPrice = table.Column<double>(type: "float", nullable: true),
-                    paymentStatus = table.Column<int>(type: "int", nullable: true),
-                    paymentMethod = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    firstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    lastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    fullName = table.Column<string>(type: "nvarchar(101)", maxLength: 101, nullable: true, computedColumnSql: "(([firstName]+' ')+[lastName])", stored: false),
+                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    phoneNumber = table.Column<string>(type: "nchar(10)", fixedLength: true, maxLength: 10, nullable: true),
+                    email = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    membershipTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Invoices", x => x.id);
+                    table.PrimaryKey("PK_Customers", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Invoices_AppUsers_Create",
+                        name: "FK_Customers_AppUsers_Create",
                         column: x => x.createBy,
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Invoices_Customers",
-                        column: x => x.customerID,
-                        principalTable: "Customers",
+                        name: "FK_Customers_AppUsers_Delete",
+                        column: x => x.deleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Customers_membershipType",
+                        column: x => x.membershipTypeId,
+                        principalTable: "MemberShipTypes",
                         principalColumn: "id");
                 });
 
@@ -491,8 +468,8 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "ProductBatches",
                 columns: table => new
                 {
-                    productId = table.Column<int>(type: "int", nullable: false),
-                    batchId = table.Column<int>(type: "int", nullable: false)
+                    productId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    batchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -513,8 +490,8 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "productCategories",
                 columns: table => new
                 {
-                    productId = table.Column<int>(type: "int", nullable: false),
-                    categoryId = table.Column<int>(type: "int", nullable: false)
+                    productId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    categoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -535,8 +512,8 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "ProductCoupons",
                 columns: table => new
                 {
-                    productId = table.Column<int>(type: "int", nullable: false),
-                    couponId = table.Column<int>(type: "int", nullable: false)
+                    productId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    couponId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -554,19 +531,89 @@ namespace Supermarket.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UnitConversions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    unitName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    quantity = table.Column<int>(type: "int", nullable: true),
+                    productId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    createTime = table.Column<DateTime>(type: "date", nullable: false),
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnitConversions", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_UnitConversions_AppUsers_Create",
+                        column: x => x.createBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UnitConversions_AppUsers_Delete",
+                        column: x => x.deleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UnitConversions_Products",
+                        column: x => x.productId,
+                        principalTable: "Products",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VariantValues",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    attributeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AttributeValueName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    createTime = table.Column<DateTime>(type: "date", nullable: false),
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VariantValues", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_VariantValue_Attributes",
+                        column: x => x.attributeId,
+                        principalTable: "Attributes",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_VariantValue_Product",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_VariantValues_AppUsers_Create",
+                        column: x => x.createBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VariantValues_AppUsers_Delete",
+                        column: x => x.deleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StockIns",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    supplierId = table.Column<int>(type: "int", nullable: true),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    supplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     entryDate = table.Column<DateTime>(type: "date", nullable: true),
                     totalOrderValue = table.Column<double>(type: "float", nullable: true),
                     note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -577,6 +624,11 @@ namespace Supermarket.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
+                        name: "FK_StockIns_AppUsers_Delete",
+                        column: x => x.deleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_StockIns_Suppliers",
                         column: x => x.supplierId,
                         principalTable: "Suppliers",
@@ -584,74 +636,37 @@ namespace Supermarket.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Variants",
+                name: "Invoices",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    buyingPrice = table.Column<double>(type: "float", nullable: true),
-                    salePrice = table.Column<double>(type: "float", nullable: true),
-                    attributeValueId = table.Column<int>(type: "int", nullable: true),
-                    productId = table.Column<int>(type: "int", nullable: true),
-                    quantity = table.Column<int>(type: "int", nullable: true),
-                    sku = table.Column<string>(type: "nchar(10)", fixedLength: true, maxLength: 10, nullable: true),
-                    imageProductVariant = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    customerID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    invoiceDate = table.Column<DateTime>(type: "date", nullable: true),
+                    totalPrice = table.Column<double>(type: "float", nullable: true),
+                    paymentStatus = table.Column<int>(type: "int", nullable: true),
+                    paymentMethod = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
+                    createBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
+                    deleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Variants", x => x.id);
+                    table.PrimaryKey("PK_Invoices", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Variants_AppUsers_Create",
+                        name: "FK_Invoices_AppUsers_Create",
                         column: x => x.createBy,
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Variants_AttributeValues",
-                        column: x => x.attributeValueId,
-                        principalTable: "AttributeValues",
-                        principalColumn: "id");
+                        name: "FK_Invoices_AppUsers_Delete",
+                        column: x => x.deleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_VaritionOptions_Products",
-                        column: x => x.productId,
-                        principalTable: "Products",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "InvoiceDetails",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    productId = table.Column<int>(type: "int", nullable: false),
-                    variantId = table.Column<int>(type: "int", nullable: true),
-                    invoiceId = table.Column<int>(type: "int", nullable: false),
-                    quantity = table.Column<int>(type: "int", nullable: true),
-                    unitPrice = table.Column<double>(type: "float", nullable: true),
-                    totalPrice = table.Column<double>(type: "float", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InvoiceDetails", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_InvoiceDetails_Invoices",
-                        column: x => x.invoiceId,
-                        principalTable: "Invoices",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_InvoiceDetails_Products",
-                        column: x => x.productId,
-                        principalTable: "Products",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_InvoiceDetails_Variants",
-                        column: x => x.variantId,
-                        principalTable: "Variants",
+                        name: "FK_Invoices_Customers",
+                        column: x => x.customerID,
+                        principalTable: "Customers",
                         principalColumn: "id");
                 });
 
@@ -659,14 +674,17 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "StockInDetails",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false),
-                    productId = table.Column<int>(type: "int", nullable: true),
-                    variantId = table.Column<int>(type: "int", nullable: true),
-                    stockInId = table.Column<int>(type: "int", nullable: true),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    productId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    stockInId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     price = table.Column<double>(type: "float", nullable: true),
                     quantityReceived = table.Column<int>(type: "int", nullable: true),
                     unitPriceReceived = table.Column<double>(type: "float", nullable: true),
-                    totalValueReceived = table.Column<double>(type: "float", nullable: true)
+                    totalValueReceived = table.Column<double>(type: "float", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -682,67 +700,55 @@ namespace Supermarket.Infrastructure.Migrations
                         principalTable: "StockIns",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_StockInDetails_Variants",
-                        column: x => x.variantId,
-                        principalTable: "Variants",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UnitConversions",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    unitName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    quantity = table.Column<int>(type: "int", nullable: true),
-                    productId = table.Column<int>(type: "int", nullable: true),
-                    variantId = table.Column<int>(type: "int", nullable: true),
-                    isDelete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    createBy = table.Column<int>(type: "int", nullable: true),
-                    createTime = table.Column<DateTime>(type: "date", nullable: false),
-                    deleteBy = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UnitConversions", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_UnitConversions_AppUsers_Create",
-                        column: x => x.createBy,
+                        name: "FK_StockInsDetails_AppUsers_Create",
+                        column: x => x.CreateBy,
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_UnitConversions_Products",
+                        name: "FK_StockInsDetails_AppUsers_Delete",
+                        column: x => x.DeleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoiceDetails",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    productId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    invoiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    quantity = table.Column<int>(type: "int", nullable: true),
+                    unitPrice = table.Column<double>(type: "float", nullable: true),
+                    totalPrice = table.Column<double>(type: "float", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeleteBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoiceDetails", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_InvoiceDetails_Invoices",
+                        column: x => x.invoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_InvoiceDetails_Products",
                         column: x => x.productId,
                         principalTable: "Products",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_UnitConversions_Variants",
-                        column: x => x.variantId,
-                        principalTable: "Variants",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VariantBatches",
-                columns: table => new
-                {
-                    variantId = table.Column<int>(type: "int", nullable: false),
-                    batchId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VaritionBatches", x => new { x.variantId, x.batchId });
+                        name: "FK_InvoicesDetails_AppUsers_Create",
+                        column: x => x.CreateBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_VariantBatches_Variants",
-                        column: x => x.variantId,
-                        principalTable: "Variants",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_VaritionBatches_Batches",
-                        column: x => x.batchId,
-                        principalTable: "Batches",
-                        principalColumn: "id");
+                        name: "FK_InvoicesDetails_AppUsers_Delete",
+                        column: x => x.DeleteBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -751,14 +757,9 @@ namespace Supermarket.Infrastructure.Migrations
                 column: "createBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttributeValues_attributeId",
-                table: "AttributeValues",
-                column: "attributeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AttributeValues_createBy",
-                table: "AttributeValues",
-                column: "createBy");
+                name: "IX_Attributes_deleteBy",
+                table: "Attributes",
+                column: "deleteBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Batches_createBy",
@@ -766,9 +767,19 @@ namespace Supermarket.Infrastructure.Migrations
                 column: "createBy");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Batches_deleteBy",
+                table: "Batches",
+                column: "deleteBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Categories_createBy",
                 table: "Categories",
                 column: "createBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_deleteBy",
+                table: "Categories",
+                column: "deleteBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_parentId",
@@ -781,9 +792,19 @@ namespace Supermarket.Infrastructure.Migrations
                 column: "createBy");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Coupons_deleteBy",
+                table: "Coupons",
+                column: "deleteBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Customers_createBy",
                 table: "Customers",
                 column: "createBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_deleteBy",
+                table: "Customers",
+                column: "deleteBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_membershipTypeId",
@@ -794,7 +815,18 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "IX_Employees_UserId",
                 table: "Employees",
                 column: "UserId",
-                unique: true);
+                unique: true,
+                filter: "[UserId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceDetails_CreateBy",
+                table: "InvoiceDetails",
+                column: "CreateBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceDetails_DeleteBy",
+                table: "InvoiceDetails",
+                column: "DeleteBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InvoiceDetails_invoiceId",
@@ -807,11 +839,6 @@ namespace Supermarket.Infrastructure.Migrations
                 column: "productId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceDetails_variantId",
-                table: "InvoiceDetails",
-                column: "variantId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Invoices_createBy",
                 table: "Invoices",
                 column: "createBy");
@@ -820,6 +847,21 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "IX_Invoices_customerID",
                 table: "Invoices",
                 column: "customerID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoices_deleteBy",
+                table: "Invoices",
+                column: "deleteBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MemberShipTypes_CreateBy",
+                table: "MemberShipTypes",
+                column: "CreateBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MemberShipTypes_DeleteBy",
+                table: "MemberShipTypes",
+                column: "DeleteBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Modifications_ModifiedBy",
@@ -847,6 +889,16 @@ namespace Supermarket.Infrastructure.Migrations
                 column: "createBy");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_deleteBy",
+                table: "Products",
+                column: "deleteBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ParentId",
+                table: "Products",
+                column: "ParentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_userId",
                 table: "RefreshTokens",
                 column: "userId",
@@ -865,6 +917,16 @@ namespace Supermarket.Infrastructure.Migrations
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StockInDetails_CreateBy",
+                table: "StockInDetails",
+                column: "CreateBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockInDetails_DeleteBy",
+                table: "StockInDetails",
+                column: "DeleteBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StockInDetails_productId",
                 table: "StockInDetails",
                 column: "productId");
@@ -875,14 +937,14 @@ namespace Supermarket.Infrastructure.Migrations
                 column: "stockInId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockInDetails_variantId",
-                table: "StockInDetails",
-                column: "variantId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StockIns_createBy",
                 table: "StockIns",
                 column: "createBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockIns_deleteBy",
+                table: "StockIns",
+                column: "deleteBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockIns_supplierId",
@@ -895,19 +957,24 @@ namespace Supermarket.Infrastructure.Migrations
                 column: "createBy");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Suppliers_deleteBy",
+                table: "Suppliers",
+                column: "deleteBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UnitConversions_createBy",
                 table: "UnitConversions",
                 column: "createBy");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UnitConversions_deleteBy",
+                table: "UnitConversions",
+                column: "deleteBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UnitConversions_productId",
                 table: "UnitConversions",
                 column: "productId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UnitConversions_variantId",
-                table: "UnitConversions",
-                column: "variantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
@@ -937,24 +1004,24 @@ namespace Supermarket.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VariantBatches_batchId",
-                table: "VariantBatches",
-                column: "batchId");
+                name: "IX_VariantValues_attributeId",
+                table: "VariantValues",
+                column: "attributeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Variants_attributeValueId",
-                table: "Variants",
-                column: "attributeValueId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Variants_createBy",
-                table: "Variants",
+                name: "IX_VariantValues_createBy",
+                table: "VariantValues",
                 column: "createBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Variants_productId",
-                table: "Variants",
-                column: "productId");
+                name: "IX_VariantValues_deleteBy",
+                table: "VariantValues",
+                column: "deleteBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VariantValues_ProductId",
+                table: "VariantValues",
+                column: "ProductId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -1002,10 +1069,13 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "VariantBatches");
+                name: "VariantValues");
 
             migrationBuilder.DropTable(
                 name: "Invoices");
+
+            migrationBuilder.DropTable(
+                name: "Batches");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -1020,10 +1090,10 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Variants");
+                name: "Attributes");
 
             migrationBuilder.DropTable(
-                name: "Batches");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Customers");
@@ -1032,16 +1102,7 @@ namespace Supermarket.Infrastructure.Migrations
                 name: "Suppliers");
 
             migrationBuilder.DropTable(
-                name: "AttributeValues");
-
-            migrationBuilder.DropTable(
-                name: "Products");
-
-            migrationBuilder.DropTable(
                 name: "MemberShipTypes");
-
-            migrationBuilder.DropTable(
-                name: "Attributes");
 
             migrationBuilder.DropTable(
                 name: "Users");

@@ -14,19 +14,19 @@ namespace Supermarket.Infrastructure.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        public RoleManager<IdentityRole<int>> _roleManager { get; set; }
+        public RoleManager<IdentityRole<Guid>> _roleManager { get; set; }
 
-        public RoleRepository(RoleManager<IdentityRole<int>> roleManager)
+        public RoleRepository(RoleManager<IdentityRole<Guid>> roleManager)
         {
            _roleManager=roleManager;
         }
-        public async Task<IdentityRole<int>> AddAsync(IdentityRole<int> entity)
+        public async Task<IdentityRole<Guid>> AddAsync(IdentityRole<Guid> entity)
         {
             await _roleManager.CreateAsync(entity);
             return entity;
         }
 
-        public async Task<IdentityRole<int>> UpdateAsync(IdentityRole<int> entity, int id)
+        public async Task<IdentityRole<Guid>> UpdateAsync(IdentityRole<Guid> entity, Guid id)
         {
             var result = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
             if (result == null)
@@ -38,7 +38,7 @@ namespace Supermarket.Infrastructure.Repositories
             return entity;
         }
 
-        public async Task<IdentityRole<int>> DeleteAsync(int id)
+        public async Task<IdentityRole<Guid>> DeleteAsync(Guid id)
         {
             var result = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
             if (result == null)
@@ -50,7 +50,7 @@ namespace Supermarket.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<IdentityRole<int>> GetByIdAsync(int id)
+        public async Task<IdentityRole<Guid>> GetByIdAsync(Guid id)
         {
             var result = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
             if (result == null)
@@ -60,7 +60,7 @@ namespace Supermarket.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<IEnumerable<IdentityRole<int>>> GetAll()
+        public async Task<IEnumerable<IdentityRole<Guid>>> GetAll()
         {
             var result = _roleManager.Roles.AsEnumerable();
             if (result == null)

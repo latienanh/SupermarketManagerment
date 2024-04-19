@@ -31,7 +31,7 @@ namespace Supermarket.Application.Services
             return result;
         }
 
-        public async Task<UserResponseDto> GetByIdAsync(int id)
+        public async Task<UserResponseDto> GetByIdAsync(Guid id)
         {
             var result = await _userRepository.GetByIdAsync(id);
             return result;
@@ -44,7 +44,7 @@ namespace Supermarket.Application.Services
             return true;
         }
 
-        public async Task<bool> UpdateAsync(UserRequestDto entity, int id)
+        public async Task<bool> UpdateAsync(UserRequestDto entity, Guid id)
         {
             var result = await _userRepository.UpdateAsync(entity, id);
             if (result == null)
@@ -53,7 +53,7 @@ namespace Supermarket.Application.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
             var result = await _userRepository.DeleteAsync(id);
             if (result == null)

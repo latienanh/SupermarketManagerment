@@ -15,7 +15,7 @@ public class Customer : BaseDomain
     public string? Address { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Email { get; set; }
-    public int? MembershipTypeId { get; set; }
+    public Guid? MembershipTypeId { get; set; }
 
     public virtual MemberShipType? MembershipType { get; set; }
     public virtual ICollection<Invoice> Invoices { get; set; }

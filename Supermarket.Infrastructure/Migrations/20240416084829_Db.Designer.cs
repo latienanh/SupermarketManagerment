@@ -5,14 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Supermarket.Infrastructure;
 
 #nullable disable
 
 namespace Supermarket.Infrastructure.Migrations
 {
     [DbContext(typeof(SuperMarketDbContext))]
-    [Migration("20240317115530_fixModified")]
-    partial class fixModified
+    [Migration("20240416084829_Db")]
+    partial class Db
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,13 +24,11 @@ namespace Supermarket.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -53,7 +52,7 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,8 +66,8 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -77,7 +76,7 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("RoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,8 +90,8 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -101,7 +100,7 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("UserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -112,8 +111,8 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -122,13 +121,13 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("UserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -137,10 +136,10 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("UserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -158,12 +157,12 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("ProductBatch", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
-                    b.Property<int>("BatchId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("BatchId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("batchId");
 
                     b.HasKey("ProductId", "BatchId");
@@ -175,12 +174,12 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("ProductCategory", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("categoryId");
 
                     b.HasKey("ProductId", "CategoryId");
@@ -192,12 +191,12 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("ProductCoupon", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("CouponId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("couponId");
 
                     b.HasKey("ProductId", "CouponId");
@@ -209,21 +208,19 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.Common.Modification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("EntityId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EntityType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedTime")
                         .HasColumnType("datetime2");
@@ -237,11 +234,9 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -305,28 +300,26 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Attribute", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AttributeName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("attributeName");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<bool?>("IsDelete")
@@ -339,59 +332,17 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasIndex("CreateBy");
 
+                    b.HasIndex("DeleteBy");
+
                     b.ToTable("Attributes");
-                });
-
-            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.AttributeValue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("AttributeId")
-                        .HasColumnType("int")
-                        .HasColumnName("attributeId");
-
-                    b.Property<string>("AttributeValue1")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("attributeValue");
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
-                        .HasColumnName("createBy");
-
-                    b.Property<DateTime>("CreateTime")
-                        .HasColumnType("date")
-                        .HasColumnName("createTime");
-
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
-                        .HasColumnName("deleteBy");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttributeId");
-
-                    b.HasIndex("CreateBy");
-
-                    b.ToTable("AttributeValues");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Batch", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BatchNumber")
                         .HasMaxLength(50)
@@ -399,16 +350,16 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("batchNumber");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<DateTime?>("ExpiryDate")
@@ -433,33 +384,33 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasIndex("CreateBy");
 
+                    b.HasIndex("DeleteBy");
+
                     b.ToTable("Batches");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CategoryName")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)")
                         .HasColumnName("categoryName");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<bool?>("IsDelete")
@@ -468,13 +419,15 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("parentId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
+
+                    b.HasIndex("DeleteBy");
 
                     b.HasIndex("ParentId");
 
@@ -483,12 +436,10 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Coupon", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Code")
                         .HasMaxLength(50)
@@ -508,16 +459,16 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("date")
                         .HasColumnName("couponStartDate");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<int?>("DiscountType")
@@ -538,32 +489,32 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasIndex("CreateBy");
 
+                    b.HasIndex("DeleteBy");
+
                     b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("address");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<string>("Email")
@@ -595,8 +546,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("lastName");
 
-                    b.Property<int?>("MembershipTypeId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("MembershipTypeId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("membershipTypeId");
 
                     b.Property<string>("PhoneNumber")
@@ -609,6 +560,8 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasIndex("CreateBy");
 
+                    b.HasIndex("DeleteBy");
+
                     b.HasIndex("MembershipTypeId");
 
                     b.ToTable("Customers");
@@ -616,28 +569,14 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Employee", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("address");
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
-                        .HasColumnName("createBy");
-
-                    b.Property<DateTime>("CreateTime")
-                        .HasColumnType("date")
-                        .HasColumnName("createTime");
-
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
-                        .HasColumnName("deleteBy");
 
                     b.Property<string>("Email")
                         .HasMaxLength(50)
@@ -657,12 +596,6 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("fullName")
                         .HasComputedColumnSql("(([firstName]+' ')+[lastName])", false);
 
-                    b.Property<bool?>("IsDelete")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasColumnName("isDelete")
-                        .HasDefaultValueSql("((0))");
-
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
@@ -671,40 +604,39 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Invoice", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("customerID");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<DateTime?>("InvoiceDate")
@@ -736,24 +668,38 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("DeleteBy");
+
                     b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.InvoiceDetail", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int")
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("InvoiceId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("invoiceId");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
                     b.Property<int?>("Quantity")
@@ -768,29 +714,37 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("float")
                         .HasColumnName("unitPrice");
 
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("int")
-                        .HasColumnName("variantId");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("DeleteBy");
 
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("VariantId");
 
                     b.ToTable("InvoiceDetails");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.MemberShipType", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
@@ -799,17 +753,19 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("DeleteBy");
+
                     b.ToTable("MemberShipTypes");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BarCode")
                         .HasMaxLength(10)
@@ -817,27 +773,29 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("barCode")
                         .IsFixedLength();
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int")
-                        .HasColumnName("categoryId");
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
+
+                    b.Property<string>("Describe")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDelete")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProductImage")
                         .HasMaxLength(150)
@@ -863,28 +821,30 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasIndex("CreateBy");
 
+                    b.HasIndex("DeleteBy");
+
+                    b.HasIndex("ParentId");
+
                     b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.StockIn", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<DateTime?>("EntryDate")
@@ -901,8 +861,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("note");
 
-                    b.Property<int?>("SupplierId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("SupplierId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("supplierId");
 
                     b.Property<double?>("TotalOrderValue")
@@ -913,6 +873,8 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasIndex("CreateBy");
 
+                    b.HasIndex("DeleteBy");
+
                     b.HasIndex("SupplierId");
 
                     b.ToTable("StockIns");
@@ -920,24 +882,36 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.StockInDetail", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<double?>("Price")
                         .HasColumnType("float")
                         .HasColumnName("price");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
                     b.Property<int?>("QuantityReceived")
                         .HasColumnType("int")
                         .HasColumnName("quantityReceived");
 
-                    b.Property<int?>("StockInId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("StockInId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("stockInId");
 
                     b.Property<double?>("TotalValueReceived")
@@ -948,44 +922,40 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("float")
                         .HasColumnName("unitPriceReceived");
 
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("int")
-                        .HasColumnName("variantId");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CreateBy");
+
+                    b.HasIndex("DeleteBy");
 
                     b.HasIndex("ProductId");
 
                     b.HasIndex("StockInId");
-
-                    b.HasIndex("VariantId");
 
                     b.ToTable("StockInDetails");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Supplier", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("address");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<string>("Email")
@@ -1014,28 +984,28 @@ namespace Supermarket.Infrastructure.Migrations
 
                     b.HasIndex("CreateBy");
 
+                    b.HasIndex("DeleteBy");
+
                     b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.UnitConversion", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<bool?>("IsDelete")
@@ -1044,8 +1014,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
                     b.Property<int?>("Quantity")
@@ -1058,103 +1028,68 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("unitName");
 
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("int")
-                        .HasColumnName("variantId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreateBy");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("DeleteBy");
 
-                    b.HasIndex("VariantId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("UnitConversions");
                 });
 
-            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Variant", b =>
+            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.VariantValue", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<Guid?>("AttributeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("attributeId");
 
-                    b.Property<int?>("AttributeValueId")
-                        .HasColumnType("int")
-                        .HasColumnName("attributeValueId");
+                    b.Property<string>("AttributeValueName")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("BuyingPrice")
-                        .HasColumnType("float")
-                        .HasColumnName("buyingPrice");
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
-                    b.Property<string>("ImageProductVariant")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
-                        .HasColumnName("imageProductVariant");
-
                     b.Property<bool?>("IsDelete")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasColumnName("isDelete")
-                        .HasDefaultValueSql("((0))");
+                        .HasColumnType("bit");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("productId");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int")
-                        .HasColumnName("quantity");
-
-                    b.Property<double?>("SalePrice")
-                        .HasColumnType("float")
-                        .HasColumnName("salePrice");
-
-                    b.Property<string>("Sku")
-                        .HasMaxLength(10)
-                        .HasColumnType("nchar(10)")
-                        .HasColumnName("sku")
-                        .IsFixedLength();
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("title");
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttributeValueId");
+                    b.HasIndex("AttributeId");
 
                     b.HasIndex("CreateBy");
 
+                    b.HasIndex("DeleteBy");
+
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Variants");
+                    b.ToTable("VariantValues");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.Token.RefreshToken", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Expriaton")
                         .HasColumnType("datetime")
@@ -1165,8 +1100,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("token");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("userId");
 
                     b.HasKey("Id");
@@ -1177,34 +1112,16 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("VariantBatch", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.Property<int>("VariantId")
-                        .HasColumnType("int")
-                        .HasColumnName("variantId");
-
-                    b.Property<int>("BatchId")
-                        .HasColumnType("int")
-                        .HasColumnName("batchId");
-
-                    b.HasKey("VariantId", "BatchId")
-                        .HasName("PK_VaritionBatches");
-
-                    b.HasIndex("BatchId");
-
-                    b.ToTable("VariantBatches", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", null)
                         .WithMany()
@@ -1213,7 +1130,7 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", null)
                         .WithMany()
@@ -1222,9 +1139,9 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1237,7 +1154,7 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", null)
                         .WithMany()
@@ -1302,101 +1219,117 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Attribute", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Attributes")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateAttributes")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_Attributes_AppUsers_Create");
 
-                    b.Navigation("AppUsers");
-                });
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteAttributes")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_Attributes_AppUsers_Delete");
 
-            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.AttributeValue", b =>
-                {
-                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Attribute", "Attribute")
-                        .WithMany("AttributeValues")
-                        .HasForeignKey("AttributeId")
-                        .HasConstraintName("FK_AttributeValues_Attributes2");
+                    b.Navigation("UserCreate");
 
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("AttributeValues")
-                        .HasForeignKey("CreateBy")
-                        .HasConstraintName("FK_AttributeValues_AppUsers_Create");
-
-                    b.Navigation("AppUsers");
-
-                    b.Navigation("Attribute");
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Batch", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Batches")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateBatches")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_Batches_AppUsers_Create");
 
-                    b.Navigation("AppUsers");
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteBatches")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_Batches_AppUsers_Delete");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Category", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Categories")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateCategories")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_Categories_AppUsers_Create");
+
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteCategories")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_Categories_AppUsers_Delete");
 
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Category", "Parent")
                         .WithMany("InverseParent")
                         .HasForeignKey("ParentId")
                         .HasConstraintName("FK_Categories_Categories");
 
-                    b.Navigation("AppUsers");
-
                     b.Navigation("Parent");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Coupon", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Coupons")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateCoupons")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_Coupons_AppUsers_Create");
 
-                    b.Navigation("AppUsers");
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteCoupons")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_Coupons_AppUsers_Delete");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Customer", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Customers")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateCustomers")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_Customers_AppUsers_Create");
+
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteCustomers")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_Customers_AppUsers_Delete");
 
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.MemberShipType", "MembershipType")
                         .WithMany("Customers")
                         .HasForeignKey("MembershipTypeId")
                         .HasConstraintName("FK_Customers_membershipType");
 
-                    b.Navigation("AppUsers");
-
                     b.Navigation("MembershipType");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Employee", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUser")
                         .WithOne("Employee")
                         .HasForeignKey("Supermarket.Domain.Entities.SupermarketEntities.Employee", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK_Employees_AppUsers");
 
-                    b.Navigation("AppUsers");
+                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Invoice", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Invoices")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateInvoices")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_Invoices_AppUsers_Create");
 
@@ -1405,13 +1338,30 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasForeignKey("CustomerId")
                         .HasConstraintName("FK_Invoices_Customers");
 
-                    b.Navigation("AppUsers");
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteInvoices")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_Invoices_AppUsers_Delete");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.InvoiceDetail", b =>
                 {
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateInvoicesDetails")
+                        .HasForeignKey("CreateBy")
+                        .HasConstraintName("FK_InvoicesDetails_AppUsers_Create");
+
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteInvoicesDetails")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_InvoicesDetails_AppUsers_Delete");
+
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Invoice", "Invoice")
                         .WithMany("InvoiceDetails")
                         .HasForeignKey("InvoiceId")
@@ -1424,47 +1374,92 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_InvoiceDetails_Products");
 
-                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Variant", "Variant")
-                        .WithMany("InvoiceDetails")
-                        .HasForeignKey("VariantId")
-                        .HasConstraintName("FK_InvoiceDetails_Variants");
-
                     b.Navigation("Invoice");
 
                     b.Navigation("Product");
 
-                    b.Navigation("Variant");
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
+                });
+
+            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.MemberShipType", b =>
+                {
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateMemberShipTypes")
+                        .HasForeignKey("CreateBy")
+                        .HasConstraintName("FK_MemberShipTypes_AppUsers_Create");
+
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteMemberShipTypes")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_MemberShipTypes_AppUsers_Delete");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Product", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Products")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateProducts")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_Products_AppUsers_Create");
 
-                    b.Navigation("AppUsers");
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteProducts")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_Products_AppUsers_Delete");
+
+                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Product", "Parent")
+                        .WithMany("InverseParent")
+                        .HasForeignKey("ParentId")
+                        .HasConstraintName("FK_Product_Product");
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.StockIn", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("StockIns")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateStockIns")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_StockIns_AppUsers_Create");
+
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteStockIns")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_StockIns_AppUsers_Delete");
 
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Supplier", "Supplier")
                         .WithMany("StockIns")
                         .HasForeignKey("SupplierId")
                         .HasConstraintName("FK_StockIns_Suppliers");
 
-                    b.Navigation("AppUsers");
-
                     b.Navigation("Supplier");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.StockInDetail", b =>
                 {
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateStockInsDetails")
+                        .HasForeignKey("CreateBy")
+                        .HasConstraintName("FK_StockInsDetails_AppUsers_Create");
+
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteStockInsDetails")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_StockInsDetails_AppUsers_Delete");
+
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Product", "Product")
                         .WithMany("StockInDetails")
                         .HasForeignKey("ProductId")
@@ -1475,74 +1470,85 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasForeignKey("StockInId")
                         .HasConstraintName("FK_StockInDetails_StockIns");
 
-                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Variant", "Variant")
-                        .WithMany("StockInDetails")
-                        .HasForeignKey("VariantId")
-                        .HasConstraintName("FK_StockInDetails_Variants");
-
                     b.Navigation("Product");
 
                     b.Navigation("StockIn");
 
-                    b.Navigation("Variant");
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Supplier", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Suppliers")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateSuppliers")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_Suppliers_AppUsers_Create");
 
-                    b.Navigation("AppUsers");
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteSuppliers")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_Suppliers_AppUsers_Delete");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.UnitConversion", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("UnitConversions")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateUnitConversions")
                         .HasForeignKey("CreateBy")
                         .HasConstraintName("FK_UnitConversions_AppUsers_Create");
+
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteUnitConversions")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_UnitConversions_AppUsers_Delete");
 
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Product", "Product")
                         .WithMany("UnitConversions")
                         .HasForeignKey("ProductId")
                         .HasConstraintName("FK_UnitConversions_Products");
 
-                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Variant", "Variant")
-                        .WithMany("UnitConversions")
-                        .HasForeignKey("VariantId")
-                        .HasConstraintName("FK_UnitConversions_Variants");
-
-                    b.Navigation("AppUsers");
-
                     b.Navigation("Product");
 
-                    b.Navigation("Variant");
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
-            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Variant", b =>
+            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.VariantValue", b =>
                 {
-                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.AttributeValue", "AttributeValue")
-                        .WithMany("Variants")
-                        .HasForeignKey("AttributeValueId")
-                        .HasConstraintName("FK_Variants_AttributeValues");
+                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Attribute", "Attribute")
+                        .WithMany("AttributeValues")
+                        .HasForeignKey("AttributeId")
+                        .HasConstraintName("FK_VariantValue_Attributes");
 
-                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUsers")
-                        .WithMany("Variants")
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserCreate")
+                        .WithMany("CreateVariantValues")
                         .HasForeignKey("CreateBy")
-                        .HasConstraintName("FK_Variants_AppUsers_Create");
+                        .HasConstraintName("FK_VariantValues_AppUsers_Create");
+
+                    b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "UserDelete")
+                        .WithMany("DeleteVariantValues")
+                        .HasForeignKey("DeleteBy")
+                        .HasConstraintName("FK_VariantValues_AppUsers_Delete");
 
                     b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Product", "Product")
-                        .WithMany("Variants")
+                        .WithMany("VariantValues")
                         .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_VaritionOptions_Products");
+                        .HasConstraintName("FK_VariantValue_Product");
 
-                    b.Navigation("AppUsers");
-
-                    b.Navigation("AttributeValue");
+                    b.Navigation("Attribute");
 
                     b.Navigation("Product");
+
+                    b.Navigation("UserCreate");
+
+                    b.Navigation("UserDelete");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.Token.RefreshToken", b =>
@@ -1556,64 +1562,76 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("VariantBatch", b =>
-                {
-                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Batch", null)
-                        .WithMany()
-                        .HasForeignKey("BatchId")
-                        .IsRequired()
-                        .HasConstraintName("FK_VaritionBatches_Batches");
-
-                    b.HasOne("Supermarket.Domain.Entities.SupermarketEntities.Variant", null)
-                        .WithMany()
-                        .HasForeignKey("VariantId")
-                        .IsRequired()
-                        .HasConstraintName("FK_VariantBatches_Variants");
-                });
-
             modelBuilder.Entity("Supermarket.Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("AttributeValues");
+                    b.Navigation("CreateAttributes");
 
-                    b.Navigation("Attributes");
+                    b.Navigation("CreateBatches");
 
-                    b.Navigation("Batches");
+                    b.Navigation("CreateCategories");
 
-                    b.Navigation("Categories");
+                    b.Navigation("CreateCoupons");
 
-                    b.Navigation("Coupons");
+                    b.Navigation("CreateCustomers");
 
-                    b.Navigation("Customers");
+                    b.Navigation("CreateInvoices");
+
+                    b.Navigation("CreateInvoicesDetails");
+
+                    b.Navigation("CreateMemberShipTypes");
+
+                    b.Navigation("CreateProducts");
+
+                    b.Navigation("CreateStockIns");
+
+                    b.Navigation("CreateStockInsDetails");
+
+                    b.Navigation("CreateSuppliers");
+
+                    b.Navigation("CreateUnitConversions");
+
+                    b.Navigation("CreateVariantValues");
+
+                    b.Navigation("DeleteAttributes");
+
+                    b.Navigation("DeleteBatches");
+
+                    b.Navigation("DeleteCategories");
+
+                    b.Navigation("DeleteCoupons");
+
+                    b.Navigation("DeleteCustomers");
+
+                    b.Navigation("DeleteInvoices");
+
+                    b.Navigation("DeleteInvoicesDetails");
+
+                    b.Navigation("DeleteMemberShipTypes");
+
+                    b.Navigation("DeleteProducts");
+
+                    b.Navigation("DeleteStockIns");
+
+                    b.Navigation("DeleteStockInsDetails");
+
+                    b.Navigation("DeleteSuppliers");
+
+                    b.Navigation("DeleteUnitConversions");
+
+                    b.Navigation("DeleteVariantValues");
 
                     b.Navigation("Employee")
                         .IsRequired();
 
-                    b.Navigation("Invoices");
-
                     b.Navigation("Modifications");
-
-                    b.Navigation("Products");
 
                     b.Navigation("RefreshToken")
                         .IsRequired();
-
-                    b.Navigation("StockIns");
-
-                    b.Navigation("Suppliers");
-
-                    b.Navigation("UnitConversions");
-
-                    b.Navigation("Variants");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Attribute", b =>
                 {
                     b.Navigation("AttributeValues");
-                });
-
-            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.AttributeValue", b =>
-                {
-                    b.Navigation("Variants");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Category", b =>
@@ -1638,13 +1656,15 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Product", b =>
                 {
+                    b.Navigation("InverseParent");
+
                     b.Navigation("InvoiceDetails");
 
                     b.Navigation("StockInDetails");
 
                     b.Navigation("UnitConversions");
 
-                    b.Navigation("Variants");
+                    b.Navigation("VariantValues");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.StockIn", b =>
@@ -1655,15 +1675,6 @@ namespace Supermarket.Infrastructure.Migrations
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Supplier", b =>
                 {
                     b.Navigation("StockIns");
-                });
-
-            modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Variant", b =>
-                {
-                    b.Navigation("InvoiceDetails");
-
-                    b.Navigation("StockInDetails");
-
-                    b.Navigation("UnitConversions");
                 });
 #pragma warning restore 612, 618
         }

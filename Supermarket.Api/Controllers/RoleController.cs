@@ -39,7 +39,7 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _roleServices.GetByIdAsync(id);
             if (result == null)
@@ -69,7 +69,7 @@ namespace Supermarket.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _roleServices.DeleteAsync(id);
             if (result)
@@ -80,7 +80,7 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, RoleRequestDto model)
+        public async Task<IActionResult> Update(Guid id, RoleRequestDto model)
         {
             var result = await _roleServices.UpdateAsync(model, id);
             if (result)

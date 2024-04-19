@@ -39,7 +39,7 @@ public class TokenServices : ITokenServices
         return await _refreshTokenRepository.AddAsync(refreshToken);
     }
 
-    public async Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken,int id)
+    public async Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken, Guid id)
     {
         return await _refreshTokenRepository.UpdateAsync(refreshToken,id);
     }

@@ -7,20 +7,23 @@ using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace Supermarket.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductServices _productServices;
-        private readonly int _userId;
+        private readonly IImageServices _imageServices;
 
-        public ProductController(IProductServices productServices)
+        public ProductController(IProductServices productServices, IImageServices imageServices)
         {
             _productServices = productServices;
-            _userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
+            _imageServices = imageServices;
         }
 
         [HttpGet]
@@ -41,7 +44,7 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _productServices.GetByIdAsync(id);
             if (result == null)
@@ -59,9 +62,33 @@ namespace Supermarket.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] ProductRequestDto model)
+        [HttpPost]
+        public async Task<IActionResult> Create( [FromForm] string dataProductJson, IFormFile? imageProduct, IFormFileCollection? variantImages)
         {
-            var result = await _productServices.CreateAsync(model, _userId);
+            var model = JsonConvert.DeserializeObject<ProductRequestDto>(dataProductJson);
+            var folderProduct = "images/products/";
+            if (imageProduct != null)
+            {
+                var productImagePath = await _imageServices.SaveImageAsync(folderProduct,imageProduct);
+                if (productImagePath == null)
+                {
+                    model.ProductImage = "/images/default-image.jpg";
+                }
+                model.ProductImage = productImagePath;
+            }
+            if (model.Variants != null)
+            {
+                for (int i = 0; i < model.Variants.Count(); i++)
+                {
+                    var variantImagePath = await _imageServices.SaveImageAsync(folderProduct, variantImages[i]);
+                    if(variantImagePath == null)
+                        model.Variants.ElementAt(i).ProductImage = "/images/default-image.jpg";
+                    model.Variants.ElementAt(i).ProductImage=variantImagePath;
+                }
+            }
+
+            var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
+            var result = await _productServices.CreateAsync(model, userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase
@@ -69,11 +96,11 @@ namespace Supermarket.Api.Controllers
                 Message = "Tạo không thành công"
             });
         }
-
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _productServices.DeleteAsync(id, _userId);
+            var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
+            var result = await _productServices.DeleteAsync(id, userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase
@@ -82,9 +109,10 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, ProductRequestDto model)
+        public async Task<IActionResult> Update(Guid id, ProductRequestDto model)
         {
-            var result = await _productServices.UpdateAsync(model, id, _userId);
+            var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
+            var result = await _productServices.UpdateAsync(model, id, userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase

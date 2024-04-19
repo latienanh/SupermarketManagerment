@@ -18,7 +18,7 @@ public class AuthRepository : IAuthRepository
 {
     private readonly JsonWebTokenSettings _jsonWebTokenSettings;
     private readonly IMapper _mapper;
-    private readonly RoleManager<IdentityRole<int>> _roleManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly SuperMarketDbContext _supermarketDbContext;
     private readonly ITokenServices _tokenServices;
@@ -28,7 +28,7 @@ public class AuthRepository : IAuthRepository
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
         JsonWebTokenSettings jsonWebTokenSettings,
-        RoleManager<IdentityRole<int>> roleManager,
+        RoleManager<IdentityRole<Guid>> roleManager,
         SuperMarketDbContext supermarketDbContext,
         ITokenServices tokenServices,
         IMapper mapper)
@@ -95,7 +95,7 @@ public class AuthRepository : IAuthRepository
         if (result.Succeeded)
         {
             if (!await _roleManager.RoleExistsAsync("Salesperson"))
-                await _roleManager.CreateAsync(new IdentityRole<int>("Salesperson"));
+                await _roleManager.CreateAsync(new IdentityRole<Guid>("Salesperson"));
 
             await _userManager.AddToRoleAsync(user, "Salesperson");
             return IdentityResult.Success;

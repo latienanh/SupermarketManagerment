@@ -19,7 +19,7 @@ namespace Supermarket.Infrastructure.Repositories
         {
             _categoryRepository = categoryRepository;
         }
-        public async Task<bool> AddToCategoryAsync(Product product, IEnumerable<int> categoryIds)
+        public async Task<bool> AddToCategoryAsync(Product product, IEnumerable<Guid> categoryIds)
         {
            
             if (product == null)
@@ -37,6 +37,7 @@ namespace Supermarket.Infrastructure.Repositories
             return true;
         }
 
-        
+
+      
     }
 }

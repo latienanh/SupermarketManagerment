@@ -41,7 +41,7 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _couponServices.GetByIdAsync(id);
             if (result == null)
@@ -61,7 +61,8 @@ namespace Supermarket.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CouponRequestDto model)
         {
-            var result = await _couponServices.CreateAsync(model, _userId);
+            var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
+            var result = await _couponServices.CreateAsync(model, userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase
@@ -71,9 +72,10 @@ namespace Supermarket.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _couponServices.DeleteAsync(id, _userId);
+            var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
+            var result = await _couponServices.DeleteAsync(id, userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase
@@ -82,9 +84,10 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, CouponRequestDto model)
+        public async Task<IActionResult> Update(Guid id, CouponRequestDto model)
         {
-            var result = await _couponServices.UpdateAsync(model, id, _userId);
+            var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
+            var result = await _couponServices.UpdateAsync(model, id, userId);
             if (result)
                 return Ok(new ResponseBase());
             return BadRequest(new ResponseBase

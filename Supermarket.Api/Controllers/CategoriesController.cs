@@ -17,12 +17,10 @@ namespace Supermarket.Api.Controllers;
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoryServices _categoryServices;
-    private readonly int _userId;
 
     public CategoriesController(ICategoryServices categoryServices)
     {
         _categoryServices = categoryServices;
-        _userId = Convert.ToInt32(HttpContext.User.FindFirstValue("userId"));
     }
 
     [HttpGet]
@@ -43,7 +41,7 @@ public class CategoriesController : ControllerBase
         });
     }
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _categoryServices.GetByIdAsync(id);
         if (result == null)
@@ -63,7 +61,8 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CategoryRequestDto model)
     {
-        var result = await _categoryServices.CreateAsync(model, _userId);
+        var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
+        var result = await _categoryServices.CreateAsync(model, userId);
         if (result)
             return Ok(new ResponseBase());
         return BadRequest(new ResponseBase
@@ -73,9 +72,10 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _categoryServices.DeleteAsync(id, _userId);
+        var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
+        var result = await _categoryServices.DeleteAsync(id, userId);
         if (result)
             return Ok(new ResponseBase());
         return BadRequest(new ResponseBase
@@ -84,9 +84,10 @@ public class CategoriesController : ControllerBase
         });
     }
     [HttpPut]
-    public async Task<IActionResult> Update(int id, CategoryRequestDto model)
+    public async Task<IActionResult> Update(Guid id, CategoryRequestDto model)
     {
-        var result = await _categoryServices.UpdateAsync(model, id, _userId);
+        var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
+        var result = await _categoryServices.UpdateAsync(model, id, userId);
         if (result)
             return Ok(new ResponseBase());
         return BadRequest(new ResponseBase

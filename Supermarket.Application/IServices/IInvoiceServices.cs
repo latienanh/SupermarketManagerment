@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Supermarket.Domain.Entities.Common
+namespace Supermarket.Application.IServices
 {
-    public class BaseDomainBasic
+    public interface IInvoiceServices
     {
-        public Guid Id { get; set; }
     }
 }

@@ -9,7 +9,7 @@ public class Invoice : BaseDomain
         InvoiceDetails = new HashSet<InvoiceDetail>();
     }
 
-    public int? CustomerId { get; set; }
+    public Guid? CustomerId { get; set; }
     public DateTime? InvoiceDate { get; set; }
     public double? TotalPrice { get; set; }
     public int? PaymentStatus { get; set; }

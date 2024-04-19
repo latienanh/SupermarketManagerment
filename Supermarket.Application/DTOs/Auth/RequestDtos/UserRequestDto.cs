@@ -21,6 +21,6 @@ namespace Supermarket.Application.DTOs.Auth.RequestDtos
         //public DateOnly DateOfBirth { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-10));
 
         //public IFormFile? Avatar { get; set; }
-        public IEnumerable<int> Roles { get; set; } = new List<int>();
+        public IEnumerable<Guid> Roles { get; set; } = new List<Guid>();
     }
 }

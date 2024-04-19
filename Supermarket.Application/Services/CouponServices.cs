@@ -33,14 +33,14 @@ namespace Supermarket.Application.Services
             return resultMap;
         }
 
-        public async Task<CouponResposeDto> GetByIdAsync(int id)
+        public async Task<CouponResposeDto> GetByIdAsync(Guid id)
         {
             var result = await _couponRepository.GetSingleByIdAsync(id);
             var resultMap = _mapper.Map<CouponResposeDto>(result);
             return resultMap;
         }
 
-        public async Task<bool> CreateAsync(CouponRequestDto entity, int userID)
+        public async Task<bool> CreateAsync(CouponRequestDto entity, Guid userID)
         {
             var entityMap = _mapper.Map<Coupon>(entity);
             var result = await _couponRepository.AddAsync(entityMap, userID);
@@ -48,7 +48,7 @@ namespace Supermarket.Application.Services
             return result!=null?true:false;
         }
 
-        public async Task<bool> UpdateAsync(CouponRequestDto entity, int id, int userID)
+        public async Task<bool> UpdateAsync(CouponRequestDto entity, Guid id, Guid userID)
         {
             var entityMap = _mapper.Map<Coupon>(entity);
             var result = await _couponRepository.UpdateAsync(entityMap,id,"Coupon", userID);
@@ -56,7 +56,7 @@ namespace Supermarket.Application.Services
             return result != null ? true : false;
         }
 
-        public async Task<bool> DeleteAsync(int id, int userID)
+        public async Task<bool> DeleteAsync(Guid id, Guid userID)
         {
             var result = await _couponRepository.DeleteAsync(id, userID);
             await _unitOfWork.CommitAsync();

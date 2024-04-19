@@ -6,6 +6,7 @@ using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.UnitOfWork;
 using Supermarket.Domain.Entities.SupermarketEntities;
+using System;
 
 namespace Supermarket.Application.Services;
 
@@ -30,14 +31,14 @@ public class CategoryServices : ICategoryServices
         return resultMap;
     }
 
-    public async Task<CategoryResponseDto> GetByIdAsync(int id)
+    public async Task<CategoryResponseDto> GetByIdAsync(Guid id)
     {
         var result = await _categoryRepository.GetSingleByIdAsync(id);
         var resultMap= _mapper.Map<CategoryResponseDto>(result);
         return resultMap;
     }
 
-    public async Task<bool> CreateAsync(CategoryRequestDto entity, int userID)
+    public async Task<bool> CreateAsync(CategoryRequestDto entity, Guid userID)
     {
         if (entity == null)
             return false;
@@ -47,7 +48,7 @@ public class CategoryServices : ICategoryServices
         return true;
     }
 
-    public async Task<bool> UpdateAsync(CategoryRequestDto entity, int id, int userID)
+    public async Task<bool> UpdateAsync(CategoryRequestDto entity, Guid id, Guid userID)
     {
         if (entity == null)
             return false;
@@ -58,7 +59,7 @@ public class CategoryServices : ICategoryServices
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id, int userID)
+    public async Task<bool> DeleteAsync(Guid id, Guid userID)
     {
         await _categoryRepository.DeleteAsync(id, userID);
         await _unitOfWork.CommitAsync();

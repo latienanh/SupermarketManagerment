@@ -41,7 +41,7 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _userServices.GetByIdAsync(id);
             if (result == null)
@@ -86,7 +86,7 @@ namespace Supermarket.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _userServices.DeleteAsync(id);
             if (result)
@@ -97,7 +97,7 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, UserRequestDto model)
+        public async Task<IActionResult> Update(Guid id, UserRequestDto model)
         {
             var result = await _userServices.UpdateAsync(model, id);
             if (result)

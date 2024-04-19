@@ -10,7 +10,7 @@ public class Category : BaseDomain
         Products = new HashSet<Product>();
     }
 
-    public int? ParentId { get; set; }
+    public Guid? ParentId { get; set; }
     public string? CategoryName { get; set; }
 
     public virtual Category? Parent { get; set; }

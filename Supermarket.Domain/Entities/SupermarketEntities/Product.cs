@@ -1,4 +1,5 @@
 ﻿using Supermarket.Domain.Entities.Common;
+using Supermarket.Domain.Entities.Identity;
 
 namespace Supermarket.Domain.Entities.SupermarketEntities;
 
@@ -14,12 +15,14 @@ public class Product : BaseDomain
         Categories = new HashSet<Category>();
         Coupons = new HashSet<Coupon>();
     }
-
+    
+    
     public string? BarCode { get; set; }
     public string? ProductName { get; set; }
     public string? ProductSlug { get; set; }
     public string? ProductImage { get; set; }
-    public int? ParentId { get; set; }
+    public string? Describe { get; set; }
+    public Guid? ParentId { get; set; }
     public int? Quantity { get; set; }
     public virtual Product? Parent { get; set; }
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; }
@@ -30,4 +33,5 @@ public class Product : BaseDomain
     public virtual ICollection<Batch> Batches { get; set; }
     public virtual ICollection<Category> Categories { get; set; }
     public virtual ICollection<Coupon> Coupons { get; set; }
+ 
 }

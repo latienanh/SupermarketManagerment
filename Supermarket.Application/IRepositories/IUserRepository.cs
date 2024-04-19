@@ -10,9 +10,9 @@ namespace Supermarket.Application.IRepositories
     public interface IUserRepository<TRequest, TResponse>
     {
         Task<TResponse> AddAsync(TRequest entity);
-        Task<TResponse> UpdateAsync(TRequest entity, int id);
-        Task<TResponse> DeleteAsync(int id);
-        Task<TResponse> GetByIdAsync(int id);
+        Task<TResponse> UpdateAsync(TRequest entity, Guid id);
+        Task<TResponse> DeleteAsync(Guid id);
+        Task<TResponse> GetByIdAsync(Guid id);
         Task<IEnumerable<TResponse>> GetAll();
     }
 }

@@ -33,9 +33,10 @@ public class Program
         builder.Services.AddScoped<Custom403ResponseMiddleware>();
         builder.Services.AddScoped<HandleExceptionMiddleware>();
 
-        builder.Services.AddIdentity<AppUser, IdentityRole<int>>()
+        builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<SuperMarketDbContext>()
             .AddDefaultTokenProviders();
+        builder.Services.AddScoped<RoleManager<IdentityRole<Guid>>, RoleManager<IdentityRole<Guid>>>();
         builder.Services.Configure<IdentityOptions>(options =>
         {
             // Thiết lập về Password

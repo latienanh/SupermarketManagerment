@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Supermarket.Application.DTOs.SupermarketDtos;
@@ -26,17 +27,29 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
         _dbSet = DbContext.Set<T>();
     }
 
-    public async Task<T> AddAsync(T entity, int userId)
+    public async Task<T?> AddAsync(T entity, Guid userId)
     {
         if (entity == null) return null;
-        entity.CreateTime = DateTime.UtcNow;
-        entity.CreateBy = userId;
-        entity.IsDelete = false;
-        await _dbSet.AddAsync(entity);
-        return entity;
+        try
+        {
+            entity.CreateTime = DateTime.UtcNow;
+            entity.CreateBy = userId;
+            entity.IsDelete = false;
+            await _dbSet.AddAsync(entity);
+            return entity;
+        }
+        catch (Exception ex)
+        {
+            // Xử lý ngoại lệ nếu có
+            // Có thể ghi log, hoặc trả về một giá trị khác để biểu thị lỗi
+            Console.WriteLine(ex.Message);
+            return null;
+        }
     }
 
-    public async Task<T> UpdateAsync(T entity, int id, string entityType, int userId)
+   
+
+    public async Task<T?> UpdateAsync(T entity, Guid id, string entityType, Guid userId)
     {
         var entitySet = await DbContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id&&x.IsDelete==false);
         if (entitySet == null)
@@ -50,15 +63,15 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
             property.SetValue(entityToUpdate, property.GetValue(entity));
         }
         entityToUpdate.Id = id;
-        var updateModifed = new ModificationDto
+        var updateModifed = new Modification()
         {
             ModifiedBy = userId,
             ModifiedTime = DateTime.UtcNow,
             EntityId = entityToUpdate.Id,
             EntityType = entityType
         };
-        var mapperUpdateM = _mapper.Map<Modification>(updateModifed);
-        DbContext.Modifications.Add(mapperUpdateM);
+        //var mapperUpdateM = _mapper.Map<Modification>(updateModifed);
+        DbContext.Modifications.Add(updateModifed);
         _dbSet.Update(entityToUpdate);
 
         return entityToUpdate;
@@ -69,7 +82,7 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
         throw new NotImplementedException();
     }
 
-    public async Task<T> DeleteAsync(int id, int userId)
+    public async Task<T?> DeleteAsync(Guid id, Guid userId)
     {
         var entity = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
         if (entity == null)
@@ -87,12 +100,12 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
         return true;
     }
 
-    public async Task<T> GetSingleByIdAsync(int id)
+    public async Task<T?> GetSingleByIdAsync(Guid id)
     {
         return await _dbSet.FirstOrDefaultAsync(x => x.Id == id && x.IsDelete == false);
     }
 
-    public async Task<T> GetSingleByConditionAsync(Expression<Func<T, bool>> expression, string[] includes = null)
+    public async Task<T> GetSingleByConditionAsync(Expression<Func<T, bool>> expression, string[]? includes )
     {
         if (includes != null && includes.Count() > 0)
         {
@@ -106,7 +119,7 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
     }
 
 
-    public async Task<IEnumerable<T>> GetAllAsync(string[] includes = null)
+    public async Task<IEnumerable<T>> GetAllAsync(string[]? includes)
     {
         if (includes != null && includes.Count() > 0)
         {
@@ -119,7 +132,7 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
         return _dataContext.Set<T>().Where(x => x.IsDelete == false).AsQueryable();
     }
 
-    public async Task<IEnumerable<T>> GetMultiAsync(Expression<Func<T, bool>> predicate, string[] includes = null)
+    public async Task<IEnumerable<T>> GetMultiAsync(Expression<Func<T, bool>> predicate, string[]? includes)
     {
         //HANDLE INCLUDES FOR ASSOCIATED OBJECTS IF APPLICABLE
         if (includes != null && includes.Count() > 0)
@@ -133,8 +146,7 @@ public abstract class RepositoryBase<T> : IEntityRepository<T> where T : BaseDom
         return _dataContext.Set<T>().Where(predicate=>predicate.IsDelete==false).AsQueryable();
     }
 
-    public async Task<IEnumerable<T>> GetMultiPagingAsync(Expression<Func<T, bool>> predicate, int total, int index = 0,
-        int size = 50, string[] includes = null)
+    public async Task<IEnumerable<T>> GetMultiPagingAsync(Expression<Func<T, bool>> predicate, int total, int index = 0, int size = 50, string[]? includes =null)
     {
         var skipCount = index * size;
         IQueryable<T> _resetSet;

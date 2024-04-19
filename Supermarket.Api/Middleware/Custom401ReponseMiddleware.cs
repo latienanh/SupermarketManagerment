@@ -14,6 +14,7 @@ public class Custom401ReponseMiddleware : IMiddleware
         {
             var response = new ResponseBase
             {
+                Title = "Thất bại",
                 Message = "Bạn chưa xác thực",
                 Errors = new Dictionary<string, string[]>
                 {

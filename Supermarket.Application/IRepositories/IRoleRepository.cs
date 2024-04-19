@@ -2,7 +2,7 @@
 
 namespace Supermarket.Application.IRepositories
 {
-    public interface IRoleRepository : IBasicRepository<IdentityRole<int>>
+    public interface IRoleRepository : IBasicRepository<IdentityRole<Guid>>
     {
     }
 }

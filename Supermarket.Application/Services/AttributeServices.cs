@@ -31,14 +31,14 @@ public class AttributeServices : IAttributeServices
         return listAttribute;
     }
 
-    public async Task<AttributeResponseDto> GetByIdAsync(int id)
+    public async Task<AttributeResponseDto> GetByIdAsync(Guid id)
     {
         var result = await _attributeRepository.GetSingleByIdAsync(id);
         var attribute = _mapper.Map<AttributeResponseDto>(result);
         return attribute;
     }
 
-    public async Task<bool> CreateAsync(AttributeRequestDto entity,int userID)
+    public async Task<bool> CreateAsync(AttributeRequestDto entity, Guid userID)
     {
         if (entity == null)
             return false;
@@ -48,18 +48,18 @@ public class AttributeServices : IAttributeServices
         return true;
     }
 
-    public async Task<bool> UpdateAsync(AttributeRequestDto entity, int id, int userID)
+    public async Task<bool> UpdateAsync(AttributeRequestDto entity, Guid id, Guid userID)
     {
         if (entity == null)
             return false;
         var attributeValue = _mapper.Map<Attribute>(entity);
         var entityType = "Attribute";
-        await _attributeRepository.UpdateAsync(attributeValue, id, entityType,  userID);
+        var result=await _attributeRepository.UpdateAsync(attributeValue, id, entityType,  userID);
         await _unitOfWork.CommitAsync();
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id, int userID)
+    public async Task<bool> DeleteAsync(Guid id, Guid userID)
     {
         await _attributeRepository.DeleteAsync(id, userID);
         await _unitOfWork.CommitAsync();

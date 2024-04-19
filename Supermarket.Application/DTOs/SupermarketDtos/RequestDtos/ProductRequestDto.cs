@@ -13,11 +13,8 @@ namespace Supermarket.Application.DTOs.SupermarketDtos.RequestDtos
         public string? BarCode { get; set; }
         public string? ProductName { get; set; }
         public string? ProductSlug { get; set; }
-        public int? CategoryId { get; set; }
-        public int? ParentId { get; set; }
-        public IFormFile image { get; set; }
-
-        public IEnumerable<int> CategoriesId { get; set; }
-
+        public string? ProductImage { get; set; }
+        public IEnumerable<Guid>? CategoriesId { get; set; }
+        public IEnumerable<VariantRequestDto>? Variants { get; set; } 
     }
 }

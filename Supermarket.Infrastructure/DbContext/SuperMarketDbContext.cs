@@ -9,7 +9,7 @@ using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 
 namespace Supermarket.Infrastructure;
 
-public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
+public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>,Guid>
 {
     public SuperMarketDbContext(DbContextOptions<SuperMarketDbContext> options)
         : base(options)
@@ -279,8 +279,6 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
 
             entity.Property(e => e.UnitPrice).HasColumnName("unitPrice");
 
-            entity.Property(e => e.VariantId).HasColumnName("variantId");
-
             entity.HasOne(d => d.Invoice)
                 .WithMany(p => p.InvoiceDetails)
                 .HasForeignKey(d => d.InvoiceId)
@@ -354,9 +352,9 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
 
                         j.ToTable("ProductBatches");
 
-                        j.IndexerProperty<int>("ProductId").HasColumnName("productId");
+                        j.IndexerProperty<Guid>("ProductId").HasColumnName("productId");
 
-                        j.IndexerProperty<int>("BatchId").HasColumnName("batchId");
+                        j.IndexerProperty<Guid>("BatchId").HasColumnName("batchId");
                     });
 
             entity.HasMany(d => d.Categories)
@@ -374,9 +372,9 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
 
                         j.ToTable("productCategories");
 
-                        j.IndexerProperty<int>("ProductId").HasColumnName("productId");
+                        j.IndexerProperty<Guid>("ProductId").HasColumnName("productId");
 
-                        j.IndexerProperty<int>("CategoryId").HasColumnName("categoryId");
+                        j.IndexerProperty<Guid>("CategoryId").HasColumnName("categoryId");
                     });
 
             entity.HasMany(d => d.Coupons)
@@ -393,9 +391,9 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
 
                         j.ToTable("ProductCoupons");
 
-                        j.IndexerProperty<int>("ProductId").HasColumnName("productId");
+                        j.IndexerProperty<Guid>("ProductId").HasColumnName("productId");
 
-                        j.IndexerProperty<int>("CouponId").HasColumnName("couponId");
+                        j.IndexerProperty<Guid>("CouponId").HasColumnName("couponId");
                     });
         });
 
@@ -446,8 +444,6 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<int>
             entity.Property(e => e.TotalValueReceived).HasColumnName("totalValueReceived");
 
             entity.Property(e => e.UnitPriceReceived).HasColumnName("unitPriceReceived");
-
-            entity.Property(e => e.VariantId).HasColumnName("variantId");
 
             entity.HasOne(d => d.Product)
                 .WithMany(p => p.StockInDetails)

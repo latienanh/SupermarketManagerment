@@ -4,13 +4,8 @@ namespace Supermarket.Domain.Entities.SupermarketEntities;
 
 public class VariantValue : BaseDomain
 {
-    public VariantValue()
-    {
-     
-    }
-
-    public int? AttributeId { get; set; }
-    public int? ProductId { get; set; }
+    public Guid? AttributeId { get; set; }
+    public Guid? ProductId { get; set; }
     public string? AttributeValueName { get; set; }
 
     public virtual Attribute? Attribute { get; set; }

@@ -34,7 +34,7 @@ namespace Supermarket.Application.Services
             return resultMap;
         }
 
-        public async Task<RoleResponseDto> GetByIdAsync(int id)
+        public async Task<RoleResponseDto> GetByIdAsync(Guid id)
         {
             var result = await _roleRepository.GetByIdAsync(id);
             var resultMap = _mapper.Map<RoleResponseDto>(result
@@ -44,15 +44,15 @@ namespace Supermarket.Application.Services
 
         public async Task<bool> CreateAsync(RoleRequestDto entity)
         {
-            var entityMap = _mapper.Map<IdentityRole<int>>(entity);
-                await _roleRepository.AddAsync(entityMap);
+            var entityMap = _mapper.Map<IdentityRole<Guid>>(entity);
+            await _roleRepository.AddAsync(entityMap);
             await _unitOfWork.CommitAsync();
             return true;
         }
 
-        public async Task<bool> UpdateAsync(RoleRequestDto entity, int id)
+        public async Task<bool> UpdateAsync(RoleRequestDto entity, Guid id)
         {
-            var entityMap = _mapper.Map<IdentityRole<int>>(entity);
+            var entityMap = _mapper.Map<IdentityRole<Guid>>(entity);
             var result = await _roleRepository.UpdateAsync(entityMap, id);
             if(result==null)
                 return false;
@@ -60,7 +60,7 @@ namespace Supermarket.Application.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
             var result = await _roleRepository.DeleteAsync(id);
             if (result == null)

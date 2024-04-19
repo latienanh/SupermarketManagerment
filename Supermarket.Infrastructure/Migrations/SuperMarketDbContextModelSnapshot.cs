@@ -22,13 +22,11 @@ namespace Supermarket.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -52,7 +50,7 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,8 +64,8 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -76,7 +74,7 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("RoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,8 +88,8 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -100,7 +98,7 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("UserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -111,8 +109,8 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -121,13 +119,13 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("UserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -136,10 +134,10 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("UserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -157,12 +155,12 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("ProductBatch", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
-                    b.Property<int>("BatchId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("BatchId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("batchId");
 
                     b.HasKey("ProductId", "BatchId");
@@ -174,12 +172,12 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("ProductCategory", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("categoryId");
 
                     b.HasKey("ProductId", "CategoryId");
@@ -191,12 +189,12 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("ProductCoupon", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("CouponId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("couponId");
 
                     b.HasKey("ProductId", "CouponId");
@@ -208,21 +206,19 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.Common.Modification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("EntityId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EntityType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedTime")
                         .HasColumnType("datetime2");
@@ -236,11 +232,9 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -304,28 +298,26 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Attribute", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AttributeName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("attributeName");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<bool?>("IsDelete")
@@ -345,12 +337,10 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Batch", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BatchNumber")
                         .HasMaxLength(50)
@@ -358,16 +348,16 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("batchNumber");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<DateTime?>("ExpiryDate")
@@ -399,28 +389,26 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CategoryName")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)")
                         .HasColumnName("categoryName");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<bool?>("IsDelete")
@@ -429,8 +417,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("parentId");
 
                     b.HasKey("Id");
@@ -446,12 +434,10 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Coupon", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Code")
                         .HasMaxLength(50)
@@ -471,16 +457,16 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("date")
                         .HasColumnName("couponStartDate");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<int?>("DiscountType")
@@ -508,27 +494,25 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("address");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<string>("Email")
@@ -560,8 +544,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("lastName");
 
-                    b.Property<int?>("MembershipTypeId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("MembershipTypeId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("membershipTypeId");
 
                     b.Property<string>("PhoneNumber")
@@ -583,12 +567,10 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Employee", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)")
@@ -620,40 +602,39 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Invoice", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("customerID");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<DateTime?>("InvoiceDate")
@@ -692,31 +673,31 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.InvoiceDetail", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("InvoiceId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("invoiceId");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
                     b.Property<int?>("Quantity")
@@ -730,10 +711,6 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<double?>("UnitPrice")
                         .HasColumnType("float")
                         .HasColumnName("unitPrice");
-
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("int")
-                        .HasColumnName("variantId");
 
                     b.HasKey("Id");
 
@@ -750,21 +727,19 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.MemberShipType", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -785,12 +760,10 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BarCode")
                         .HasMaxLength(10)
@@ -798,17 +771,20 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("barCode")
                         .IsFixedLength();
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
+
+                    b.Property<string>("Describe")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDelete")
                         .ValueGeneratedOnAdd()
@@ -816,8 +792,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProductImage")
                         .HasMaxLength(150)
@@ -852,23 +828,21 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.StockIn", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<DateTime?>("EntryDate")
@@ -885,8 +859,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("note");
 
-                    b.Property<int?>("SupplierId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("SupplierId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("supplierId");
 
                     b.Property<double?>("TotalOrderValue")
@@ -906,18 +880,18 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.StockInDetail", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -926,16 +900,16 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("float")
                         .HasColumnName("price");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
                     b.Property<int?>("QuantityReceived")
                         .HasColumnType("int")
                         .HasColumnName("quantityReceived");
 
-                    b.Property<int?>("StockInId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("StockInId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("stockInId");
 
                     b.Property<double?>("TotalValueReceived")
@@ -945,10 +919,6 @@ namespace Supermarket.Infrastructure.Migrations
                     b.Property<double?>("UnitPriceReceived")
                         .HasColumnType("float")
                         .HasColumnName("unitPriceReceived");
-
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("int")
-                        .HasColumnName("variantId");
 
                     b.HasKey("Id");
 
@@ -965,27 +935,25 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.Supplier", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("address");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<string>("Email")
@@ -1021,23 +989,21 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.UnitConversion", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<bool?>("IsDelete")
@@ -1046,8 +1012,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnName("isDelete")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
 
                     b.Property<int?>("Quantity")
@@ -1073,37 +1039,35 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.SupermarketEntities.VariantValue", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("AttributeId")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("AttributeId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("attributeId");
 
                     b.Property<string>("AttributeValueName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CreateBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("createBy");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("date")
                         .HasColumnName("createTime");
 
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int")
+                    b.Property<Guid?>("DeleteBy")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("deleteBy");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -1120,12 +1084,10 @@ namespace Supermarket.Infrastructure.Migrations
 
             modelBuilder.Entity("Supermarket.Domain.Entities.Token.RefreshToken", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Expriaton")
                         .HasColumnType("datetime")
@@ -1136,8 +1098,8 @@ namespace Supermarket.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("token");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("userId");
 
                     b.HasKey("Id");
@@ -1148,16 +1110,16 @@ namespace Supermarket.Infrastructure.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", null)
                         .WithMany()
@@ -1166,7 +1128,7 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", null)
                         .WithMany()
@@ -1175,9 +1137,9 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1190,7 +1152,7 @@ namespace Supermarket.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", null)
                         .WithMany()
@@ -1357,8 +1319,6 @@ namespace Supermarket.Infrastructure.Migrations
                     b.HasOne("Supermarket.Domain.Entities.Identity.AppUser", "AppUser")
                         .WithOne("Employee")
                         .HasForeignKey("Supermarket.Domain.Entities.SupermarketEntities.Employee", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK_Employees_AppUsers");
 
                     b.Navigation("AppUser");

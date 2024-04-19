@@ -33,7 +33,7 @@ namespace Supermarket.Infrastructure.Repositories
             return entity;
         }
 
-        public async Task<T> UpdateAsync(T entity, int id)
+        public async Task<T> UpdateAsync(T entity, Guid id)
         {
             var entityUpdate = await _dbSet.FirstOrDefaultAsync(x => x.Id==id);
             if (entityUpdate == null)
@@ -49,7 +49,7 @@ namespace Supermarket.Infrastructure.Repositories
             return entity;
         }
 
-        public async Task<T> DeleteAsync(int id)
+        public async Task<T> DeleteAsync(Guid id)
         {
             var entityDelete = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
             if (entityDelete == null)
@@ -60,7 +60,9 @@ namespace Supermarket.Infrastructure.Repositories
             return entityDelete;
         }
 
-        public Task<T> GetByIdAsync(int id)
+      
+
+        public Task<T> GetByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }

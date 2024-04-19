@@ -20,10 +20,10 @@ namespace Supermarket.Infrastructure.Repositories
     public class UserRepository : IUserRepository<UserRequestDto, UserResponseDto>
     {
         public UserManager<AppUser> _userManager;
-        public RoleManager<IdentityRole<int>> _roleManager;
+        public RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IMapper _mapper;
 
-        public UserRepository(UserManager<AppUser> userManager, IMapper mapper, RoleManager<IdentityRole<int>> roleManager)
+        public UserRepository(UserManager<AppUser> userManager, IMapper mapper, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -32,7 +32,7 @@ namespace Supermarket.Infrastructure.Repositories
         public async Task<UserResponseDto> AddAsync(UserRequestDto entity)
         {
             var entityMap = _mapper.Map<AppUser>(entity);
-            var createResult = await _userManager.CreateAsync(entityMap, entityMap.PasswordHash);
+            var createResult = await _userManager.CreateAsync(entityMap, entity.Password);
             foreach (var roleId in entity.Roles)
             {
                 var role = await _roleManager.FindByIdAsync(roleId.ToString());
@@ -48,7 +48,7 @@ namespace Supermarket.Infrastructure.Repositories
             return null;
         }
 
-        public async Task<UserResponseDto> UpdateAsync(UserRequestDto entity, int id)
+        public async Task<UserResponseDto> UpdateAsync(UserRequestDto entity, Guid id)
         {
             var existingUser = await _userManager.FindByIdAsync(id.ToString());
             if (existingUser == null)
@@ -94,7 +94,7 @@ namespace Supermarket.Infrastructure.Repositories
             return null;
         }
 
-        public async Task<UserResponseDto> DeleteAsync(int id)
+        public async Task<UserResponseDto> DeleteAsync(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
@@ -107,7 +107,7 @@ namespace Supermarket.Infrastructure.Repositories
             return _mapper.Map<UserResponseDto>(user);
         }
 
-        public async Task<UserResponseDto> GetByIdAsync(int id)
+        public async Task<UserResponseDto> GetByIdAsync(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
