@@ -21,7 +21,7 @@ namespace Supermarket.Application.Services
         private readonly IVariantValueRepository _variantValueRepository;
 
 
-        public ProductServices(IProductRepository productRepository,IMapper mapper,IUnitOfWork unitOfWork,IVariantValueRepository variantValueRepository)
+        public ProductServices(IProductRepository productRepository, IMapper mapper, IUnitOfWork unitOfWork, IVariantValueRepository variantValueRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
@@ -30,14 +30,14 @@ namespace Supermarket.Application.Services
         }
         public async Task<IEnumerable<ProductResponseDto>> GetAllAsync()
         {
-             var result = await _productRepository.GetAllAsync(IncludeConstants.ProductIncludes);
+            var result = await _productRepository.GetAllAsync(IncludeConstants.ProductIncludes);
             var resultMap = _mapper.Map<IEnumerable<ProductResponseDto>>(result);
-             return resultMap;
+            return resultMap;
         }
 
         public async Task<ProductResponseDto> GetByIdAsync(Guid id)
         {
-            var result = await _productRepository.GetSingleByConditionAsync((product) => product.Id ==id,
+            var result = await _productRepository.GetSingleByConditionAsync((product) => product.Id == id,
                 IncludeConstants.ProductIncludes);
             var resultMap = _mapper.Map<ProductResponseDto>(result);
             return resultMap;
@@ -49,32 +49,31 @@ namespace Supermarket.Application.Services
             if (!entity.CategoriesId.IsNullOrEmpty())
             {
                 var resultAddCategory = await _productRepository.AddToCategoryAsync(entityMap, entity.CategoriesId);
+                if (!resultAddCategory)
+                    return false;
             }
             var result = await _productRepository.AddAsync(entityMap, userID);
+            if (result == null)
+                return false;
             if (!entity.Variants.IsNullOrEmpty())
             {
                 Guid parentProductId = entityMap.Id;
                 foreach (var variant in entity.Variants)
                 {
                     var variantMap = _mapper.Map<Product>(variant);
-                    variantMap.ParentId=parentProductId;
-                    if (variantMap != null && entity.CategoriesId != null)
+                    variantMap.ParentId = parentProductId;
+                    if (entity.CategoriesId != null)
                     {
                         if (!entity.CategoriesId.IsNullOrEmpty())
                         {
                             await _productRepository.AddToCategoryAsync(variantMap, entity.CategoriesId);
                         }
                     }
-
-                    if (variantMap != null)
+                    var resultVatiant = await _productRepository.AddAsync(variantMap, userID);
+                    if (resultVatiant == null)
                     {
-                        var resultVatiant = await _productRepository.AddAsync(variantMap, userID);
-                        if (resultVatiant == null)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
-
                     foreach (var variantValue in variant.VariantValue)
                     {
                         var variantValueNew = new VariantValue();
@@ -88,24 +87,27 @@ namespace Supermarket.Application.Services
                     }
                 }
             }
-
             await _unitOfWork.CommitAsync();
-            return result!=null?true:false;
+            return true;
         }
 
         public async Task<bool> UpdateAsync(ProductRequestDto entity, Guid id, Guid userID)
         {
             var entityMap = _mapper.Map<Product>(entity);
-            var result = await _productRepository.UpdateAsync(entityMap,id,"Product", userID);
+            var result = await _productRepository.UpdateAsync(entityMap, id, "Product", userID);
+            if (result == null)
+                return false;
             await _unitOfWork.CommitAsync();
-            return result != null ? true : false;
+            return true;
         }
 
         public async Task<bool> DeleteAsync(Guid id, Guid userID)
         {
             var result = await _productRepository.DeleteAsync(id, userID);
+            if (result == null)
+                return false;
             await _unitOfWork.CommitAsync();
-            return result!=null?true:false;
+            return true;
         }
     }
 }

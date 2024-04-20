@@ -25,33 +25,39 @@ namespace Supermarket.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _roleServices.GetAllAsync();
-            if (result.IsNullOrEmpty())
-                return BadRequest(new ResponseWithList<RoleResponseDto>
-                {
-                    Message = "Không có thông tin gì",
-                    ListData = result
-                }
-                );
-            return Ok(new ResponseWithList<RoleResponseDto>
+            if (result != null)
             {
-                Message = "Lấy thông tin thành công",
-                ListData = result
+                if (result.Any())
+                    return Ok(new ResponseWithListSuccess<RoleResponseDto>
+                    {
+                        Message = "Tìm thấy thành công",
+                        ListData = result
+                    });
+                return Ok(new ResponseWithListSuccess<RoleResponseDto>
+                {
+                    Message = "Không tìm thấy thông tin",
+                    ListData = result
+                });
+            }
+
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
             });
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _roleServices.GetByIdAsync(id);
-            if (result == null)
-                return BadRequest(new ResponseWithData<RoleResponseDto>
+            if (result != null)
+                return Ok(new ResponseWithDataSuccess<RoleResponseDto>
                 {
-                    Message = "Không có thông tin gì",
+                    Message = "Tìm thấy thông tin",
                     Data = result
-                }
-                );
-            return Ok(new ResponseWithData<RoleResponseDto>
+                });
+            return BadRequest(new ResponseWithDataFailure<RoleResponseDto>
             {
-                Message = "Lấy thông tin thành công",
+                Message = "Không tìm thấy thông tin",
                 Data = result
             });
         }
@@ -61,10 +67,13 @@ namespace Supermarket.Api.Controllers
         {
             var result = await _roleServices.CreateAsync(model);
             if (result)
-                return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Tạo thành công!!!"
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Tạo không thành công"
+                Message = "Tạo không thành công!!!"
             });
         }
 
@@ -73,21 +82,29 @@ namespace Supermarket.Api.Controllers
         {
             var result = await _roleServices.DeleteAsync(id);
             if (result)
-                return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Xoá thành công",
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Xoá không thành công"
+                Message = "Xoá thất bại"
             });
         }
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, RoleRequestDto model)
         {
             var result = await _roleServices.UpdateAsync(model, id);
             if (result)
                 return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+            if (result)
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Sửa thành công!!!"
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Sửa không thành công"
+                Message = "Sửa thất bại!!!"
             });
         }
     }

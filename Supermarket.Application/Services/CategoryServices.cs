@@ -43,7 +43,9 @@ public class CategoryServices : ICategoryServices
         if (entity == null)
             return false;
         var attrbute = _mapper.Map<Category>(entity);
-        await _categoryRepository.AddAsync(attrbute, userID);
+        var result=await _categoryRepository.AddAsync(attrbute, userID);
+        if (result == null)
+            return false;
         await _unitOfWork.CommitAsync();
         return true;
     }
@@ -54,14 +56,18 @@ public class CategoryServices : ICategoryServices
             return false;
         var attributeValue = _mapper.Map<Category>(entity);
         var entityType = "Attribute";
-        await _categoryRepository.UpdateAsync(attributeValue, id, entityType, userID);
+        var result = await _categoryRepository.UpdateAsync(attributeValue, id, entityType, userID);
+        if (result == null)
+            return false;
         await _unitOfWork.CommitAsync();
         return true;
     }
 
     public async Task<bool> DeleteAsync(Guid id, Guid userID)
     {
-        await _categoryRepository.DeleteAsync(id, userID);
+        var result = await _categoryRepository.DeleteAsync(id, userID);
+        if (result == null)
+            return false;
         await _unitOfWork.CommitAsync();
         return true;
     }

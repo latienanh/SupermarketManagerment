@@ -44,23 +44,29 @@ namespace Supermarket.Application.Services
         {
             var entityMap = _mapper.Map<Coupon>(entity);
             var result = await _couponRepository.AddAsync(entityMap, userID);
+            if (result == null)
+                return false;
             await _unitOfWork.CommitAsync();
-            return result!=null?true:false;
+            return true;
         }
 
         public async Task<bool> UpdateAsync(CouponRequestDto entity, Guid id, Guid userID)
         {
             var entityMap = _mapper.Map<Coupon>(entity);
             var result = await _couponRepository.UpdateAsync(entityMap,id,"Coupon", userID);
+            if (result == null)
+                return false;
             await _unitOfWork.CommitAsync();
-            return result != null ? true : false;
+            return true;
         }
 
         public async Task<bool> DeleteAsync(Guid id, Guid userID)
         {
             var result = await _couponRepository.DeleteAsync(id, userID);
+            if (result == null)
+                return false;
             await _unitOfWork.CommitAsync();
-            return result != null ? true : false;
+            return true;
         }
     }
 }

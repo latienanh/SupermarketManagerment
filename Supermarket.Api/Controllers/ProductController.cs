@@ -30,38 +30,43 @@ namespace Supermarket.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _productServices.GetAllAsync();
-            if (result.IsNullOrEmpty())
-                return BadRequest(new ResponseWithList<ProductResponseDto>
-                {
-                    Message = "Không có thông tin gì",
-                    ListData = result
-                }
-                );
-            return Ok(new ResponseWithList<ProductResponseDto>
+            if (result != null)
             {
-                Message = "Lấy thông tin thành công",
-                ListData = result
+                if (result.Any())
+                    return Ok(new ResponseWithListSuccess<ProductResponseDto>
+                    {
+                        Message = "Tìm thấy thành công",
+                        ListData = result
+                    });
+                return Ok(new ResponseWithListSuccess<ProductResponseDto>
+                {
+                    Message = "Không tìm thấy thông tin",
+                    ListData = result
+                });
+            }
+
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
             });
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _productServices.GetByIdAsync(id);
-            if (result == null)
-                return BadRequest(new ResponseWithData<ProductResponseDto>
+            if (result != null)
+                return Ok(new ResponseWithDataSuccess<ProductResponseDto>
                 {
-                    Message = "Không có thông tin gì",
+                    Message = "Tìm thấy thông tin",
                     Data = result
-                }
-                );
-            return Ok(new ResponseWithData<ProductResponseDto>
+                });
+            return BadRequest(new ResponseWithDataFailure<ProductResponseDto>
             {
-                Message = "Lấy thông tin thành công",
+                Message = "Không tìm thấy thông tin",
                 Data = result
             });
         }
 
-        [HttpPost]
         [HttpPost]
         public async Task<IActionResult> Create( [FromForm] string dataProductJson, IFormFile? imageProduct, IFormFileCollection? variantImages)
         {
@@ -90,10 +95,13 @@ namespace Supermarket.Api.Controllers
             var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
             var result = await _productServices.CreateAsync(model, userId);
             if (result)
-                return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Tạo thành công!!!"
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Tạo không thành công"
+                Message = "Tạo không thành công!!!"
             });
         }
         [HttpDelete("{id}")]
@@ -102,22 +110,28 @@ namespace Supermarket.Api.Controllers
             var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
             var result = await _productServices.DeleteAsync(id, userId);
             if (result)
-                return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Xoá thành công",
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Xoá không thành công"
+                Message = "Xoá thất bại"
             });
         }
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ProductRequestDto model)
         {
             var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
             var result = await _productServices.UpdateAsync(model, id, userId);
             if (result)
-                return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Sửa thành công!!!"
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Sửa không thành công"
+                Message = "Sửa thất bại!!!"
             });
         }
     }

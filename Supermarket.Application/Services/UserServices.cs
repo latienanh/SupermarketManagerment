@@ -39,7 +39,9 @@ namespace Supermarket.Application.Services
 
         public async Task<bool> CreateAsync(UserRequestDto entity)
         {
-            await _userRepository.AddAsync(entity);
+            var result = await _userRepository.AddAsync(entity);
+            if (result == null)
+                return false;
             await _unitOfWork.CommitAsync();
             return true;
         }
@@ -60,11 +62,6 @@ namespace Supermarket.Application.Services
                 return false;
             await _unitOfWork.CommitAsync();
             return true;
-        }
-
-        public Task<bool> GetLoggedInUserId()
-        {
-            throw new NotImplementedException();
         }
     }
 }

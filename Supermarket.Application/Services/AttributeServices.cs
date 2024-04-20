@@ -43,7 +43,9 @@ public class AttributeServices : IAttributeServices
         if (entity == null)
             return false;
         var attrbute = _mapper.Map<Attribute>(entity);
-        await _attributeRepository.AddAsync(attrbute,userID);
+        var result = await _attributeRepository.AddAsync(attrbute, userID);
+        if (result == null)
+            return false;
         await _unitOfWork.CommitAsync();
         return true;
     }
@@ -54,14 +56,18 @@ public class AttributeServices : IAttributeServices
             return false;
         var attributeValue = _mapper.Map<Attribute>(entity);
         var entityType = "Attribute";
-        var result=await _attributeRepository.UpdateAsync(attributeValue, id, entityType,  userID);
+        var result = await _attributeRepository.UpdateAsync(attributeValue, id, entityType, userID);
+        if (result == null)
+            return false;
         await _unitOfWork.CommitAsync();
         return true;
     }
 
     public async Task<bool> DeleteAsync(Guid id, Guid userID)
     {
-        await _attributeRepository.DeleteAsync(id, userID);
+        var result = await _attributeRepository.DeleteAsync(id, userID);
+        if (result == null)
+            return false;
         await _unitOfWork.CommitAsync();
         return true;
     }

@@ -14,6 +14,7 @@ namespace Supermarket.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserServices _userServices;
@@ -27,37 +28,42 @@ namespace Supermarket.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _userServices.GetAllAsync();
-            if (result.IsNullOrEmpty())
-                return BadRequest(new ResponseWithList<UserResponseDto>
-                    {
-                        Message = "Không có thông tin gì",
-                        ListData = result
-                    }
-                );
-            return Ok(new ResponseWithList<UserResponseDto>
+            if (result != null)
             {
-                Message = "Lấy thông tin thành công",
-                ListData = result
+                if (result.Any())
+                    return Ok(new ResponseWithListSuccess<UserResponseDto>
+                    {
+                        Message = "Tìm thấy thành công",
+                        ListData = result
+                    });
+                return Ok(new ResponseWithListSuccess<UserResponseDto>
+                {
+                    Message = "Không tìm thấy thông tin",
+                    ListData = result
+                });
+            }
+
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
             });
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _userServices.GetByIdAsync(id);
-            if (result == null)
-                return BadRequest(new ResponseWithData<UserResponseDto>
-                    {
-                        Message = "Không có thông tin gì",
-                        Data = result
-                    }
-                );
-            return Ok(new ResponseWithData<UserResponseDto>
+            if (result != null)
+                return Ok(new ResponseWithDataSuccess<UserResponseDto>
+                {
+                    Message = "Tìm thấy thông tin",
+                    Data = result
+                });
+            return BadRequest(new ResponseWithDataFailure<UserResponseDto>
             {
-                Message = "Lấy thông tin thành công",
+                Message = "Không tìm thấy thông tin",
                 Data = result
             });
         }
-        [Authorize]
         [HttpGet]
         [Route("/current")]
         public async Task<IActionResult> GetLoggedInUserId()
@@ -72,16 +78,19 @@ namespace Supermarket.Api.Controllers
         public async Task<IActionResult> Create([FromBody] UserRequestDto model)
         {
             if(model.Password!=model.ConfirmPassword)
-                return BadRequest(new ResponseBase
+                return BadRequest(new ResponseFailure()
             {
                 Message = "Mật khẩu không trùng khớp"
             });
             var result = await _userServices.CreateAsync(model);
             if (result)
-                return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Tạo thành công!!!"
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Tạo không thành công"
+                Message = "Tạo không thành công!!!"
             });
         }
 
@@ -90,21 +99,27 @@ namespace Supermarket.Api.Controllers
         {
             var result = await _userServices.DeleteAsync(id);
             if (result)
-                return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Xoá thành công",
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Xoá không thành công"
+                Message = "Xoá thất bại"
             });
         }
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, UserRequestDto model)
         {
             var result = await _userServices.UpdateAsync(model, id);
             if (result)
-                return Ok(new ResponseBase());
-            return BadRequest(new ResponseBase
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Sửa thành công!!!"
+                });
+            return BadRequest(new ResponseFailure()
             {
-                Message = "Sửa không thành công"
+                Message = "Sửa thất bại!!!"
             });
         }
     }

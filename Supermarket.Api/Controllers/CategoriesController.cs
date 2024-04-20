@@ -27,33 +27,39 @@ public class CategoriesController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _categoryServices.GetAllAsync();
-        if (result.IsNullOrEmpty())
-            return BadRequest(new ResponseWithList<CategoryResponseDto>
-                {
-                    Message = "Không có thông tin gì",
-                    ListData = result
-                }
-            );
-        return Ok(new ResponseWithList<CategoryResponseDto>
+        if (result != null)
         {
-            Message = "Lấy thông tin thành công",
-            ListData = result
+            if (result.Any())
+                return Ok(new ResponseWithListSuccess<CategoryResponseDto>
+                {
+                    Message = "Tìm thấy thành công",
+                    ListData = result
+                });
+            return Ok(new ResponseWithListSuccess<CategoryResponseDto>
+            {
+                Message = "Không tìm thấy thông tin",
+                ListData = result
+            });
+        }
+
+        return BadRequest(new ResponseFailure()
+        {
+            Message = "Lỗi",
         });
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _categoryServices.GetByIdAsync(id);
-        if (result == null)
-            return BadRequest(new ResponseWithData<CategoryResponseDto>
-                {
-                    Message = "Không có thông tin gì",
-                    Data = result
-                }
-            );
-        return Ok(new ResponseWithData<CategoryResponseDto>
+        if (result != null)
+            return Ok(new ResponseWithDataSuccess<CategoryResponseDto>
+            {
+                Message = "Tìm thấy thông tin",
+                Data = result
+            });
+        return BadRequest(new ResponseWithDataFailure<CategoryResponseDto>
         {
-            Message = "Lấy thông tin thành công",
+            Message = "Không tìm thấy thông tin",
             Data = result
         });
     }
@@ -64,10 +70,13 @@ public class CategoriesController : ControllerBase
         var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
         var result = await _categoryServices.CreateAsync(model, userId);
         if (result)
-            return Ok(new ResponseBase());
-        return BadRequest(new ResponseBase
+            return Ok(new ResponseSuccess()
+            {
+                Message = "Tạo thành công!!!"
+            });
+        return BadRequest(new ResponseFailure()
         {
-            Message = "Tạo không thành công"
+            Message = "Tạo không thành công!!!"
         });
     }
 
@@ -77,22 +86,28 @@ public class CategoriesController : ControllerBase
         var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
         var result = await _categoryServices.DeleteAsync(id, userId);
         if (result)
-            return Ok(new ResponseBase());
-        return BadRequest(new ResponseBase
+            return Ok(new ResponseSuccess()
+            {
+                Message = "Xoá thành công",
+            });
+        return BadRequest(new ResponseFailure()
         {
-            Message = "Xoá không thành công"
+            Message = "Xoá thất bại"
         });
     }
-    [HttpPut]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, CategoryRequestDto model)
     {
         var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
         var result = await _categoryServices.UpdateAsync(model, id, userId);
         if (result)
-            return Ok(new ResponseBase());
-        return BadRequest(new ResponseBase
+            return Ok(new ResponseSuccess()
+            {
+                Message = "Sửa thành công!!!"
+            });
+        return BadRequest(new ResponseFailure()
         {
-            Message = "Sửa không thành công"
+            Message = "Sửa thất bại!!!"
         });
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace Supermarket.Application.ModelResponses;
 
-public class ResponseWithList<T> : ResponseBase
+public class ResponseWithListSuccess<T> : ResponseSuccess
 {
-    public ResponseWithList()
+    public ResponseWithListSuccess()
     {
         ListData = new List<T>();
     }

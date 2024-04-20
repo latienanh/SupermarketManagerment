@@ -45,7 +45,9 @@ namespace Supermarket.Application.Services
         public async Task<bool> CreateAsync(RoleRequestDto entity)
         {
             var entityMap = _mapper.Map<IdentityRole<Guid>>(entity);
-            await _roleRepository.AddAsync(entityMap);
+            var result = await _roleRepository.AddAsync(entityMap);
+            if (result == null)
+                return false;
             await _unitOfWork.CommitAsync();
             return true;
         }

@@ -1,40 +1,35 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
-using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
-using System.Security.Claims;
 
 namespace Supermarket.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class CouponController : ControllerBase
+    public class CustomerController : ControllerBase
     {
-        private readonly ICouponServices _couponServices;
-        public CouponController(ICouponServices couponServices)
+        public readonly ICustomerServices _customerServices;
+        public CustomerController(ICustomerServices customerServices)
         {
-            _couponServices = couponServices;
+            _customerServices=customerServices;
         }
-
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _couponServices.GetAllAsync();
+            var result = await _customerServices.GetAllAsync();
             if (result != null)
             {
                 if (result.Any())
-                    return Ok(new ResponseWithListSuccess<CouponResposeDto>
+                    return Ok(new ResponseWithListSuccess<CustomerResponseDto>
                     {
                         Message = "Tìm thấy thành công",
                         ListData = result
                     });
-                return Ok(new ResponseWithListSuccess<CouponResposeDto>
+                return Ok(new ResponseWithListSuccess<CustomerResponseDto>
                 {
                     Message = "Không tìm thấy thông tin",
                     ListData = result
@@ -45,18 +40,20 @@ namespace Supermarket.Api.Controllers
             {
                 Message = "Lỗi",
             });
+
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _couponServices.GetByIdAsync(id);
+            var result = await _customerServices.GetByIdAsync(id);
             if (result != null)
-                return Ok(new ResponseWithDataSuccess<CouponResposeDto>
+                return Ok(new ResponseWithDataSuccess<CustomerResponseDto>
                 {
                     Message = "Tìm thấy thông tin",
                     Data = result
                 });
-            return BadRequest(new ResponseWithDataFailure<CouponResposeDto>
+            return BadRequest(new ResponseWithDataFailure<CustomerResponseDto>
             {
                 Message = "Không tìm thấy thông tin",
                 Data = result
@@ -64,10 +61,10 @@ namespace Supermarket.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CouponRequestDto model)
+        public async Task<IActionResult> Create([FromBody] CustomerRequestDto entity)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _couponServices.CreateAsync(model, userId);
+            var result = await _customerServices.CreateAsync(entity, userId);
             if (result)
                 return Ok(new ResponseSuccess()
                 {
@@ -79,26 +76,11 @@ namespace Supermarket.Api.Controllers
             });
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _couponServices.DeleteAsync(id, userId);
-            if (result)
-                return Ok(new ResponseSuccess()
-                {
-                    Message = "Xoá thành công",
-                });
-            return BadRequest(new ResponseFailure()
-            {
-                Message = "Xoá thất bại"
-            });
-        }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, CouponRequestDto model)
+        public async Task<IActionResult> Update(CustomerRequestDto entity, Guid id)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _couponServices.UpdateAsync(model, id, userId);
+            var result = await _customerServices.UpdateAsync(entity, id, userId);
             if (result)
                 return Ok(new ResponseSuccess()
                 {
@@ -109,6 +91,21 @@ namespace Supermarket.Api.Controllers
                 Message = "Sửa thất bại!!!"
             });
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
+            var result = await _customerServices.DeleteAsync(id, userId);
+            if (result)
+                return Ok(new ResponseSuccess()
+                {
+                    Message = "Xoá thành công",
+                });
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Xoá thất bại"
+            });
+        }
     }
 }
-
