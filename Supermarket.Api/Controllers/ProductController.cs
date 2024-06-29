@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
-using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
 
 namespace Supermarket.Api.Controllers
 {
@@ -50,6 +46,53 @@ namespace Supermarket.Api.Controllers
                 Message = "Lỗi",
             });
         }
+        [HttpGet("GetPaging")]
+        public async Task<IActionResult> GetPaging(int index, int size)
+        {
+            var result = await _productServices.getPagingAsync(index, size);
+            if (result != null)
+            {
+                if (result.Any())
+                    return Ok(new ResponseWithListSuccess<ProductsPagingResponseDto>
+                    {
+                        Message = "Tìm thấy thành công",
+                        ListData = result
+                    });
+                return Ok(new ResponseWithListSuccess<ProductsPagingResponseDto>
+                {
+                    Message = "Không tìm thấy thông tin",
+                    ListData = result
+                });
+            }
+
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
+            });
+        }
+        [HttpGet("TotalPaging")]
+        public async Task<IActionResult> GetTotalPaging(int size)
+        {
+            var result = await _productServices.getTotalPagingTask(size);
+            if (result != null)
+            {
+                if (result > 0)
+                    return Ok(new ResponseWithDataSuccess<int>()
+                    {
+                        Message = "Thành công",
+                        Data = result
+                    });
+                return Ok(new ResponseWithDataFailure<int>()
+                {
+                    Message = "Thất bại",
+                    Data = result
+                });
+            }
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
+            });
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -68,27 +111,50 @@ namespace Supermarket.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create( [FromForm] string dataProductJson, IFormFile? imageProduct, IFormFileCollection? variantImages)
+        public async Task<IActionResult> Create([FromForm] ProductRequestDto model)
         {
-            var model = JsonConvert.DeserializeObject<ProductRequestDto>(dataProductJson);
+            //var model = JsonConvert.DeserializeObject<ProductRequestDto>(dataProductJson);
             var folderProduct = "images/products/";
-            if (imageProduct != null)
+
+
+            var productImagePath = await _imageServices.SaveImageAsync(folderProduct, model.Image);
+            if (productImagePath == null)
             {
-                var productImagePath = await _imageServices.SaveImageAsync(folderProduct,imageProduct);
-                if (productImagePath == null)
-                {
-                    model.ProductImage = "/images/default-image.jpg";
-                }
-                model.ProductImage = productImagePath;
+                model.PathImage = "/images/default-image.jpg";
             }
+            else if (!productImagePath.isSuccess)
+            {
+                return BadRequest(new ResponseFailure()
+                {
+                    Message = productImagePath.Message,
+                });
+            }
+            else
+            {
+                model.PathImage = productImagePath.Data;
+            }
+
+
             if (model.Variants != null)
             {
-                for (int i = 0; i < model.Variants.Count(); i++)
+                foreach (var variant in model.Variants)
                 {
-                    var variantImagePath = await _imageServices.SaveImageAsync(folderProduct, variantImages[i]);
-                    if(variantImagePath == null)
-                        model.Variants.ElementAt(i).ProductImage = "/images/default-image.jpg";
-                    model.Variants.ElementAt(i).ProductImage=variantImagePath;
+                    var variantImagePath = await _imageServices.SaveImageAsync(folderProduct, variant.Image);
+                    if (variantImagePath == null)
+                    {
+                        variant.PathImage = "/images/default-image.jpg";
+                    }
+                    else if (!variantImagePath.isSuccess)
+                    {
+                        return BadRequest(new ResponseFailure()
+                        {
+                            Message = variantImagePath.Message,
+                        });
+                    }
+                    else
+                    {
+                        variant.PathImage = variantImagePath.Data;
+                    }
                 }
             }
 
@@ -120,8 +186,25 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, ProductRequestDto model)
+        public async Task<IActionResult> Update(Guid id, [FromForm] ProductRequestDto model)
         {
+            var folderProduct = "images/products/";
+            var productImagePath = await _imageServices.SaveImageAsync(folderProduct, model.Image);
+            if (productImagePath == null)
+            {
+                model.PathImage = null;
+            }
+            else if (!productImagePath.isSuccess)
+            {
+                return BadRequest(new ResponseFailure()
+                {   
+                    Message = productImagePath.Message,
+                });
+            }
+            else
+            {
+                model.PathImage = productImagePath.Data;
+            }
             var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
             var result = await _productServices.UpdateAsync(model, id, userId);
             if (result)

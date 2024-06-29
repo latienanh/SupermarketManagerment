@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Supermarket.Application.DTOs.Common;
+﻿using Supermarket.Application.DTOs.Common;
 
 namespace Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos
 {
     public class AttributeResponseDto:BaseDTO
     {
-        public string? AttributeName { get; set; }
+        public string? Name { get; set; }
     }
 }

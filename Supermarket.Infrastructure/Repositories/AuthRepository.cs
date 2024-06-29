@@ -8,8 +8,10 @@ using Supermarket.Application.DTOs.Auth.RequestDtos;
 using Supermarket.Application.DTOs.Auth.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
+using Supermarket.Domain.Entities.Common;
 using Supermarket.Domain.Entities.Identity;
 using Supermarket.Domain.Entities.Token;
+using Supermarket.Infrastructure.DbFactories;
 using Supermarket.Infrastructure.Settings;
 
 namespace Supermarket.Infrastructure.Repositories;
@@ -20,12 +22,14 @@ public class AuthRepository : IAuthRepository
     private readonly IMapper _mapper;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly SuperMarketDbContext _supermarketDbContext;
     private readonly ITokenServices _tokenServices;
     private readonly UserManager<AppUser> _userManager;
-
+    private readonly IDbFactory _dbFactory;
+    private SuperMarketDbContext _dataContext;
+    protected SuperMarketDbContext _supermarketDbContext => _dataContext ?? (_dataContext = _dbFactory.Init());
     public AuthRepository(
         UserManager<AppUser> userManager,
+        IDbFactory dbFactory,
         SignInManager<AppUser> signInManager,
         JsonWebTokenSettings jsonWebTokenSettings,
         RoleManager<IdentityRole<Guid>> roleManager,
@@ -34,70 +38,86 @@ public class AuthRepository : IAuthRepository
         IMapper mapper)
     {
         _userManager = userManager;
+        _dbFactory = dbFactory;
         _signInManager = signInManager;
         _jsonWebTokenSettings = jsonWebTokenSettings;
         _roleManager = roleManager;
-        _supermarketDbContext = supermarketDbContext;
         _tokenServices = tokenServices;
         _mapper = mapper;
     }
 
-    public async Task<LoginResponseDtos> LoginAsync(LoginBasicRequestDtos loginBasicRequestDtos)
+    public async Task<LoginResponseDtos?> LoginAsync(LoginBasicRequestDtos loginBasicRequestDtos)
     {
         var user = await _userManager.FindByNameAsync(loginBasicRequestDtos.UserName);
-        var passwordValid = await _userManager.CheckPasswordAsync(user,loginBasicRequestDtos.Password);
+        if (user == null)
+            return null;
+        var passwordValid = await _userManager.CheckPasswordAsync(user, loginBasicRequestDtos.Password);
         if (user == null || !passwordValid)
-            return new LoginResponseDtos()
-            {
-                AccessToken = string.Empty
-            };
+            return null;
         var token = await _tokenServices.GenerateAccessTokenAsync(user);
-
-        var refreshTokenNew = new RefreshToken
+        var refreshTokenDatabase = await _supermarketDbContext.RefreshTokens.FirstOrDefaultAsync(u => u.UserId == user.Id);
+        if (refreshTokenDatabase == null)
         {
-            Token = await _tokenServices.GenerateRefreshTokenAsync(),
-            Expriaton = DateTime.UtcNow.AddDays(30),//30 ngay
-            UserId = user.Id
-        };
-        var refeshTokenDatabase = await _supermarketDbContext.RefreshTokens.FirstOrDefaultAsync(u => u.UserId == user.Id);
-        if (refeshTokenDatabase == null)
-        {
+            var refreshTokenNew = new RefreshToken
+            {
+                Token = await _tokenServices.GenerateRefreshTokenAsync(),
+                Expriaton = DateTime.UtcNow.AddDays(30),//30 ngay
+                UserId = user.Id
+            };
             await _tokenServices.CreateRefreshTokenAsync(refreshTokenNew);
             return new LoginResponseDtos()
             {
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-                ExpirationAT = token.ValidTo,
+            
                 RefreshToken = refreshTokenNew.Token,
-                ExpirationRT = refreshTokenNew.Expriaton
+              
             };
         }
 
-        if (refeshTokenDatabase.Expriaton < DateTime.UtcNow)
-            await _tokenServices.UpdateRefreshTokenAsync(refeshTokenDatabase,refeshTokenDatabase.Id);
+        if (refreshTokenDatabase.Expriaton < DateTime.UtcNow)
+        {
+            var refreshTokenNew = new RefreshToken
+            {
+                Token = await _tokenServices.GenerateRefreshTokenAsync(),
+                Expriaton = DateTime.UtcNow.AddDays(30),//30 ngay
+                UserId = user.Id
+            };
+            await _tokenServices.UpdateRefreshTokenAsync(refreshTokenNew, refreshTokenDatabase.Id);
+            return new LoginResponseDtos()
+            {
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+              
+                RefreshToken = refreshTokenNew.Token,
+         
+            };
+        }
+
         return new LoginResponseDtos()
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-            ExpirationAT = token.ValidTo,
-            RefreshToken = refeshTokenDatabase.Token,
-            ExpirationRT = refeshTokenDatabase.Expriaton
+       
+            RefreshToken = refreshTokenDatabase.Token,
+     
         };
+
     }
 
-    public async Task<IdentityResult> SignUpAsync(UserRequestDto userRequestDtos)
+    public async Task<IdentityResult> SignUpAsync(SignUpRequestDto signUpRequestDto)
     {
-        if (userRequestDtos.Password != userRequestDtos.ConfirmPassword)
-        {
-            return IdentityResult.Failed(new IdentityError { Code = "PasswordConfirmation", Description = "Passwords không giống." });
-        }
-        var user = _mapper.Map<AppUser>(userRequestDtos);
-        user.PasswordHash = userRequestDtos.Password;
+        //if (signUpRequestDto.Password != signUpRequestDto.ConfirmPassword)
+        //{
+        //    return IdentityResult.Failed(new IdentityError { Code = "PasswordConfirmation", Description = "Passwords không giống." });
+        //}
+        var user = _mapper.Map<AppUser>(signUpRequestDto);
+        user.Image = signUpRequestDto.PathImage;
+        user.PasswordHash = signUpRequestDto.Password;
         var result = await _userManager.CreateAsync(user, user.PasswordHash);
         if (result.Succeeded)
         {
-            if (!await _roleManager.RoleExistsAsync("Salesperson"))
-                await _roleManager.CreateAsync(new IdentityRole<Guid>("Salesperson"));
+            if (!await _roleManager.RoleExistsAsync(RoleBase.Cashier))
+                await _roleManager.CreateAsync(new IdentityRole<Guid>(RoleBase.Cashier));
 
-            await _userManager.AddToRoleAsync(user, "Salesperson");
+            await _userManager.AddToRoleAsync(user, RoleBase.Cashier);
             return IdentityResult.Success;
         }
         return result;
@@ -151,9 +171,7 @@ public class AuthRepository : IAuthRepository
             return new LoginResponseDtos()
             {
                 AccessToken = AccessToken,
-                ExpirationAT = token.ValidTo,
                 RefreshToken = storeRefeshToken.Token,
-                ExpirationRT = storeRefeshToken.Expriaton
             };
         }
         catch (Exception e)
@@ -161,6 +179,21 @@ public class AuthRepository : IAuthRepository
             Console.WriteLine(e);
             return null;
         }
+    }
+
+    public async Task<bool> LogOut(Guid id)
+    {
+        var currentTime = DateTime.UtcNow;
+        var refreshToken = await _supermarketDbContext.RefreshTokens.FirstOrDefaultAsync((r) => r.UserId == id);
+        if (refreshToken == null || refreshToken.Expriaton< currentTime)
+        {
+            // Refresh token không tồn tại hoặc đã hết hạn, không cần xóa
+            return false;
+        }
+        _supermarketDbContext.RefreshTokens.Remove(refreshToken);
+        //await _supermarketDbContext.SaveChangesAsync();
+        return true;
+
     }
 
     public DateTime ConvertUtcTime(long utcTime)

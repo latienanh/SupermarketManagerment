@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
+using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
 
@@ -13,9 +13,12 @@ namespace Supermarket.Api.Controllers
     public class CustomerController : ControllerBase
     {
         public readonly ICustomerServices _customerServices;
+        private readonly ICustomerRepository _customerRepository;
+
         public CustomerController(ICustomerServices customerServices)
         {
             _customerServices=customerServices;
+ 
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -43,6 +46,53 @@ namespace Supermarket.Api.Controllers
 
         }
 
+        [HttpGet("GetPaging")]
+        public async Task<IActionResult> GetPaging(int index, int size)
+        {
+            var result = await _customerServices.getPagingAsync(index, size);
+            if (result != null)
+            {
+                if (result.Any())
+                    return Ok(new ResponseWithListSuccess<CustomerResponseDto>
+                    {
+                        Message = "Tìm thấy thành công",
+                        ListData = result
+                    });
+                return Ok(new ResponseWithListSuccess<CustomerResponseDto>
+                {
+                    Message = "Không tìm thấy thông tin",
+                    ListData = result
+                });
+            }
+
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
+            });
+        }
+        [HttpGet("TotalPaging")]
+        public async Task<IActionResult> GetTotalPaging(int size)
+        {
+            var result = await _customerServices.getTotalPagingTask(size);
+            if (result != null)
+            {
+                if (result > 0)
+                    return Ok(new ResponseWithDataSuccess<int>()
+                    {
+                        Message = "Thành công",
+                        Data = result
+                    });
+                return Ok(new ResponseWithDataFailure<int>()
+                {
+                    Message = "Thất bại",
+                    Data = result
+                });
+            }
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
+            });
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -107,5 +157,6 @@ namespace Supermarket.Api.Controllers
                 Message = "Xoá thất bại"
             });
         }
+
     }
 }

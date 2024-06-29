@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using Supermarket.Application.DTOs.SupermarketDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.UnitOfWork;
 using Supermarket.Domain.Entities.SupermarketEntities;
-using System;
 
 namespace Supermarket.Application.Services;
 
@@ -27,7 +25,7 @@ public class CategoryServices : ICategoryServices
     public async Task<IEnumerable<CategoryResponseDto>> GetAllAsync()
     {
         var result = await _categoryRepository.GetAllAsync();
-        var resultMap = _mapper.Map<ICollection<CategoryResponseDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<CategoryResponseDto>>(result);
         return resultMap;
     }
 
@@ -42,8 +40,9 @@ public class CategoryServices : ICategoryServices
     {
         if (entity == null)
             return false;
-        var attrbute = _mapper.Map<Category>(entity);
-        var result=await _categoryRepository.AddAsync(attrbute, userID);
+        var category = _mapper.Map<Category>(entity);
+        category.Image = entity.PathImage;
+        var result=await _categoryRepository.AddAsync(category, userID);
         if (result == null)
             return false;
         await _unitOfWork.CommitAsync();
@@ -54,9 +53,13 @@ public class CategoryServices : ICategoryServices
     {
         if (entity == null)
             return false;
-        var attributeValue = _mapper.Map<Category>(entity);
-        var entityType = "Attribute";
-        var result = await _categoryRepository.UpdateAsync(attributeValue, id, entityType, userID);
+        var categoryUpdate = _mapper.Map<Category>(entity);
+        if (entity.PathImage != null)
+        {
+                categoryUpdate.Image = entity.PathImage;
+        }
+        var entityType = "Category";
+        var result = await _categoryRepository.UpdateAsyncCategory(categoryUpdate, id, entityType, userID);
         if (result == null)
             return false;
         await _unitOfWork.CommitAsync();
@@ -70,5 +73,28 @@ public class CategoryServices : ICategoryServices
             return false;
         await _unitOfWork.CommitAsync();
         return true;
+    }
+
+    public async Task<IEnumerable<CategoriesPagingResponseDto>> getPagingAsync( int index, int size)
+    {
+        var result = await _categoryRepository.GetMultiPagingAsync(x=>x.IsDelete==false && x.ParentId == null, index,size);
+        var resultChildren = await _categoryRepository.GetMultiPagingAsync(x => x.IsDelete == false && x.ParentId != null);
+        var resultMap = _mapper.Map<IEnumerable<CategoriesPagingResponseDto>>(result);
+        foreach (var categoryParent in resultMap )
+        {
+            var children = resultChildren.Where(x => x.ParentId == categoryParent.id);
+            if (children.Any())
+            {
+                categoryParent.CategoryChildren = _mapper.Map<IEnumerable<CategoryResponseDto>>(children);
+            }
+        }
+        return resultMap;
+    }
+
+    public async Task<int> getTotalPagingTask(int size)
+    {
+        var result = await _categoryRepository.CountAsync(x => x.IsDelete == false&&x.ParentId==null);
+        decimal total = Math.Ceiling((decimal)result / size);
+        return (int)total;
     }
 }

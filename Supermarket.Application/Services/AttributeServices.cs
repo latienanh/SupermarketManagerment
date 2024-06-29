@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using Supermarket.Application.DTOs.SupermarketDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.UnitOfWork;
-using Supermarket.Domain.Entities.SupermarketEntities;
 using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 
 namespace Supermarket.Application.Services;
@@ -71,4 +69,21 @@ public class AttributeServices : IAttributeServices
         await _unitOfWork.CommitAsync();
         return true;
     }
+
+    public async Task<IEnumerable<AttributeResponseDto>> getPagingAsync(int index, int size)
+    {
+        var result = await _attributeRepository.GetMultiPagingAsync(x => x.IsDelete == false , index, size);
+        var resultMap = _mapper.Map<IEnumerable<AttributeResponseDto>>(result);
+        return resultMap;
+    }
+
+    public async Task<int> getTotalPagingTask(int size)
+    {
+        var result = await _attributeRepository.CountAsync(x => x.IsDelete == false);
+        decimal total = Math.Ceiling((decimal)result / size);
+        return (int)total;
+    }
+    
+
+ 
 }

@@ -1,12 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Supermarket.Application.DTOs.Auth.RequestDtos;
 using Supermarket.Application.DTOs.Auth.ResponseDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
-using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
 
@@ -14,14 +11,16 @@ namespace Supermarket.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "admin")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserServices _userServices;
+        private readonly IImageServices _imageServices;
 
-        public UserController(IUserServices userServices)
+        public UserController(IUserServices userServices,IImageServices imageServices)
         {
             _userServices=userServices;
+            _imageServices = imageServices;
         }
 
         [HttpGet]
@@ -75,13 +74,32 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] UserRequestDto model)
+        public async Task<IActionResult> Create([FromForm] UserRequestDto model)
         {
+
             if(model.Password!=model.ConfirmPassword)
                 return BadRequest(new ResponseFailure()
             {
                 Message = "Mật khẩu không trùng khớp"
             });
+
+            var folderUsers = "images/users/";
+                var userImagePath = await _imageServices.SaveImageAsync(folderUsers, model.Avatar);
+                if (userImagePath == null)
+                {
+                    model.PathImage = "/images/default-image.jpg";
+                }
+                else if (!userImagePath.isSuccess)
+                {
+                    return BadRequest(new ResponseFailure()
+                    {
+                        Message = userImagePath.Message,
+                    });
+                }
+                else
+                {
+                    model.PathImage = userImagePath.Data;
+                }
             var result = await _userServices.CreateAsync(model);
             if (result)
                 return Ok(new ResponseSuccess()
@@ -98,8 +116,7 @@ namespace Supermarket.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _userServices.DeleteAsync(id);
-            if (result)
-                return Ok(new ResponseSuccess()
+            if (result) return Ok(new ResponseSuccess()
                 {
                     Message = "Xoá thành công",
                 });
@@ -109,8 +126,25 @@ namespace Supermarket.Api.Controllers
             });
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, UserRequestDto model)
+        public async Task<IActionResult> Update(Guid id,[FromForm] UserUpdateRequestDto model)
         {
+            var folderUsers = "images/users/";
+                var userImagePath = await _imageServices.SaveImageAsync(folderUsers, model.Avatar);
+                if (userImagePath == null)
+                {
+                    model.PathImage = null;
+                }
+                else if (!userImagePath.isSuccess)
+                {
+                    return BadRequest(new ResponseFailure()
+                    {
+                        Message = userImagePath.Message,
+                    });
+                }
+                else
+                {
+                    model.PathImage = userImagePath.Data;
+                }
             var result = await _userServices.UpdateAsync(model, id);
             if (result)
                 return Ok(new ResponseSuccess()

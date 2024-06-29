@@ -20,7 +20,7 @@ public interface IEntityRepository<T> where T : BaseDomain
     Task<bool> DeleteMultiAsync(Expression<Func<T, bool>> where);
 
     // Get an entity by int id
-    Task<T?> GetSingleByIdAsync(Guid id);
+    Task<T?> GetSingleByIdAsync(Guid? id);
 
     Task<T> GetSingleByConditionAsync(Expression<Func<T, bool>> expression, string[] includes = null);
 
@@ -28,7 +28,7 @@ public interface IEntityRepository<T> where T : BaseDomain
 
     Task<IEnumerable<T>> GetMultiAsync(Expression<Func<T, bool>> predicate, string[] includes = null);
 
-    Task<IEnumerable<T>> GetMultiPagingAsync(Expression<Func<T, bool>> predicate, int total, int index = 0,
+    Task<IEnumerable<T>> GetMultiPagingAsync(Expression<Func<T, bool>> predicate, int index = 0,
         int size = 50,
         string[] includes = null);
 

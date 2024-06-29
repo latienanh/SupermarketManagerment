@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Supermarket.Application.ModelResponses;
 
 namespace Supermarket.Application.IServices
 {
     public interface IImageServices
     {
-        Task<string> SaveImageAsync(string folderPath,IFormFile? file);
+        Task<ResponseImage> SaveImageAsync(string folderPath,IFormFile? file);
     }
 }

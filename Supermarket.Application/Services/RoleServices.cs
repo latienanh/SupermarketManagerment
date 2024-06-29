@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.UnitOfWork;
-using Supermarket.Domain.Entities.Identity;
 
 namespace Supermarket.Application.Services
 {

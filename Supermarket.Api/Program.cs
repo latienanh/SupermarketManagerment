@@ -5,13 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Supermarket.Api.Middleware;
 using Supermarket.Application;
-using Supermarket.Application.IRepositories;
-using Supermarket.Application.IServices;
 using Supermarket.Application.Profiles;
-using Supermarket.Application.Services;
 using Supermarket.Domain.Entities.Identity;
 using Supermarket.Infrastructure;
-using Supermarket.Infrastructure.Repositories;
 
 namespace Supermarket.Api;
 
@@ -75,6 +71,7 @@ public class Program
                         .WithHeaders("Content-Type"); // Thêm tiêu đề Content-Type vào danh sách các tiêu đề cho phép
                 });
         });
+
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(option =>
@@ -144,6 +141,10 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        app.UseStaticFiles();
+     
+
+        
 
         app.UseHttpsRedirection();
         
@@ -152,9 +153,6 @@ public class Program
         app.UseMiddleware<Custom401ReponseMiddleware>();
         app.UseMiddleware<Custom403ResponseMiddleware>();
         app.UseAuthorization();
-       
-
-
         app.MapControllers();
         app.UseMiddleware<HandleExceptionMiddleware>();
         app.Run();

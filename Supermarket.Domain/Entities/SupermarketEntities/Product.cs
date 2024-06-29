@@ -1,5 +1,4 @@
 ﻿using Supermarket.Domain.Entities.Common;
-using Supermarket.Domain.Entities.Identity;
 
 namespace Supermarket.Domain.Entities.SupermarketEntities;
 
@@ -15,12 +14,11 @@ public class Product : BaseDomain
         Categories = new HashSet<Category>();
         Coupons = new HashSet<Coupon>();
     }
-    
-    
     public string? BarCode { get; set; }
-    public string? ProductName { get; set; }
-    public string? ProductSlug { get; set; }
-    public string? ProductImage { get; set; }
+    public string? Name { get; set; }
+    public string? Slug { get; set; }
+    public string? Image { get; set; }
+    public double? Price { get; set; }
     public string? Describe { get; set; }
     public Guid? ParentId { get; set; }
     public int? Quantity { get; set; }

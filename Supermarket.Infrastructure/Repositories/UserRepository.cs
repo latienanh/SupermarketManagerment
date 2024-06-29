@@ -1,23 +1,17 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.IdentityModel.Tokens;
 using Supermarket.Application.DTOs.Auth.RequestDtos;
 using Supermarket.Application.DTOs.Auth.ResponseDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Domain.Entities.Identity;
-using Supermarket.Infrastructure.DbFactories;
 
 namespace Supermarket.Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository<UserRequestDto, UserResponseDto>
+    public class UserRepository : IUserRepository<UserRequestDto,UserUpdateRequestDto, UserResponseDto>
     {
         public UserManager<AppUser> _userManager;
         public RoleManager<IdentityRole<Guid>> _roleManager;
@@ -32,6 +26,7 @@ namespace Supermarket.Infrastructure.Repositories
         public async Task<UserResponseDto> AddAsync(UserRequestDto entity)
         {
             var entityMap = _mapper.Map<AppUser>(entity);
+            entityMap.Image = entity.PathImage;
             var createResult = await _userManager.CreateAsync(entityMap, entity.Password);
             foreach (var roleId in entity.Roles)
             {
@@ -48,7 +43,7 @@ namespace Supermarket.Infrastructure.Repositories
             return null;
         }
 
-        public async Task<UserResponseDto> UpdateAsync(UserRequestDto entity, Guid id)
+        public async Task<UserResponseDto> UpdateAsync(UserUpdateRequestDto entity, Guid id)
         {
             var existingUser = await _userManager.FindByIdAsync(id.ToString());
             if (existingUser == null)
@@ -57,34 +52,43 @@ namespace Supermarket.Infrastructure.Repositories
             }
             existingUser.Email = entity.Email;
             existingUser.PhoneNumber = entity.PhoneNumber;
+            if (entity.PathImage != null)
+            {
+                existingUser.Image = entity.PathImage;
+            }
 
+            existingUser.FirstName = entity.FirstName;
+            existingUser.LastName = entity.LastName;
             var updateResult = await _userManager.UpdateAsync(existingUser);
+            if (!entity.Roles.IsNullOrEmpty())
+            {
+                var currentRoles = await _userManager.GetRolesAsync(existingUser); // Get current roles
+                foreach (var roleId in entity.Roles)
+                {
+                    var role = await _roleManager.FindByIdAsync(roleId.ToString());
+                    if (role == null)
+                    {
+                        continue; // Skip invalid roles
+                    }
 
+                    if (!currentRoles.Contains(role.Name))
+                    {
+                        await _userManager.AddToRoleAsync(existingUser, role.Name);
+                    }
+                    else
+                    {
+                        currentRoles.Remove(role.Name); // Remove from track of remaining roles
+                    }
+                }
+
+                // Remove roles that are no longer assigned
+                foreach (var roleName in currentRoles)
+                {
+                    await _userManager.RemoveFromRoleAsync(existingUser, roleName);
+                }
+            }
             // Manage roles efficiently
-            var currentRoles = await _userManager.GetRolesAsync(existingUser); // Get current roles
-            foreach (var roleId in entity.Roles)
-            {
-                var role = await _roleManager.FindByIdAsync(roleId.ToString());
-                if (role == null)
-                {
-                    continue; // Skip invalid roles
-                }
 
-                if (!currentRoles.Contains(role.Name))
-                {
-                    await _userManager.AddToRoleAsync(existingUser, role.Name);
-                }
-                else
-                {
-                    currentRoles.Remove(role.Name); // Remove from track of remaining roles
-                }
-            }
-
-            // Remove roles that are no longer assigned
-            foreach (var roleName in currentRoles)
-            {
-                await _userManager.RemoveFromRoleAsync(existingUser, roleName);
-            }
 
             if (updateResult.Succeeded)
             {

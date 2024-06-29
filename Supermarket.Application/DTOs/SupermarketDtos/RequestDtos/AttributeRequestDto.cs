@@ -2,5 +2,5 @@
 
 public class AttributeRequestDto
 {
-    public string? AttributeName { get; set; }
+    public string? Name { get; set; }
 }

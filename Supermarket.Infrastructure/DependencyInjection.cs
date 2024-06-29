@@ -1,19 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Supermarket.Application.DTOs.Auth.RequestDtos;
 using Supermarket.Application.DTOs.Auth.ResponseDtos;
 using Supermarket.Application.IRepositories;
-using Supermarket.Application.IServices;
-using Supermarket.Application.Services;
 using Supermarket.Application.UnitOfWork;
-using Supermarket.Domain.Entities.Identity;
 using Supermarket.Infrastructure.DbFactories;
 using Supermarket.Infrastructure.Repositories;
 using Supermarket.Infrastructure.Settings;
 using Supermarket.Infrastructure.UnitOfWorks;
-using System.Reflection;
+using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 
 namespace Supermarket.Infrastructure;
 
@@ -48,9 +44,17 @@ public static class DependencyInjection
         service.AddScoped<IAuthRepository, AuthRepository>();
         service.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         service.AddScoped<IRoleRepository, RoleRepository>();
-        service.AddScoped<IUserRepository<UserRequestDto,UserResponseDto>, UserRepository>();
+        service.AddScoped<IUserRepository<UserRequestDto,UserUpdateRequestDto,UserResponseDto>, UserRepository>();
         service.AddScoped<IProductRepository, ProductRepository>();
         service.AddScoped<ICouponRepository, CouponRepository>();
+        service.AddScoped<ICustomerRepository, CustomerRepository>();
+        service.AddScoped<IMemberShipTypeRepository, MemberShipTypeRepository>();
+        service.AddScoped<ISupplierRepository, SupplierRepository>();
+        service.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        service.AddScoped<IStockInRepository, StockInRepository>();
+        service.AddScoped<IStockInDetailRepository, StockInDetailRepository>();
+        service.AddScoped<IInvoiceRepository, InvoiceRepository>();
+        service.AddScoped<IInvoiceDetailRepository, InvoiceDetailRepository>();
         return service;
     }
     public static IServiceCollection AddDbFactory(this IServiceCollection service)

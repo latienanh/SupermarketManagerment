@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
+using Supermarket.Application.IServices;
 using Supermarket.Application.UnitOfWork;
 using Supermarket.Domain.Entities.SupermarketEntities;
 
@@ -46,6 +42,9 @@ namespace Supermarket.Application.Services
         public async Task<bool> CreateAsync(ProductRequestDto entity, Guid userID)
         {
             var entityMap = _mapper.Map<Product>(entity);
+
+            entityMap.Image = entity.PathImage;
+
             if (!entity.CategoriesId.IsNullOrEmpty())
             {
                 var resultAddCategory = await _productRepository.AddToCategoryAsync(entityMap, entity.CategoriesId);
@@ -61,6 +60,7 @@ namespace Supermarket.Application.Services
                 foreach (var variant in entity.Variants)
                 {
                     var variantMap = _mapper.Map<Product>(variant);
+                    variantMap.Image = variant.PathImage;
                     variantMap.ParentId = parentProductId;
                     if (entity.CategoriesId != null)
                     {
@@ -74,16 +74,15 @@ namespace Supermarket.Application.Services
                     {
                         return false;
                     }
-                    foreach (var variantValue in variant.VariantValue)
+                    foreach (var variantValue in variant.VariantValues)
                     {
                         var variantValueNew = new VariantValue();
                         variantValueNew.AttributeValueName = variantValue.VariantValue;
                         variantValueNew.AttributeId = variantValue.AttributeId;
-                        variantValueNew.ProductId = parentProductId;
+                        variantValueNew.ProductId = variantMap.Id;
                         var resultVariantValue = await _variantValueRepository.AddAsync(variantValueNew, userID);
                         if (resultVariantValue == null)
                             return false;
-
                     }
                 }
             }
@@ -94,9 +93,19 @@ namespace Supermarket.Application.Services
         public async Task<bool> UpdateAsync(ProductRequestDto entity, Guid id, Guid userID)
         {
             var entityMap = _mapper.Map<Product>(entity);
-            var result = await _productRepository.UpdateAsync(entityMap, id, "Product", userID);
+            if (entity.PathImage != null)
+            {
+                entityMap.Image = entity.PathImage;
+            }
+            var result = await _productRepository.UpdateAsyncProduct(entityMap, id, "Product", userID);
             if (result == null)
                 return false;
+            if (!entity.CategoriesId.IsNullOrEmpty())
+            {
+                var resultUpdateCategory = await _productRepository.UpdateToCategoryAsync(result, entity.CategoriesId);
+                if (!resultUpdateCategory)
+                    return false;
+            }
             await _unitOfWork.CommitAsync();
             return true;
         }
@@ -108,6 +117,28 @@ namespace Supermarket.Application.Services
                 return false;
             await _unitOfWork.CommitAsync();
             return true;
+        }
+        public async Task<IEnumerable<ProductsPagingResponseDto>> getPagingAsync(int index, int size)
+        {
+            var result = await _productRepository.GetMultiPagingAsync(x => x.IsDelete == false && x.ParentId == null, index, size, IncludeConstants.ProductIncludes);
+            var resultChildren = await _productRepository.GetMultiAsync(x => x.IsDelete == false && x.ParentId != null, IncludeConstants.ProductIncludes);
+            var resultMap = _mapper.Map<IEnumerable<ProductsPagingResponseDto>>(result);
+            foreach (var productParent in resultMap)
+            {
+                var children = resultChildren.Where(x => x.ParentId == productParent.id);
+                if (children.Any())
+                {
+                    productParent.Variants = _mapper.Map<IEnumerable<ProductResponseDto>>(children);
+                }
+            }
+            return resultMap;
+        }
+
+        public async Task<int> getTotalPagingTask(int size)
+        {
+            var result = await _productRepository.CountAsync(x => x.IsDelete == false && x.ParentId == null);
+            decimal total = Math.Ceiling((decimal)result / size);
+            return (int)total;
         }
     }
 }

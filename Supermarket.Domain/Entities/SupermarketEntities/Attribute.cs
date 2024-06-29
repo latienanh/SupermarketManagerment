@@ -9,6 +9,6 @@ public class Attribute : BaseDomain
         AttributeValues = new HashSet<VariantValue>();
     }
 
-    public string? AttributeName { get; set; }
+    public string? Name { get; set; }
     public virtual ICollection<VariantValue> AttributeValues { get; set; }
 }

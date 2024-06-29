@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Supermarket.Application.IRepositories;
-using Supermarket.Domain.Entities.Identity;
-using Supermarket.Infrastructure.DbFactories;
 
 namespace Supermarket.Infrastructure.Repositories
 {

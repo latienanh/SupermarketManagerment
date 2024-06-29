@@ -1,5 +1,4 @@
-﻿using Supermarket.Application.DTOs.SupermarketDtos;
-using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
+﻿using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
 
 namespace Supermarket.Application.IRepositories;
 

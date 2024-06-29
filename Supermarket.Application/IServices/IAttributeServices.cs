@@ -4,6 +4,6 @@ using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 
 namespace Supermarket.Application.IServices;
 
-public interface IAttributeServices : IServicesBase<AttributeRequestDto,AttributeResponseDto>
+public interface IAttributeServices : IServicesBase<AttributeRequestDto,AttributeResponseDto>,IGetPaging<AttributeResponseDto>
 {
 }

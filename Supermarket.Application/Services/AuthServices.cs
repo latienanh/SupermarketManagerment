@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Supermarket.Application.DTOs.Auth;
 using Supermarket.Application.DTOs.Auth.RequestDtos;
 using Supermarket.Application.DTOs.Auth.ResponseDtos;
 using Supermarket.Application.IRepositories;
@@ -20,22 +19,31 @@ public class AuthServices : IAuthServices
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<LoginResponseDtos> LoginAsync(LoginBasicRequestDtos loginBasicRequestDtos)
+    public async Task<LoginResponseDtos?> LoginAsync(LoginBasicRequestDtos loginBasicRequestDtos)
     {
         var result = await _authRepository.LoginAsync(loginBasicRequestDtos);
-        return result;
-    }
-
-    public async Task<IdentityResult> SignUp(UserRequestDto userRequestDtos)
-    {
-        var result = await _authRepository.SignUpAsync(userRequestDtos);
         await _unitOfWork.CommitAsync();
         return result;
     }
 
+    public async Task<IdentityResult> SignUp(SignUpRequestDto signUpRequestDto)
+    {
+        var result = await _authRepository.SignUpAsync(signUpRequestDto);
+        await _unitOfWork.CommitAsync();
+        return result;
+    }
+
+  
     public async Task<LoginResponseDtos> RenewTokenAsync(LoginTokenRequestDtos loginTokenRequestDtos)
     {
         var result = await _authRepository.RenewTokenAsync(loginTokenRequestDtos);
+        await _unitOfWork.CommitAsync();
+        return result;
+    }
+
+    public async Task<bool> LogOut(Guid id)
+    {
+        var result = await _authRepository.LogOut(id);
         await _unitOfWork.CommitAsync();
         return result;
     }

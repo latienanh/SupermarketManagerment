@@ -1,20 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Supermarket.Domain.Entities.SupermarketEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Supermarket.Application.DTOs.SupermarketDtos.RequestDtos
 {
     public class VariantRequestDto
     {
         public string? BarCode { get; set; }
-        public string? ProductName { get; set; }
-        public string? ProductSlug { get; set; }
-        public string? ProductImage { get; set; }
-        public Guid AttributeId { get; set; }
-        public IEnumerable<VariantValueRequestDto> VariantValue { get; set; }
+        public string? Name { get; set; }
+        public string? Slug { get; set; }
+        public double? Price { get; set; }
+        public string? Describe { get; set; }
+        public IFormFile? Image { get; set; }
+        public string? PathImage { get; set; }
+        public IEnumerable<VariantValueRequestDto> VariantValues { get; set; }
     }
 }

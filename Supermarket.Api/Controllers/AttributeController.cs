@@ -1,14 +1,11 @@
-﻿using System.Net;
-using System.Runtime.InteropServices;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Supermarket.Application.DTOs.SupermarketDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IServices;
 using Supermarket.Application.ModelResponses;
-using Attribute = Supermarket.Domain.Entities.SupermarketEntities.Attribute;
+
 namespace Supermarket.Api.Controllers;
 
 [Route("api/[controller]")]
@@ -48,6 +45,53 @@ public class AttributeController : ControllerBase
             Message = "Lỗi",
         });
 
+    }
+    [HttpGet("GetPaging")]
+    public async Task<IActionResult> GetPaging(int index, int size)
+    {
+        var result = await _attributeServices.getPagingAsync(index, size);
+        if (result != null)
+        {
+            if (result.Any())
+                return Ok(new ResponseWithListSuccess<AttributeResponseDto>
+                {
+                    Message = "Tìm thấy thành công",
+                    ListData = result
+                });
+            return Ok(new ResponseWithListSuccess<AttributeResponseDto>
+            {
+                Message = "Không tìm thấy thông tin",
+                ListData = result
+            });
+        }
+
+        return BadRequest(new ResponseFailure()
+        {
+            Message = "Lỗi",
+        });
+    }
+    [HttpGet("TotalPaging")]
+    public async Task<IActionResult> GetTotalPaging(int size)
+    {
+        var result = await _attributeServices.getTotalPagingTask(size);
+        if (result != null)
+        {
+            if (result > 0)
+                return Ok(new ResponseWithDataSuccess<int>()
+                {
+                    Message = "Thành công",
+                    Data = result
+                });
+            return Ok(new ResponseWithDataFailure<int>()
+            {
+                Message = "Thất bại",
+                Data = result
+            });
+        }
+        return BadRequest(new ResponseFailure()
+        {
+            Message = "Lỗi",
+        });
     }
 
     [HttpGet("{id}")]

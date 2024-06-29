@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Supermarket.Application.IServices;
+using Supermarket.Application.ModelResponses;
 
 namespace Supermarket.Application.Services
 {
@@ -16,10 +12,31 @@ namespace Supermarket.Application.Services
         {
             this._webHostEnvironment = _webHostEnvironment;
         }
-        public async Task<string> SaveImageAsync(string folderPath, IFormFile? file)
+        public async Task<ResponseImage?> SaveImageAsync(string folderPath, IFormFile? file)
         {
             if (file!=null)
             {
+                if (file.Length > 2 * 1024 * 1024) // Giới hạn kích thước file là 2MB
+                {
+                    return new ResponseImage()
+                    {
+                        isSuccess = false,
+                        Message = "File quá 2MB"
+                    };
+                }
+
+                // Kiểm tra định dạng file
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var fileExtension = Path.GetExtension(file.FileName).ToLower();
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    return new ResponseImage()
+                    {
+                        isSuccess = false,
+                        Message = "Chỉ hỗ trợ file .jpg .jpeg . png .gif"
+                    };
+                }
+
                 folderPath += Guid.NewGuid().ToString() + "_" + file.FileName;
                 var serverFolder = Path.Combine(_webHostEnvironment.WebRootPath,folderPath);
                 using (var stream = System.IO.File.Create(serverFolder))
@@ -27,7 +44,13 @@ namespace Supermarket.Application.Services
                     await file.CopyToAsync(stream);
                 }
 
-                return "/"+folderPath;
+                return new ResponseImage()
+                {
+                    isSuccess = true,
+                    Message = "Thành công",
+                    Data = "/" +folderPath
+                };
+              
             }
 
             return null;

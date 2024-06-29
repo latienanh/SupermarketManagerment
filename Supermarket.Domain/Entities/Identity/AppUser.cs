@@ -41,7 +41,12 @@ public class AppUser : IdentityUser<Guid>
         Modifications = new HashSet<Modification>();
     }
 
-    public Employee Employee { get; set; } = null!;
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string? FullName { get; set; }
+    public string Image { get; set; }
+    public ICollection<Employee> CreateEmployee { get; set; }
+    public ICollection<Employee> DeleteEmployee { get; set; }
     public RefreshToken RefreshToken { get; set; }
     public ICollection<Modification> Modifications { get; }
     public ICollection<Attribute> CreateAttributes { get; }

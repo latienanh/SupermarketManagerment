@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Supermarket.Application.IRepositories;
+﻿using Supermarket.Application.IRepositories;
 using Supermarket.Domain.Entities.Token;
 using Supermarket.Infrastructure.DbFactories;
 

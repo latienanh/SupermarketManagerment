@@ -55,9 +55,9 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
         {
             entity.Property(e => e.Id).HasColumnName("id");
 
-            entity.Property(e => e.AttributeName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(50)
-                .HasColumnName("attributeName");
+                .HasColumnName("name");
 
             entity.Property(e => e.CreateBy).HasColumnName("createBy");
             entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
@@ -127,9 +127,9 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
         {
             entity.Property(e => e.Id).HasColumnName("id");
 
-            entity.Property(e => e.CategoryName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(150)
-                .HasColumnName("categoryName");
+                .HasColumnName("name");
 
             entity.Property(e => e.CreateBy).HasColumnName("createBy");
             entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
@@ -263,6 +263,10 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
                 .WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.CustomerId)
                 .HasConstraintName("FK_Invoices_Customers");
+            entity.HasOne(d => d.Employee)
+                .WithMany(p => p.Invoices)
+                .HasForeignKey(d => d.EmployeeId)
+                .HasConstraintName("FK_Invoices_Employees");
         });
 
         modelBuilder.Entity<InvoiceDetail>(entity =>
@@ -311,6 +315,7 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
                 .IsFixedLength();
             entity.Property(e => e.CreateBy).HasColumnName("createBy");
             entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
+            entity.Property(e => e.Price).HasColumnName("price").HasDefaultValueSql("0.0");;
             entity.Property(e => e.CreateTime)
                 .HasColumnType("date")
                 .HasColumnName("createTime");
@@ -322,20 +327,20 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
                 .HasForeignKey(d => d.ParentId)
                 .HasConstraintName("FK_Product_Product");
 
-            entity.Property(e => e.ProductImage)
+            entity.Property(e => e.Image)
                 .HasMaxLength(150)
                 .IsUnicode(false)
-                .HasColumnName("productImage");
+                .HasColumnName("image");
 
-            entity.Property(e => e.ProductName)
+            entity.Property(e => e.Name)
                 .HasMaxLength(50)
-                .HasColumnName("productName");
+                .HasColumnName("name");
 
-            entity.Property(e => e.ProductSlug)
+            entity.Property(e => e.Slug)
                 .IsUnicode(false)
-                .HasColumnName("productSlug");
+                .HasColumnName("slug");
 
-            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.Quantity).HasColumnName("quantity").HasDefaultValue(0);
 
 
             entity.HasMany(d => d.Batches)
@@ -425,6 +430,10 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
                 .WithMany(p => p.StockIns)
                 .HasForeignKey(d => d.SupplierId)
                 .HasConstraintName("FK_StockIns_Suppliers");
+            entity.HasOne(d => d.Employee)
+                .WithMany(p => p.StockIns)
+                .HasForeignKey(d => d.EmployeeId)
+                .HasConstraintName("FK_StockIns_Employees");
         });
 
         modelBuilder.Entity<StockInDetail>(entity =>
@@ -433,7 +442,7 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
                 .ValueGeneratedNever()
                 .HasColumnName("id");
 
-            entity.Property(e => e.Price).HasColumnName("price");
+           
 
             entity.Property(e => e.ProductId).HasColumnName("productId");
 
@@ -523,14 +532,13 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
         modelBuilder.Entity<Employee>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
-
             entity.Property(e => e.Address).HasColumnName("address");
-
-            //entity.Property(e => e.CreateBy).HasColumnName("createBy");
-            //entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
-            //entity.Property(e => e.CreateTime)
-            //    .HasColumnType("date")
-            //    .HasColumnName("createTime");
+            entity.Property(e=>e.Image).HasColumnName("image");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.DeleteBy).HasColumnName("deleteBy");
+            entity.Property(e => e.CreateTime)
+                .HasColumnType("date")
+                .HasColumnName("createTime");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -545,9 +553,9 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
                 .HasColumnName("fullName")
                 .HasComputedColumnSql("(([firstName]+' ')+[lastName])", false);
 
-            //entity.Property(e => e.IsDelete)
-            //    .HasColumnName("isDelete")
-            //    .HasDefaultValueSql("((0))");
+            entity.Property(e => e.IsDelete)
+                .HasColumnName("isDelete")
+                .HasDefaultValueSql("((0))");
 
             entity.Property(e => e.LastName)
                 .HasMaxLength(50)
@@ -555,11 +563,24 @@ public class SuperMarketDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
         });
         modelBuilder.Entity<AppUser>(entity =>
         {
-            entity.HasOne(e => e.Employee)
-                .WithOne(x => x.AppUser)
-                .HasForeignKey<Employee>(x => x.UserId)
-                .HasConstraintName("FK_Employees_AppUsers");
-
+            entity.Property(e => e.FirstName)
+                .HasMaxLength(50)
+                .HasColumnName("firstName");
+            entity.Property(e => e.LastName)
+                .HasMaxLength(50)
+                .HasColumnName("lastName");
+            entity.Property(e => e.FullName)
+                .HasMaxLength(101)
+                .HasColumnName("fullName")
+                .HasComputedColumnSql("(([firstName]+' ')+[lastName])", false);
+            entity.HasMany(d => d.CreateEmployee)
+                .WithOne(e => e.UserCreate)
+                .HasForeignKey(e => e.CreateBy)
+                .HasConstraintName("FK_Employee_AppUsers_Create");
+            entity.HasMany(d => d.DeleteEmployee)
+                .WithOne(e => e.UserDelete)
+                .HasForeignKey(e => e.DeleteBy)
+                .HasConstraintName("FK_Employee_AppUsers_Delete");
             entity.HasMany(d => d.CreateAttributes)
                 .WithOne(e => e.UserCreate)
                 .HasForeignKey(e => e.CreateBy)
