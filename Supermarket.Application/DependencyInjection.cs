@@ -34,6 +34,7 @@ public static class DependencyInjection
         service.AddScoped<IEmployeeServices, EmployeeServices>();
         service.AddScoped<IImportGoodsServices, ImportGoodsServices>();
         service.AddScoped<ISalesService, SaleServices>();
+        service.AddScoped<ISendMailServices, SendMailServices>();
         return service;
     }
 }
