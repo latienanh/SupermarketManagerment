@@ -46,5 +46,8 @@ public class MappingProfile : Profile
         CreateMap<StockInDetail, StockInDetailRequest>().ReverseMap();
         CreateMap<Invoice, InvoiceRequestDto>().ReverseMap().ForMember(dest => dest.InvoiceDetails, opt => opt.Ignore());
         CreateMap<InvoiceDetail, InvoiceDetailRequest>().ReverseMap();
+        CreateMap<Invoice, InvoiceResponseDto>().ReverseMap();
+        CreateMap<StockIn,StockInResponseDto>().ReverseMap();
+        CreateMap<InvoiceDetail, InvoiceDetailResponseDto>().ReverseMap();
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.IRepositories;
 using Supermarket.Application.IServices;
 using Supermarket.Application.UnitOfWork;
@@ -73,9 +74,13 @@ namespace Supermarket.Application.Services
             return  true;
         }
 
-        public Task<bool> GetAllStockInAsync()
+        public async Task<ICollection<StockInResponseDto>> GetAllStockInAsync()
         {
-            throw new NotImplementedException();
+            var result = await _stockInRepository.GetMultiAsync(x=>x.IsDelete==false);
+            var resultMap = _mapper.Map<ICollection<StockInResponseDto>>(result);
+            return resultMap;
         }
+
+        
     }
 }

@@ -24,21 +24,20 @@ namespace Supermarket.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _importGoodsServices.GetAllStockInAsync();
-            //if (result != null)
-            //{
-            //    if (result.Any())
-            //        return Ok(new ResponseWithListSuccess<ProductResponseDto>
-            //        {
-            //            Message = "Tìm thấy thành công",
-            //            ListData = result
-            //        });
-            //    return Ok(new ResponseWithListSuccess<ProductResponseDto>
-            //    {
-            //        Message = "Không tìm thấy thông tin",
-            //        ListData = result
-            //    });
-            //}
-
+            if (result != null)
+            {
+                if (result.Any())
+                    return Ok(new ResponseWithListSuccess<StockInResponseDto>
+                    {
+                        Message = "Tìm thấy thành công",
+                        ListData = result
+                    });
+                return Ok(new ResponseWithListSuccess<StockInResponseDto>
+                {
+                    Message = "Không tìm thấy thông tin",
+                    ListData = result
+                });
+            }
             return BadRequest(new ResponseFailure()
             {
                 Message = "Lỗi",

@@ -5,6 +5,8 @@ using Supermarket.Application.ModelResponses;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Supermarket.Application.IServices;
+using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
+using Supermarket.Application.Services;
 
 namespace Supermarket.Api.Controllers
 {
@@ -18,6 +20,63 @@ namespace Supermarket.Api.Controllers
         public SaleController(ISalesService salesService)
         {
             _salesService = salesService;
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _salesService.GetAllStockInAsync();
+            if (result != null)
+            {
+                if (result.Any())
+                    return Ok(new ResponseWithListSuccess<InvoiceResponseDto>
+                    {
+                        Message = "Tìm thấy thành công",
+                        ListData = result
+                    });
+                return Ok(new ResponseWithListSuccess<InvoiceResponseDto>
+                {
+                    Message = "Không tìm thấy thông tin",
+                    ListData = result
+                });
+            }
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
+            });
+        }
+        [HttpGet("SaleDateNow")]
+        public async Task<IActionResult> GetSaleDateNow()
+        {
+            var result = await _salesService.GetSaleDateNow();
+            if (result != null)
+            {
+                    return Ok(new ResponseWithDataSuccess<SaleDateNowResponse>()
+                    {
+                        Message = "Thành công",
+                        Data = result
+                    });
+            }
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
+            });
+        }
+        [HttpGet("Chart")]
+        public async Task<IActionResult> GetChart()
+        {
+            var result = await _salesService.GetChart();
+            if (result != null)
+            {
+                return Ok(new ResponseWithDataSuccess<SaleDateNow1Response>()
+                {
+                    Message = "Thành công",
+                    Data = result
+                });
+            }
+            return BadRequest(new ResponseFailure()
+            {
+                Message = "Lỗi",
+            });
         }
         [HttpPost]
         public async Task<IActionResult> Create(InvoiceRequestDto model)
