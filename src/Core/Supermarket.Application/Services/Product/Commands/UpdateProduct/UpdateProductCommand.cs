@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Supermarket.Application.Abstractions.Messaging;
 
 namespace Supermarket.Application.Services.Product.Commands.UpdateProduct
 {
-    internal class UpdateAttributeCommand
-    {
-    }
+    public sealed record UpdateProductCommand(UpdateProductRequest UpdateProductRequest, Guid userId) : ICommand<Guid?>;
 }

@@ -66,9 +66,9 @@ namespace Supermarket.Infrastructure.Repositories
             }
             return true;
         }
-        public async Task<Product> UpdateAsyncProduct(Product entity, Guid id, string entityType, Guid userId)
+        public async Task<Product> UpdateAsyncProduct(Product entity, string entityType, Guid userId)
         {
-            var entityResult = await DbContext.Products.FirstOrDefaultAsync(x => x.Id == id && x.IsDelete == false);
+            var entityResult = await DbContext.Products.FirstOrDefaultAsync(x => x.Id == entity.Id && x.IsDelete == false);
             if (entityResult == null)
                 return null;
             entityResult.Name = entity.Name;

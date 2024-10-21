@@ -1,28 +1,30 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.ModelResponses;
+using Supermarket.Application.Services.Supplier.Commands.CreateSupplier;
+using Supermarket.Application.Services.Supplier.Commands.DeleteSupplier;
+using Supermarket.Application.Services.Supplier.Commands.UpdateSupplier;
+using Supermarket.Application.Services.Supplier.Queries.SQLServerQueries.GetAllSuppliers;
+using Supermarket.Application.Services.Supplier.Queries.SQLServerQueries.GetPagingSuppliers;
+using Supermarket.Application.Services.Supplier.Queries.SQLServerQueries.GetSupplierById;
+using Supermarket.Application.Services.Supplier.Queries.SQLServerQueries.GetTotalPagingSuppliers;
 
 namespace Supermarket.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class SupplierController : ControllerBase
+    public class SupplierController : ApiController
     {
-        private readonly ISupplierServices _supplierServices;
 
-        public SupplierController(ISupplierServices supplierServices)
-        {
-            _supplierServices = supplierServices;
-        }
-
-        [HttpGet]
+        [HttpGet("sql")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _supplierServices.GetAllAsync();
+            var query = new GetAllSuppliersQuery();
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result.Any())
@@ -44,10 +46,12 @@ namespace Supermarket.Presentation.Controllers
             });
 
         }
-        [HttpGet("GetPaging")]
+        [HttpGet("sql/GetPaging")]
         public async Task<IActionResult> GetPaging(int index, int size)
         {
-            var result = await _supplierServices.getPagingAsync(index, size);
+            var query = new GetPagingSuppliersQuery(index,size);
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result.Any())
@@ -68,10 +72,12 @@ namespace Supermarket.Presentation.Controllers
                 Message = "Lỗi",
             });
         }
-        [HttpGet("TotalPaging")]
+        [HttpGet("sql/TotalPaging")]
         public async Task<IActionResult> GetTotalPaging(int size)
         {
-            var result = await _supplierServices.getTotalPagingTask(size);
+            var query = new GetTotalPagingSuppliersQuery(size);
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result > 0)
@@ -92,10 +98,12 @@ namespace Supermarket.Presentation.Controllers
             });
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("sql/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _supplierServices.GetByIdAsync(id);
+            var query = new GetSupplierByIdQuery(id);
+
+            var result = await Sender.Send(query);
             if (result != null)
                 return Ok(new ResponseWithDataSuccess<SupplierResponseDto>
                 {
@@ -110,11 +118,12 @@ namespace Supermarket.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SupplierRequestDto model)
+        public async Task<IActionResult> Create([FromBody] CreateSupplierRequest model,CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _supplierServices.CreateAsync(model, userId);
-            if (result)
+            var command = new CreateSupplierCommand(model, userId);
+            var result = Sender.Send(command, cancellationToken);
+            if (result!=null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Tạo thành công!!!"
@@ -125,12 +134,13 @@ namespace Supermarket.Presentation.Controllers
             });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(SupplierRequestDto model, Guid id)
+        [HttpPut]
+        public async Task<IActionResult> Update(UpdateSupplierRequest model, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _supplierServices.UpdateAsync(model, id, userId);
-            if (result)
+            var command = new UpdateSupplierCommand(model, userId);
+            var result = Sender.Send(command, cancellationToken);
+            if (result!=null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Sửa thành công!!!"
@@ -141,12 +151,13 @@ namespace Supermarket.Presentation.Controllers
             });
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(DeleteSupplierRequest deleteSupplierRequest,CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _supplierServices.DeleteAsync(id, userId);
-            if (result)
+            var command = new DeleteSupplierCommand(deleteSupplierRequest, userId);
+            var result = Sender.Send(command, cancellationToken);
+            if (result!=null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Xoá thành công",

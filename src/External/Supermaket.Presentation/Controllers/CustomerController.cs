@@ -1,27 +1,27 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.ModelResponses;
+using Supermarket.Application.Services.Customer.Commands.CreateCustomer;
+using Supermarket.Application.Services.Customer.Commands.DeleteCustomer;
+using Supermarket.Application.Services.Customer.Commands.UpdateCustomer;
+using Supermarket.Application.Services.Customer.Queries.SQLServerQueries.GetAllCustomers;
+using Supermarket.Application.Services.Customer.Queries.SQLServerQueries.GetCustomerById;
+using Supermarket.Application.Services.Customer.Queries.SQLServerQueries.GetPagingCustomers;
+using Supermarket.Application.Services.Customer.Queries.SQLServerQueries.GetTotalPagingCustomers;
 
 namespace Supermarket.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomerController : ApiController
     {
-        public readonly ICustomerServices _customerServices;
-        private readonly ICustomerRepository _customerRepository;
-
-        public CustomerController(ICustomerServices customerServices)
-        {
-            _customerServices=customerServices;
- 
-        }
-        [HttpGet]
+        [HttpGet("sql")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _customerServices.GetAllAsync();
+            var query = new GetAllCustomersQuery();
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result.Any())
@@ -44,10 +44,12 @@ namespace Supermarket.Presentation.Controllers
 
         }
 
-        [HttpGet("GetPaging")]
+        [HttpGet("sql/GetPaging")]
         public async Task<IActionResult> GetPaging(int index, int size)
         {
-            var result = await _customerServices.getPagingAsync(index, size);
+            var query = new GetPagingCustomersQuery(index,size);
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result.Any())
@@ -68,10 +70,12 @@ namespace Supermarket.Presentation.Controllers
                 Message = "Lỗi",
             });
         }
-        [HttpGet("TotalPaging")]
+        [HttpGet("sql/TotalPaging")]
         public async Task<IActionResult> GetTotalPaging(int size)
         {
-            var result = await _customerServices.getTotalPagingTask(size);
+            var query = new GetTotalPagingCustomersQuery(size);
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result > 0)
@@ -91,10 +95,12 @@ namespace Supermarket.Presentation.Controllers
                 Message = "Lỗi",
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("sql/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _customerServices.GetByIdAsync(id);
+            var query = new GetCustomerByIdQuery(id);
+
+            var result = await Sender.Send(query);
             if (result != null)
                 return Ok(new ResponseWithDataSuccess<CustomerResponseDto>
                 {
@@ -109,11 +115,12 @@ namespace Supermarket.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CustomerRequestDto entity)
+        public async Task<IActionResult> Create([FromBody] CreateCustomerRequest entity)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _customerServices.CreateAsync(entity, userId);
-            if (result)
+            var command = new CreateCustomerCommand(entity, userId);
+            var result = await Sender.Send(command);
+            if (result!=null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Tạo thành công!!!"
@@ -124,12 +131,13 @@ namespace Supermarket.Presentation.Controllers
             });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(CustomerRequestDto entity, Guid id)
+        [HttpPut]
+        public async Task<IActionResult> Update(UpdateCustomerRequest entity)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _customerServices.UpdateAsync(entity, id, userId);
-            if (result)
+            var command = new UpdateCustomerCommand(entity, userId);
+            var result = await Sender.Send(command);
+            if (result != null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Sửa thành công!!!"
@@ -140,12 +148,13 @@ namespace Supermarket.Presentation.Controllers
             });
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(DeleteCustomerRequest deleteCustomerRequest)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _customerServices.DeleteAsync(id, userId);
-            if (result)
+            var command = new DeleteCustomerCommand(deleteCustomerRequest, userId);
+            var result = await Sender.Send(command);
+            if (result != null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Xoá thành công",

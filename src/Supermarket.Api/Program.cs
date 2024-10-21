@@ -8,7 +8,6 @@ using Microsoft.OpenApi.Models;
 using Supermarket.Api.Middleware;
 using Supermarket.Application;
 using Supermarket.Application.Behaviors;
-using Supermarket.Application.Profiles;
 using Supermarket.Domain.Entities.Identity;
 using Supermarket.Infrastructure;
 using Supermarket.Infrastructure.DbContext;
@@ -21,58 +20,59 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
+        // Lấy cấu hình từ appsettings.json và secret
         var configuration = builder.Configuration;
-
-        var presentation =  typeof(Supermarket.Presentation.AssemblyReference).Assembly;
+        // Đăng ký các dịch vụ cần thiết
+        var presentation = typeof(Supermarket.Presentation.AssemblyReference).Assembly;
         builder.Services.AddControllers().AddApplicationPart(presentation);
         builder.Services.AddAplication(configuration);
         builder.Services.AddJWTRepository(configuration);
         builder.Services.AddSqlRepository(configuration);
+        builder.Services.AddMongoDBRepository(configuration);
 
         var application = typeof(Supermarket.Application.AssemblyReference).Assembly;
-
         builder.Services
             .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(application))
-            .AddTransient(typeof(IPipelineBehavior<,>),typeof(ValidationBehaviors<,>))
+            .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviors<,>))
             .AddValidatorsFromAssembly(application);
 
+        // Đăng ký Middleware tùy chỉnh
         builder.Services.AddScoped<Custom401ReponseMiddleware>();
         builder.Services.AddScoped<Custom403ResponseMiddleware>();
         builder.Services.AddScoped<HandleExceptionMiddleware>();
 
+        // Cấu hình Identity
         builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<SuperMarketDbContext>()
             .AddDefaultTokenProviders();
+
         builder.Services.AddScoped<RoleManager<IdentityRole<Guid>>, RoleManager<IdentityRole<Guid>>>();
+
         builder.Services.Configure<IdentityOptions>(options =>
         {
-            // Thiết lập về Password
-            options.Password.RequireDigit = false; // Không bắt phải có số
-            options.Password.RequireLowercase = false; // Không bắt phải có chữ thường
-            options.Password.RequireNonAlphanumeric = false; // Không bắt ký tự đặc biệt
-            options.Password.RequireUppercase = false; // Không bắt buộc chữ in
-            options.Password.RequiredLength = 3; // Số ký tự tối thiểu của password
-            options.Password.RequiredUniqueChars = 1; //Số ký tự riêng biệt
+            // Thiết lập mật khẩu
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequiredLength = 3;
+            options.Password.RequiredUniqueChars = 1;
 
             // Cấu hình Lockout - khóa user
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
-            options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
             options.Lockout.AllowedForNewUsers = true;
 
-            // Cấu hình về User.
-            options.User.AllowedUserNameCharacters = // các ký tự đặt tên user
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-            options.User.RequireUniqueEmail = true; // Email là duy nhất
+            // Cấu hình về User
+            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            options.User.RequireUniqueEmail = true;
 
-            // Cấu hình đăng nhập.
-            options.SignIn.RequireConfirmedEmail = false; // Cấu hình xác thực địa chỉ email (email phải tồn tại)
-            options.SignIn.RequireConfirmedPhoneNumber = false; // Xác thực số điện thoại
+            // Cấu hình đăng nhập
+            options.SignIn.RequireConfirmedEmail = false;
+            options.SignIn.RequireConfirmedPhoneNumber = false;
         });
 
-        //builder.Services.AddCors(p => p.AddPolicy("MyCrossOriginResourceSharing",
-        //    build => build.WithOrigins("*").AllowAnyMethod().WithHeaders()));
+        // Cấu hình Cors
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("MyCrossOriginResourceSharing",
@@ -81,15 +81,15 @@ public class Program
                     builder.WithOrigins(configuration["Client_URL"])
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .WithHeaders("Content-Type"); // Thêm tiêu đề Content-Type vào danh sách các tiêu đề cho phép
+                        .WithHeaders("Content-Type");
                 });
         });
 
-
+        // Cấu hình Swagger
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(option =>
         {
-            option.SwaggerDoc("v1", new OpenApiInfo { Title = "Book API", Version = "v1" });
+            option.SwaggerDoc("v1", new OpenApiInfo { Title = "Supermarket API", Version = "v1" });
             option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
@@ -114,6 +114,8 @@ public class Program
                 }
             });
         });
+
+        // Cấu hình Authentication và Authorization
         builder.Services.AddAuthorization();
         builder.Services
             .AddAuthentication(option =>
@@ -132,42 +134,36 @@ public class Program
                     ValidateAudience = true,
                     ValidIssuer = configuration["JsonWebToken:ValidIssuer"],
                     ValidAudience = configuration["JsonWebToken:ValidAudience"],
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JsonWebToken:SecretKey"])),
-                    ClockSkew = new TimeSpan(0, 0, 5)
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JsonWebToken:SecretKey"])),
+                    ClockSkew = TimeSpan.FromSeconds(5)
                 };
             });
-        //builder.Services.ConfigureCustomMiddleware();
 
-        builder.Services.AddServices();
+        // Đăng ký các dịch vụ khác
+        builder.Services.AddAbstractions();
         builder.Services.AddRepository();
         builder.Services.AddDbFactory();
         builder.Services.AddUnitOfWork();
+
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+        // Cấu hình middleware và pipeline xử lý yêu cầu HTTP
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
         app.UseStaticFiles();
         app.UseHttpsRedirection();
         app.UseCors("MyCrossOriginResourceSharing");
-        app.UseAuthentication(); 
+        app.UseAuthentication();
         app.UseMiddleware<Custom401ReponseMiddleware>();
         app.UseMiddleware<Custom403ResponseMiddleware>();
         app.UseAuthorization();
         app.MapControllers();
         app.UseMiddleware<HandleExceptionMiddleware>();
+
         app.Run();
     }
-
-    //public static IServiceCollection ConfigureCustomMiddleware(this IServiceCollection services)
-    //{
-    //    services.AddScoped<Custom401ReponseMiddleware>();
-    //    services.AddScoped<Custom403ResponseMiddleware>();
-    //    services.AddScoped<HandleExceptionMiddleware>();
-    //    return services;
-    //}
 }

@@ -1,4 +1,5 @@
-﻿using Supermarket.Domain.Abstractions.IRepositories;
+﻿using Microsoft.EntityFrameworkCore;
+using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Entities.Token;
 using Supermarket.Infrastructure.DbContext;
 using Supermarket.Infrastructure.DbFactories;
@@ -7,37 +8,23 @@ namespace Supermarket.Infrastructure.Repositories;
 
 public class RefreshTokenRepository : RepositoryBaseBasic<RefreshToken>,IRefreshTokenRepository
 {
-    private readonly SuperMarketDbContext _superMarketDbContext;
+    protected IDbFactory DbFactory;
+    private SuperMarketDbContext _dbContext;
+    public SuperMarketDbContext _superMarketDbContext => _dbContext??(_dbContext=DbFactory.Init());
 
     public RefreshTokenRepository(IDbFactory dbFactory): base(dbFactory)
     {
-        
+        DbFactory = dbFactory;
+    }
+    public async Task<RefreshToken> GetByTokenAsync(string token)
+    {
+            var entity = await _superMarketDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.Token==token);
+            return entity;
     }
 
-    //public async Task<RefreshToken> CreateRefreshTokenAsync(RefreshToken refreshToken)
-    //{
-    //    await _superMarketDbContext.RefreshTokens.AddAsync(refreshToken);
-    //    await _superMarketDbContext.SaveChangesAsync();
-    //    return refreshToken;
-    //}
-
-    //public async Task<RefreshToken> UpdateRefreshTokenAsync(RefreshToken refreshToken)
-    //{
-    //    var updateRefeshToken =
-    //        await _superMarketDbContext.RefreshTokens.FirstOrDefaultAsync(m => m.UserId == refreshToken.UserId);
-    //    if (updateRefeshToken != null)
-    //    {
-    //        updateRefeshToken.Token = refreshToken.Token;
-    //        updateRefeshToken.Expriaton = refreshToken.Expriaton;
-    //        await _superMarketDbContext.SaveChangesAsync();
-    //        return refreshToken;
-    //    }
-
-    //    return null;
-    //}
-
-    public async Task<bool> ValidateRefreshTokenAsync(string token)
+    public async Task<RefreshToken> GetByUserIdAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        var entity = await _superMarketDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == userId);
+        return entity;
     }
 }

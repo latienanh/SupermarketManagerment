@@ -2,7 +2,6 @@
 using MediatR;
 using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Abstractions.IUnitOfWorks;
-using Supermarket.Domain.Primitives;
 
 namespace Supermarket.Application.Services.Attribute.Commands.CreateAttribute
 {

@@ -1,15 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Supermarket.Application.DTOs.Auth.RequestDtos;
-using Supermarket.Application.DTOs.Auth.ResponseDtos;
 using Supermarket.Infrastructure.DbFactories;
 using Supermarket.Infrastructure.Repositories;
 using Supermarket.Infrastructure.Settings;
 using Supermarket.Infrastructure.UnitOfWorks;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Abstractions.IUnitOfWorks;
+using Supermarket.Domain.Entities.Identity;
 using Supermarket.Infrastructure.DbContext;
 
 namespace Supermarket.Infrastructure;
@@ -36,16 +34,20 @@ public static class AssemblyReference
         });
         return services;
     }
+    public static IServiceCollection AddMongoDBRepository(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<SupermarketMongoDbContext>();
+        return services;
+    }
 
     public static IServiceCollection AddRepository(this IServiceCollection service)
     {
         service.AddScoped<IAttributeRepository, AttributeRepository>();
         service.AddScoped<IVariantValueRepository, VariantValueRepository>();
         service.AddScoped<ICategoryRepository, CategoryRepository>();
-        service.AddScoped<IAuthRepository, AuthRepository>();
         service.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         service.AddScoped<IRoleRepository, RoleRepository>();
-        service.AddScoped<IUserRepository<UserRequestDto,UserUpdateRequestDto,UserResponseDto>, UserRepository>();
+        service.AddScoped<IUserRepository<AppUser>, UserRepository>();
         service.AddScoped<IProductRepository, ProductRepository>();
         service.AddScoped<ICouponRepository, CouponRepository>();
         service.AddScoped<ICustomerRepository, CustomerRepository>();

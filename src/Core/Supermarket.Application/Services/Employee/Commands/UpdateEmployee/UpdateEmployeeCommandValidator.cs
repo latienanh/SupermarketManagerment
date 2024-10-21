@@ -2,13 +2,13 @@
 
 namespace Supermarket.Application.Services.Employee.Commands.UpdateEmployee
 {
-    public sealed class UpdateEmployeeCommandValidator : AbstractValidator<UpdateEmployeeRequest>
+    public sealed class UpdateEmployeeCommandValidator : AbstractValidator<UpdateEmployeeCommand>
     {
         
         public UpdateEmployeeCommandValidator()
         {
-            RuleFor(x => x.Address).NotEmpty().MaximumLength(50);
-            RuleFor(x => x.Email).NotEmpty();
+            RuleFor(x => x.UpdateEmployeeRequest.Address).NotEmpty().MaximumLength(50);
+            RuleFor(x => x.UpdateEmployeeRequest.Email).NotEmpty();
         }
     }
 }

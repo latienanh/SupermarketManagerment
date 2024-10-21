@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Supermarket.Application.Abstractions.Messaging;
 using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Abstractions.IUnitOfWorks;
 using Supermarket.Domain.Entities.Identity;
-using Supermarket.Domain.Primitives;
 
 namespace Supermarket.Application.Services.User.Commands.CreateUser
 {

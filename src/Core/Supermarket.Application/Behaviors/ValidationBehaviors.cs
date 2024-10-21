@@ -19,7 +19,7 @@ namespace Supermarket.Application.Behaviors
             {
                 return await next();
             }
-
+          
             var context = new ValidationContext<TRequest>(request);
 
             var errorDictionary = _validators
@@ -35,12 +35,13 @@ namespace Supermarket.Application.Behaviors
                             Key = propertyName,
                             Values = errorMessage.Distinct().ToArray()
                         })
-                .ToDictionary(x =>x.Key, x => x.Values);
+                .ToDictionary(x => x.Key, x => x.Values);
             if (errorDictionary.Any())
             {
                 throw new ValidationException(errorDictionary);
             }
             return await next();
+
         }
     }
 }

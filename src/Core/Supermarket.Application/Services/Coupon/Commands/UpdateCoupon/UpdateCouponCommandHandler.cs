@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Supermarket.Application.Abstractions.Messaging;
-using Supermarket.Application.Services.Category.Commands.UpdateCategory;
 using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Abstractions.IUnitOfWorks;
 

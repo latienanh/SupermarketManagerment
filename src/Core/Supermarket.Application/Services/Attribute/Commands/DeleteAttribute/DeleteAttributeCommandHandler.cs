@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Abstractions.IUnitOfWorks;
 

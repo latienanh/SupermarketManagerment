@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Supermarket.Application.Services.Category.Commands.UpdateCategory;
 
 namespace Supermarket.Application.Services.Coupon.Commands.UpdateCoupon
 {

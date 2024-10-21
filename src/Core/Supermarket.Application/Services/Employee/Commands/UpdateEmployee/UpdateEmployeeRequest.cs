@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Supermarket.Application.Common;
 
 namespace Supermarket.Application.Services.Employee.Commands.UpdateEmployee
 {
-    public sealed record UpdateEmployeeRequest
+    public sealed record UpdateEmployeeRequest : BaseDTORequestUpdate
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -1,6 +1,8 @@
-﻿namespace Supermarket.Application.Services.Customer.Commands.UpdateCustomer
+﻿using Supermarket.Application.Common;
+
+namespace Supermarket.Application.Services.Customer.Commands.UpdateCustomer
 {
-    public sealed record UpdateCustomerRequest
+    public sealed record UpdateCustomerRequest:BaseDTORequestUpdate
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

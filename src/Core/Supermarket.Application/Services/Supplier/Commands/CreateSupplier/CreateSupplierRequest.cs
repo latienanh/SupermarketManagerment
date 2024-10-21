@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
-
-namespace Supermarket.Application.Services.Supplier.Commands.CreateSupplier
+﻿namespace Supermarket.Application.Services.Supplier.Commands.CreateSupplier
 {
     public sealed record CreateSupplierRequest
     {

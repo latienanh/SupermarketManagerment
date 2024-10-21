@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentValidation;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+﻿using FluentValidation;
 
 namespace Supermarket.Application.Services.Product.Commands.CreateProduct
 {
-    public class CreateAttributeCommandValidator : AbstractValidator<CreateAttributeRequest>
+    public class CreateProductCommandValidator : AbstractValidator<CreateProductRequest>
     {
-        public CreateAttributeCommandValidator()
+        public CreateProductCommandValidator()
         {
             RuleFor(x=>x.BarCode).NotEmpty().MaximumLength(50);
             RuleFor(x => x.Describe).NotEmpty();

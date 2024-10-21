@@ -9,6 +9,5 @@ namespace Supermarket.Application.Services.Customer.Commands.UpdateCustomer
             RuleFor(x => x.Email).NotEmpty().MaximumLength(50);
             RuleFor(x => x.Address).NotEmpty();
         }
-        }
     }
 }

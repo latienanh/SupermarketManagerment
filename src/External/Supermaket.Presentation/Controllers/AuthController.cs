@@ -1,46 +1,45 @@
 ﻿using System.Security.Claims;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Supermarket.Application.DTOs.Auth.RequestDtos;
+using Supermarket.Application.Abstractions.IImageservices;
+using Supermarket.Application.Abstractions.ISendMailServices;
 using Supermarket.Application.DTOs.Auth.ResponseDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.ModelResponses;
+using Supermarket.Application.Services.Authentication.Commands.Login;
+using Supermarket.Application.Services.Authentication.Commands.Logout;
+using Supermarket.Application.Services.Authentication.Commands.Register;
+using Supermarket.Application.Services.Authentication.Commands.RenewToken;
 using Supermarket.Domain.Entities.Identity;
 
 namespace Supermarket.Presentation.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController : ApiController
 {
-    private readonly IAuthServices _authServices;
     private readonly IImageServices _imageServices;
     private readonly ISendMailServices _sendMailServices;
     private readonly UserManager<AppUser> _userManager;
 
 
-    public AuthController(IAuthServices authServices, IImageServices imageServices,ISendMailServices sendMailServices,UserManager<AppUser> userManager)
+    public AuthController(  IImageServices imageServices,ISendMailServices sendMailServices,UserManager<AppUser> userManager)
     {
-        _authServices = authServices;
         _imageServices = imageServices;
         _sendMailServices = sendMailServices;
         _userManager = userManager;
     }
 
     [HttpPost("SignUp")]
-    public async Task<ActionResult> Signup([FromForm] SignUpRequestDto signUpRequestDto)
+    public async Task<ActionResult> Signup([FromForm] RegisterRequest registerRequest,CancellationToken cancellationToken)
     {
-        if (signUpRequestDto.Password != signUpRequestDto.ConfirmPassword)
-            return BadRequest(new ResponseFailure()
-            {
-                Message = "Mật khẩu không trùng khớp"
-            });
         var folderUsers = "images/users/";
-        var userImagePath = await _imageServices.SaveImageAsync(folderUsers, signUpRequestDto.Avatar);
+        var userImagePath = await _imageServices.SaveImageAsync(folderUsers, registerRequest.Avatar);
         if (userImagePath == null)
         {
-            signUpRequestDto.PathImage = "/images/default-image.jpg";
+            registerRequest.PathImage = "/images/default-image.jpg";
         }
         else if (!userImagePath.isSuccess)
         {
@@ -54,12 +53,12 @@ public class AuthController : ControllerBase
         else
 
         {
-            signUpRequestDto.PathImage = userImagePath.Data;
+            registerRequest.PathImage = userImagePath.Data;
 
         }
-
-        var result = await _authServices.SignUp(signUpRequestDto);
-        if (result.Succeeded)
+        var command =  new RegisterCommand(registerRequest);
+        var result = await Sender.Send(command,cancellationToken);
+        if (result!=null)
             return Ok(new ResponseSuccess()
             {
                 Message = "Tạo thành công!!!"
@@ -71,11 +70,12 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Login")]
-    public async Task<ActionResult> Login(LoginBasicRequestDtos loginBasicRequestDtos)
+    public async Task<ActionResult> Login(LoginRequest loginRequest,CancellationToken cancellationToken)
     {
-        var result = await _authServices.LoginAsync(loginBasicRequestDtos);
+        var command = new LoginCommand(loginRequest);
+        var result = await Sender.Send(command, cancellationToken);
         if (result != null)
-            return Ok(new ResponseWithDataSuccess<LoginResponseDtos>()
+            return Ok(new ResponseWithDataSuccess<LoginResponse>()
             {
                 Data = result,
                 Message = "Thành công"
@@ -144,11 +144,12 @@ public class AuthController : ControllerBase
         });
     }
     [HttpPost("Refresh")]
-    public async Task<IActionResult> Refresh(LoginTokenRequestDtos loginTokenRequestDtos)
+    public async Task<IActionResult> Refresh(RenewTokenRequest renewTokenRequest,CancellationToken cancellationToken)
     {
-        var result = await _authServices.RenewTokenAsync(loginTokenRequestDtos);
+        var command = new RenewTokenCommand(renewTokenRequest);
+        var result = await Sender.Send(command, cancellationToken);
         if (result != null)
-            return Ok(new ResponseWithDataSuccess<LoginResponseDtos>()
+            return Ok(new ResponseWithDataSuccess<LoginResponse>()
             {
                 Data = result
             });
@@ -159,11 +160,15 @@ public class AuthController : ControllerBase
     }
     [HttpPost("Logout")]
     [Authorize]
-    public async Task<IActionResult> LogOut()
+    public async Task<IActionResult> LogOut(CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-        var result = await _authServices.LogOut(userId);
-        if (result)
+        var logoutRequest = new LogoutRequest(Guid.Parse(HttpContext.User.FindFirstValue("userId")));
+       
+        //var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
+
+        var command = new LogoutCommand(logoutRequest);
+        var result = await Sender.Send(command, cancellationToken);
+        if (result!=null)
         {
             return Ok(new ResponseSuccess()
             {

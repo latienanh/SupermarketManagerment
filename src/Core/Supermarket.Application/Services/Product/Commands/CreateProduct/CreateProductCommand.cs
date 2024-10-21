@@ -1,8 +1,6 @@
-﻿using MediatR;
-using Supermarket.Application.Abstractions.Messaging;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+﻿using Supermarket.Application.Abstractions.Messaging;
 
 namespace Supermarket.Application.Services.Product.Commands.CreateProduct
 {
-    public sealed record CreateAttributeCommand(CreateAttributeRequest product,Guid userId) : ICommand<Guid>;
+    public sealed record CreateProductCommand(CreateProductRequest product,Guid userId) : ICommand<Guid?>;
 }

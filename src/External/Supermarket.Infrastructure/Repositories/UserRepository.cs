@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Supermarket.Application.DTOs.Auth.ResponseDtos;
+using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Entities.Identity;
 
@@ -68,28 +71,25 @@ namespace Supermarket.Infrastructure.Repositories
 
         public async Task<AppUser> GetByIdAsync(Guid id)
         {
-            //var user = await _userManager.FindByIdAsync(id.ToString());
-            //if (user == null)
-            //    return null;
-            //var roleUsers = await _userManager.GetRolesAsync(user);
-            //var roles = new List<RoleResponseDto>();
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+                return null;
+            return user;
 
-            //foreach (var roleUser in roleUsers)
-            //{
-            //    var tempRole = _mapper.Map<RoleResponseDto>(await _roleManager.FindByNameAsync(roleUser));
-            //    roles.Add(tempRole);
-
-            //}
-            //var userResponse = _mapper.Map<UserResponseDto>(user);
-            //userResponse.Roles = roles;
-            //if (user == null)
-            //{
-            //    return null;
-            //}
-            //return userResponse;
-            throw new NotImplementedException();
         }
+        public async Task<List<IdentityRole<Guid>>> GetRolesByUserAsync(AppUser user)
+        {
+            var roleUsers = await _userManager.GetRolesAsync(user);
+            var roles = new List<IdentityRole<Guid>>();
 
+            foreach (var roleUser in roleUsers)
+            {
+                var tempRole = await _roleManager.FindByNameAsync(roleUser);
+                roles.Add(tempRole);
+            }
+            return roles;
+
+        }
         //public Task<bool> AddRoleInUser(IEnumerable<Guid> Roles, ref AppUser entity)
         //{
         //    throw new NotImplementedException();
@@ -143,33 +143,24 @@ namespace Supermarket.Infrastructure.Repositories
             return true;
         }
 
+        public async Task<IEnumerable<AppUser>> GetMultiPagingAsync(int size, int index)
+        {
+            var users = await _userManager.Users.Skip(size*index).Take(size).ToListAsync();
+            return users;
+        }
+
+        public async Task<int> GetTotalPagingAsync(int size)
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var total = Math.Ceiling((decimal)(users.Count() / size)) ;
+            return (int)total;
+        }
+
 
         public async Task<IEnumerable<AppUser>> GetAll()
         {
-            //var users = await _userManager.Users.ToListAsync();
-            //var userResponses = new List<UserResponseDto>();
-            //foreach (var user in users)
-            //{
-            //    var roleUsers = await _userManager.GetRolesAsync(user);
-            //    var roles = new List<RoleResponseDto>();
-
-            //    foreach (var roleUser in roleUsers)
-            //    {
-            //        var tempRole = _mapper.Map<RoleResponseDto>(await _roleManager.FindByNameAsync(roleUser));
-            //        roles.Add(tempRole);
-
-            //    }
-            //    var userResponse = _mapper.Map<UserResponseDto>(user);
-            //    userResponse.Roles = roles;
-            //    userResponses.Add(userResponse);
-            //}
-
-            //if (userResponses == null)
-            //{
-            //    return null;
-            //}
-            //return userResponses;
-            throw new NotImplementedException();
+            var users = await _userManager.Users.ToListAsync();
+            return users;
         }
     }
 }

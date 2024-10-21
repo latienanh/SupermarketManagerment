@@ -2,12 +2,12 @@
 
 namespace Supermarket.Application.Services.Employee.Commands.CreateEmployee
 {
-    public class CreateEmployeeCommandValidator : AbstractValidator<CreateEmployeeRequest>
+    public class CreateMemberShipTypeCommandValidator : AbstractValidator<CreateEmployeeCommand>
     {
-        public CreateEmployeeCommandValidator()
+        public CreateMemberShipTypeCommandValidator()
         {
-            RuleFor(x=>x.Address).NotEmpty().MaximumLength(50);
-            RuleFor(x => x.Email).NotEmpty();
+            RuleFor(x=>x.CreateEmployeeRequest.Address).NotEmpty().MaximumLength(50);
+            RuleFor(x => x.CreateEmployeeRequest.Email).NotEmpty();
         }
     }
 }

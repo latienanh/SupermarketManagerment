@@ -5,13 +5,13 @@ using Supermarket.Domain.Abstractions.IUnitOfWorks;
 
 namespace Supermarket.Application.Services.Employee.Commands.DeleteEmployee
 {
-    internal class CreateAttributeCommandHandler : IRequestHandler<DeleteEmployeeCommand,Guid?>
+    internal class DeleteEmployeeCommandHandler : IRequestHandler<DeleteEmployeeCommand,Guid?>
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmployeeRepository _employeeRepository;
 
-        public CreateAttributeCommandHandler(IMapper mapper,IUnitOfWork unitOfWork,IEmployeeRepository employeeRepository)
+        public DeleteEmployeeCommandHandler(IMapper mapper,IUnitOfWork unitOfWork,IEmployeeRepository employeeRepository)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;

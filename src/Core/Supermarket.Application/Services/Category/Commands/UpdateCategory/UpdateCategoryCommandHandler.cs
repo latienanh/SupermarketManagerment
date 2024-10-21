@@ -2,7 +2,6 @@
 using Supermarket.Application.Abstractions.Messaging;
 using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Abstractions.IUnitOfWorks;
-using Supermarket.Domain.Primitives;
 
 namespace Supermarket.Application.Services.Category.Commands.UpdateCategory
 {
@@ -21,6 +20,7 @@ namespace Supermarket.Application.Services.Category.Commands.UpdateCategory
         public async Task<Guid?> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             var entityMap = _mapper.Map<Domain.Entities.SupermarketEntities.Category>(request.UpdateCategoryRequest);
+            entityMap.Image = request.UpdateCategoryRequest.PathImage;
             var result = await _categoryRepository.UpdateAsync(entityMap, "Category", request.UserId);
             if (result == null)
                 return null;

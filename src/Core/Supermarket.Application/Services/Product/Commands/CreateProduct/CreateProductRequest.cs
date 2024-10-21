@@ -1,14 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Supermarket.Application.Services.Product.Commands.CreateProduct
 {
-    public sealed record CreateAttributeRequest
+    public sealed record CreateProductRequest
     {
         public string? BarCode { get; set; }
         public string? Name { get; set; }

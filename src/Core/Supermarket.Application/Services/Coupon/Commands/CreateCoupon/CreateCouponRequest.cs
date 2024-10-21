@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
-
-namespace Supermarket.Application.Services.Coupon.Commands.CreateCoupon
+﻿namespace Supermarket.Application.Services.Coupon.Commands.CreateCoupon
 {
     public sealed record CreateCouponRequest
     {

@@ -1,12 +1,17 @@
-﻿using System.Security.Claims;
+﻿using System.Drawing;
+using System.Security.Claims;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.ModelResponses;
 using Supermarket.Application.Services.Attribute.Commands.CreateAttribute;
 using Supermarket.Application.Services.Attribute.Commands.DeleteAttribute;
 using Supermarket.Application.Services.Attribute.Commands.UpdateAttribute;
+using Supermarket.Application.Services.Attribute.Queries.SQLServerQueries.GetAllAttributes;
+using Supermarket.Application.Services.Attribute.Queries.SQLServerQueries.GetAttributeById;
+using Supermarket.Application.Services.Attribute.Queries.SQLServerQueries.GetPagingAttributes;
+using Supermarket.Application.Services.Attribute.Queries.SQLServerQueries.GetTotalPagingAttributes;
 
 namespace Supermarket.Presentation.Controllers;
 
@@ -16,24 +21,25 @@ namespace Supermarket.Presentation.Controllers;
 [Authorize]
 public class AttributeController : ApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("sql")]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        //var result = await _attributeServices.GetAllAsync();
-        //if (result != null)
-        //{
-        //    if (result.Any())
-        //        return Ok(new ResponseWithListSuccess<AttributeResponseDto>
-        //        {
-        //            Message = "Tìm thấy thành công",
-        //            ListData = result
-        //        });
-        //    return Ok(new ResponseWithListSuccess<AttributeResponseDto>
-        //    {
-        //        Message = "Không tìm thấy thông tin",
-        //        ListData = result
-        //    });
-        //}
+        var query = new GetAllAttributeQuery();
+        var result = await Sender.Send(query,cancellationToken);
+        if (result != null)
+        {
+            if (result.Any())
+                return Ok(new ResponseWithListSuccess<AttributeResponseDto>
+                {
+                    Message = "Tìm thấy thành công",
+                    ListData = result
+                });
+            return Ok(new ResponseWithListSuccess<AttributeResponseDto>
+            {
+                Message = "Không tìm thấy thông tin",
+                ListData = result
+            });
+        }
 
         return BadRequest(new ResponseFailure()
         {
@@ -41,69 +47,73 @@ public class AttributeController : ApiController
         });
 
     }
-    [HttpGet("GetPaging")]
+    [HttpGet("sql/GetPaging")]
     public async Task<IActionResult> GetPaging(int index, int size)
     {
-        //var result = await _attributeServices.getPagingAsync(index, size);
-        //if (result != null)
-        //{
-        //    if (result.Any())
-        //        return Ok(new ResponseWithListSuccess<AttributeResponseDto>
-        //        {
-        //            Message = "Tìm thấy thành công",
-        //            ListData = result
-        //        });
-        //    return Ok(new ResponseWithListSuccess<AttributeResponseDto>
-        //    {
-        //        Message = "Không tìm thấy thông tin",
-        //        ListData = result
-        //    });
-        //}
+        var query = new GetPagingAttributeQuery(index,size);
+        var result = await Sender.Send(query);
+        if (result != null)
+        {
+            if (result.Any())
+                return Ok(new ResponseWithListSuccess<AttributeResponseDto>
+                {
+                    Message = "Tìm thấy thành công",
+                    ListData = result
+                });
+            return Ok(new ResponseWithListSuccess<AttributeResponseDto>
+            {
+                Message = "Không tìm thấy thông tin",
+                ListData = result
+            });
+        }
 
         return BadRequest(new ResponseFailure()
         {
             Message = "Lỗi",
         });
     }
-    [HttpGet("TotalPaging")]
+    [HttpGet("sql/TotalPaging")]
     public async Task<IActionResult> GetTotalPaging(int size)
     {
-        //var result = await _attributeServices.getTotalPagingTask(size);
-        //if (result != null)
-        //{
-        //    if (result > 0)
-        //        return Ok(new ResponseWithDataSuccess<int>()
-        //        {
-        //            Message = "Thành công",
-        //            Data = result
-        //        });
-        //    return Ok(new ResponseWithDataFailure<int>()
-        //    {
-        //        Message = "Thất bại",
-        //        Data = result
-        //    });
-        //}
+        var query = new GetTotalPagingAttributeQuery(size);
+        var result = await Sender.Send(query);
+        if (result != null)
+        {
+            if (result > 0)
+                return Ok(new ResponseWithDataSuccess<int>()
+                {
+                    Message = "Thành công",
+                    Data = result
+                });
+            return Ok(new ResponseWithDataFailure<int>()
+            {
+                Message = "Thất bại",
+                Data = result
+            });
+        }
         return BadRequest(new ResponseFailure()
         {
             Message = "Lỗi",
         });
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("sql/{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        //var result = await _attributeServices.GetByIdAsync(id);
-        //if (result != null)
-        //    return Ok(new ResponseWithDataSuccess<AttributeResponseDto>
-        //    {
-        //        Message = "Tìm thấy thông tin",
-        //        Data = result
-        //    });
-        //return BadRequest(new ResponseWithDataFailure<AttributeResponseDto>
-        //{
-        //    Message = "Không tìm thấy thông tin",
-        //    Data = result
-        //});
+        var query = new GetAttributeByIdQuery(id);
+        var result = await Sender.Send(query);
+
+        if (result != null)
+            return Ok(new ResponseWithDataSuccess<AttributeResponseDto>
+            {
+                Message = "Tìm thấy thông tin",
+                Data = result
+            });
+        return BadRequest(new ResponseWithDataFailure<AttributeResponseDto>
+        {
+            Message = "Không tìm thấy thông tin",
+            Data = result
+        });
     }
 
     [HttpPost]
@@ -124,8 +134,8 @@ public class AttributeController : ApiController
         });
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(UpdateAttributeRequest attributeDto,Guid id)
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateAttributeRequest attributeDto)
     {
         var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
         var command = new UpdateAttributeCommand(attributeDto, userId);
@@ -142,7 +152,7 @@ public class AttributeController : ApiController
         });
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete]
     public async Task<IActionResult> Delete(DeleteAttributeRequest deleteAttributeRequest)
     {
         var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));

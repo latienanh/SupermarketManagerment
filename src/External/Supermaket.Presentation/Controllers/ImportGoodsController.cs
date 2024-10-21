@@ -4,24 +4,23 @@ using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.ModelResponses;
+using Supermarket.Application.Services.Inventory.Commands.ImportGoods;
+using Supermarket.Application.Services.Inventory.Queries.SQLServerQueries.GetAllStockIn;
 
 namespace Supermarket.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class ImportGoodsController : ControllerBase
+    public class ImportGoodsController : ApiController
     {
-        private readonly IImportGoodsServices _importGoodsServices;
 
-        public ImportGoodsController(IImportGoodsServices importGoodsServices)
-        {
-            _importGoodsServices = importGoodsServices;
-        }
-        [HttpGet]
+        [HttpGet("sql")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _importGoodsServices.GetAllStockInAsync();
+            var query = new GetAllStockInQuery();
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result.Any())
@@ -42,12 +41,14 @@ namespace Supermarket.Presentation.Controllers
             });
         }
         [HttpPost]
-        public async Task<IActionResult> Create( ImportGoodsRequest model)
+        public async Task<IActionResult> Create(ImportGoodsRequest model,CancellationToken cancellationToken)
         {
 
             var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
-            var result = await _importGoodsServices.CreateStockInAsync(model, userId);
-            if (result)
+            var command = new ImportGoodsCommand(model,userId);
+            
+            var result = await Sender.Send(command,cancellationToken);
+            if (result != null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Nhập thành công!!!"

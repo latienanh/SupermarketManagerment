@@ -1,0 +1,95 @@
+services:
+  supermarket.api:
+    container_name: supermarket_api_dev
+    image: supermarketapi:dev
+    build:
+      context: .
+      dockerfile: src/Supermarket.Api/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=Supermarket2;User Id=sa;Password=Password123@!;TrustServerCertificate=True
+    networks:
+      - supermarketnetwork
+    restart: on-failure
+
+  sqlserver:
+    container_name: sqlserver_dev  # Đổi tên để tránh xung đột
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "Password123@!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - supermarketnetwork
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_dev
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root         # Tên người dùng quản trị
+      MONGO_INITDB_ROOT_PASSWORD: Password123@!     # Mật khẩu quản trị
+      MONGO_INITDB_DATABASE: supermarketdb     # Tạo cơ sở dữ liệu ban đầu (tùy chọn)
+    networks:
+      - supermarketnetwork
+    
+  zookeeper:
+    image: quay.io/debezium/zookeeper:2.7  # Sử dụng phiên bản cụ thể
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+    networks:
+      - supermarketnetwork
+
+  kafka:
+    image: quay.io/debezium/kafka:2.7  # Sử dụng phiên bản cụ thể
+    ports:
+      - "9092:9092"
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+    networks:
+      - supermarketnetwork
+    depends_on:
+      - zookeeper
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local-kafka
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    networks:
+      - supermarketnetwork
+    depends_on:
+      - kafka
+      - zookeeper
+
+  connect:
+    image: quay.io/debezium/connect:2.7  # Sử dụng phiên bản cụ thể
+    ports:
+      - "8083:8083"
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+    networks:
+      - supermarketnetwork
+    depends_on:
+      - kafka
+      - zookeeper
+      - sqlserver
+
+networks:
+  supermarketnetwork:
+    driver: bridge

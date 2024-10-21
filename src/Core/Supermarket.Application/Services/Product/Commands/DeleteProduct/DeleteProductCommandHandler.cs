@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Supermarket.Domain.Abstractions.IRepositories;
 using Supermarket.Domain.Abstractions.IUnitOfWorks;
 
 namespace Supermarket.Application.Services.Product.Commands.DeleteProduct
 {
-    internal class CreateAttributeCommandHandler : IRequestHandler<DeleteAttributeCommand,Guid>
+    internal class CreateAttributeCommandHandler : IRequestHandler<DeleteProductCommand,Guid?>
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -22,9 +17,12 @@ namespace Supermarket.Application.Services.Product.Commands.DeleteProduct
             _unitOfWork = unitOfWork;
             _productRepository = productRepository;
         }
-        public async Task<Guid> Handle(DeleteAttributeCommand request, CancellationToken cancellationToken)
+        public async Task<Guid?> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            var result = await _productRepository.DeleteAsync(request.Id,request.UserId);
+            var result = await _productRepository.DeleteAsync(request.DeleteProductRequest.Id, request.UserId);
+            if (result == null)
+                return null;
+            await _unitOfWork.CommitAsync(cancellationToken);
             return result.Id;
         }
     }

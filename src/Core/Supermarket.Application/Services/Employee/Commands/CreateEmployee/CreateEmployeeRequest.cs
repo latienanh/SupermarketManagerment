@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 
 namespace Supermarket.Application.Services.Employee.Commands.CreateEmployee
 {

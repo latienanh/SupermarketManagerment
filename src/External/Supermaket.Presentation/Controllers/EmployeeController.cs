@@ -1,30 +1,37 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+using Supermarket.Application.Abstractions.IImageservices;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.ModelResponses;
+using Supermarket.Application.Services.Employee.Commands.CreateEmployee;
+using Supermarket.Application.Services.Employee.Commands.DeleteEmployee;
+using Supermarket.Application.Services.Employee.Commands.UpdateEmployee;
+using Supermarket.Application.Services.Employee.Queries.SQLServerQueries.GetAllEmployees;
+using Supermarket.Application.Services.Employee.Queries.SQLServerQueries.GetEmployeeById;
+using Supermarket.Application.Services.Employee.Queries.SQLServerQueries.GetPagingEmployees;
+using Supermarket.Application.Services.Employee.Queries.SQLServerQueries.GetTotalPagingEmployees;
 
 namespace Supermarket.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class EmployeeController : ControllerBase
+    public class EmployeeController : ApiController
     {
-        private readonly IEmployeeServices _employeeServices;
         private readonly IImageServices _imageServices;
 
-        public EmployeeController(IEmployeeServices employeeServices, IImageServices _imageServices)
+        public EmployeeController(IImageServices _imageServices)
         {
-            _employeeServices = employeeServices;
             this._imageServices = _imageServices;
         }
 
-        [HttpGet]
+        [HttpGet("sql")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _employeeServices.GetAllAsync();
+            var query = new GetAllEmployeesQuery();
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result.Any())
@@ -45,10 +52,12 @@ namespace Supermarket.Presentation.Controllers
                 Message = "Lỗi",
             });
         }
-        [HttpGet("GetPaging")]
+        [HttpGet("sql/GetPaging")]
         public async Task<IActionResult> GetPaging(int index, int size)
         {
-            var result = await _employeeServices.getPagingAsync(index, size);
+            var query = new GetPagingEmployeesQuery(index,size);
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result.Any())
@@ -69,10 +78,12 @@ namespace Supermarket.Presentation.Controllers
                 Message = "Lỗi",
             });
         }
-        [HttpGet("TotalPaging")]
+        [HttpGet("sql/TotalPaging")]
         public async Task<IActionResult> GetTotalPaging(int size)
         {
-            var result = await _employeeServices.getTotalPagingTask(size);
+            var query = new GetTotalPagingEmployeesQuery(size);
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result > 0)
@@ -92,10 +103,12 @@ namespace Supermarket.Presentation.Controllers
                 Message = "Lỗi",
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("sql/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _employeeServices.GetByIdAsync(id);
+            var query = new GetEmployeeByIdQuery(id);
+
+            var result = await Sender.Send(query);
             if (result != null)
                 return Ok(new ResponseWithDataSuccess<EmployeeResponseDto>
                 {
@@ -110,30 +123,30 @@ namespace Supermarket.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] EmployeeRequestDto model)
+        public async Task<IActionResult> Create([FromForm] CreateEmployeeRequest model)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var folderCategory = "images/employees/";
+            var folderEmployees = "images/employees/";
 
-            var categoryImagePath = await _imageServices.SaveImageAsync(folderCategory, model.Image);
-            if (categoryImagePath == null)
+            var employeesImagePath = await _imageServices.SaveImageAsync(folderEmployees, model.Image);
+            if (employeesImagePath == null)
             {
                 model.PathImage = "/images/default-image.jpg";
             }
-            else if (!categoryImagePath.isSuccess)
+            else if (!employeesImagePath.isSuccess)
             {
                 return BadRequest(new ResponseFailure()
                 {
-                    Message = categoryImagePath.Message,
+                    Message = employeesImagePath.Message,
                 });
             }
             else
             {
-                model.PathImage = categoryImagePath.Data;
+                model.PathImage = employeesImagePath.Data;
             }
-
-            var result = await _employeeServices.CreateAsync(model, userId);
-            if (result)
+            var command = new CreateEmployeeCommand(model, userId);
+            var result = await Sender.Send(command);
+            if (result != null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Tạo thành công!!!"
@@ -144,12 +157,13 @@ namespace Supermarket.Presentation.Controllers
             });
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(DeleteEmployeeRequest deleteEmployeeRequest)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var result = await _employeeServices.DeleteAsync(id, userId);
-            if (result)
+            var command = new DeleteEmployeeCommand(deleteEmployeeRequest, userId);
+            var result = await Sender.Send(command);
+            if (result != null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Xoá thành công",
@@ -159,32 +173,33 @@ namespace Supermarket.Presentation.Controllers
                 Message = "Xoá thất bại"
             });
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromForm] EmployeeRequestDto model)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromForm] UpdateEmployeeRequest model)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirstValue("userId"));
-            var folderCategory = "images/employees/";
+            var folderEmployees = "images/employees/";
 
 
-            var categoryImagePath = await _imageServices.SaveImageAsync(folderCategory, model.Image);
-            if (categoryImagePath == null)
+            var employeesImagePath = await _imageServices.SaveImageAsync(folderEmployees, model.Image);
+            if (employeesImagePath == null)
             {
                 model.PathImage = null;
             }
-            else if (!categoryImagePath.isSuccess)
+            else if (!employeesImagePath.isSuccess)
             {
                 return BadRequest(new ResponseFailure()
                 {
-                    Message = categoryImagePath.Message
+                    Message = employeesImagePath.Message
                 });
             }
             else
             {
-                model.PathImage = categoryImagePath.Data;
+                model.PathImage = employeesImagePath.Data;
             }
 
-            var result = await _employeeServices.UpdateAsync(model, id, userId);
-            if (result)
+            var command = new UpdateEmployeeCommand(model, userId);
+            var result = await Sender.Send(command);
+            if (result!=null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Sửa thành công!!!"

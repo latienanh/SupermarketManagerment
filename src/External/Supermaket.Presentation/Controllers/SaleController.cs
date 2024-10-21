@@ -4,24 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.ModelResponses;
+using Supermarket.Application.Services.Inventory.Commands.Sale;
+using Supermarket.Application.Services.Inventory.Queries.SQLServerQueries.GetAllInvoices;
+using Supermarket.Application.Services.Inventory.Queries.SQLServerQueries.GetChartSale;
+using Supermarket.Application.Services.Inventory.Queries.SQLServerQueries.GetSaleDateNow;
 
 namespace Supermarket.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class SaleController : ControllerBase
+    public class SaleController : ApiController
     {
-        private readonly ISalesService _salesService;
-
-        public SaleController(ISalesService salesService)
-        {
-            _salesService = salesService;
-        }
-        [HttpGet]
+        [HttpGet("sql")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _salesService.GetAllStockInAsync();
+            var query = new GetAllInvoicesQuery();
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 if (result.Any())
@@ -41,27 +41,31 @@ namespace Supermarket.Presentation.Controllers
                 Message = "Lỗi",
             });
         }
-        [HttpGet("SaleDateNow")]
+        [HttpGet("sql/SaleDateNow")]
         public async Task<IActionResult> GetSaleDateNow()
         {
-            var result = await _salesService.GetSaleDateNow();
+            var query = new GetSaleDateNowQuery();
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
-                    return Ok(new ResponseWithDataSuccess<SaleDateNowResponse>()
-                    {
-                        Message = "Thành công",
-                        Data = result
-                    });
+                return Ok(new ResponseWithDataSuccess<SaleDateNowResponse>()
+                {
+                    Message = "Thành công",
+                    Data = result
+                });
             }
             return BadRequest(new ResponseFailure()
             {
                 Message = "Lỗi",
             });
         }
-        [HttpGet("Chart")]
+        [HttpGet("sql/Chart")]
         public async Task<IActionResult> GetChart()
         {
-            var result = await _salesService.GetChart();
+            var query = new GetChartSaleQuery();
+
+            var result = await Sender.Send(query);
             if (result != null)
             {
                 return Ok(new ResponseWithDataSuccess<SaleDateNow1Response>()
@@ -76,12 +80,13 @@ namespace Supermarket.Presentation.Controllers
             });
         }
         [HttpPost]
-        public async Task<IActionResult> Create(InvoiceRequestDto model)
+        public async Task<IActionResult> Create(InvoiceRequest model,CancellationToken cancellationToken)
         {
 
             var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
-            var result = await _salesService.CreateInvoiceAsync(model, userId);
-            if (result)
+            var command = new SaleCommand(model, userId);
+            var result = await Sender.Send(command,cancellationToken);
+            if (result!=null)
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Bán thành công!!!"
