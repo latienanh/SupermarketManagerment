@@ -11,6 +11,7 @@ using Supermarket.Application.Behaviors;
 using Supermarket.Domain.Entities.Identity;
 using Supermarket.Infrastructure;
 using Supermarket.Infrastructure.DbContext;
+using Supermarket.Presentation.Hubs;
 
 namespace Supermarket.Api;
 
@@ -145,6 +146,8 @@ public class Program
         builder.Services.AddDbFactory();
         builder.Services.AddUnitOfWork();
 
+        builder.Services.AddSignalR();
+
         var app = builder.Build();
 
         // Cấu hình middleware và pipeline xử lý yêu cầu HTTP
@@ -163,7 +166,7 @@ public class Program
         app.UseAuthorization();
         app.MapControllers();
         app.UseMiddleware<HandleExceptionMiddleware>();
-
+        app.MapHub<ReportHub>("/reportHub");
         app.Run();
     }
 }

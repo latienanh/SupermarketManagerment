@@ -1,13 +1,14 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Supermarket.Application.DTOs.SupermarketDtos.RequestDtos;
+using Microsoft.AspNetCore.SignalR;
 using Supermarket.Application.DTOs.SupermarketDtos.ResponseDtos;
 using Supermarket.Application.ModelResponses;
 using Supermarket.Application.Services.Inventory.Commands.Sale;
 using Supermarket.Application.Services.Inventory.Queries.SQLServerQueries.GetAllInvoices;
 using Supermarket.Application.Services.Inventory.Queries.SQLServerQueries.GetChartSale;
 using Supermarket.Application.Services.Inventory.Queries.SQLServerQueries.GetSaleDateNow;
+using Supermarket.Presentation.Hubs;
 
 namespace Supermarket.Presentation.Controllers
 {
@@ -16,6 +17,13 @@ namespace Supermarket.Presentation.Controllers
     [Authorize]
     public class SaleController : ApiController
     {
+        private readonly IHubContext<ReportHub> _hubContext;
+
+        public SaleController(IHubContext<ReportHub> hubContext)
+        {
+            _hubContext = hubContext;
+        }
+
         [HttpGet("sql")]
         public async Task<IActionResult> GetAll()
         {
@@ -86,7 +94,9 @@ namespace Supermarket.Presentation.Controllers
             var userId = new Guid(HttpContext.User.FindFirstValue("userId"));
             var command = new SaleCommand(model, userId);
             var result = await Sender.Send(command,cancellationToken);
-            if (result!=null)
+            await _hubContext.Clients.All.SendAsync("RefreshData");
+            if (result != null)
+                
                 return Ok(new ResponseSuccess()
                 {
                     Message = "Bán thành công!!!"

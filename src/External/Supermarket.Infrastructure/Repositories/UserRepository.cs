@@ -31,9 +31,9 @@ namespace Supermarket.Infrastructure.Repositories
             return null;
         }
 
-        public async Task<AppUser> UpdateAsync(AppUser entity, Guid id)
+        public async Task<AppUser> UpdateAsync(AppUser entity)
         {
-            var existingUser = await _userManager.FindByIdAsync(id.ToString());
+            var existingUser = await _userManager.FindByIdAsync(entity.Id.ToString());
             if (existingUser == null)
             {
                 return null;
